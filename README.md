@@ -1,1 +1,1 @@
-imena: plus, +robotics, PIDi, G3
+ovde ide readme
