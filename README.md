@@ -6,7 +6,7 @@
 
 - Da sam vas dodao na repozitorijum (Nalog g3eurobot je dodat svakako)
   
-  TODO: github nalog
+![github nalog](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/github%20nalog.PNG)
 
 - Da imate skinut stm32cubeide
 
