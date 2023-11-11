@@ -5,8 +5,8 @@
 - Da ste skinuli "Github Desktop"
 
 - Da sam vas dodao na repozitorijum (Nalog g3eurobot je dodat svakako)
-
-        TODO: github nalog
+  
+  TODO: github nalog
 
 - Da imate skinut stm32cubeide
 
