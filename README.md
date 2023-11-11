@@ -37,8 +37,8 @@
 
 ##### Izmena koda i guranje (push) istog na novu (testing) granu:
 
-### NAPOMENA:
-##### Ništa ne gurati na main granu!    Ja ću mergovati kada proverimo da li radi.
+## NAPOMENA:
+## Ništa ne gurati na main granu!    Ja ću mergovati kada proverimo da radi.
 
 1. Napravite novu granu i nazovete je "testing-datum(-vreme)"
    
