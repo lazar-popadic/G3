@@ -10,8 +10,6 @@
 
 - Da imate skinut stm32cubeide
 
-
-
 ### Prvo skidanje koda:
 
 1. Klonirate repozitorijum (repo) negde na vaš sistem: [Cloning a repository from GitHub to GitHub Desktop - GitHub Docs](https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-a-repository-from-github-to-github-desktop)
@@ -23,8 +21,6 @@
 3. U stm32cubeide otvorite taj projekat, tako što izaberete direktorijum (folder) gde ste klonirali taj repo
    
    TODO: git2 i git3
-   
-   
 
 ### Dalji radi na kodu:
 
@@ -33,10 +29,12 @@
 1. U Github Desktop izaberete granu na kojoj hocete da radite (uglavnom ce to biti main grana)
    
    TODO: git4
-2. Kliknete "Fetch origin" da bi vam skinulo najnoviji kod
-3. TODO: git5
 
-##### Guranje (push) koda koji ste vi izmenili na novu (testing) granu:
+2. Kliknete "Fetch origin" da bi vam skinulo najnoviji kod
+   
+   TODO: git5
+
+##### Izmena koda i guranje (push) istog na novu (testing) granu:
 
 1. Napravite novu granu i nazovete je "testing-datum(-vreme)
    
@@ -46,7 +44,25 @@
    
    TODO: git8
 
+3. Radite na kodu
 
+4. U Github Desktop upišete naziv i opis promena kojih ste uradili na kodu
+   
+   TODO: git9
+
+5. ###### Proverite da ste na grani koju ste vi napravili!
+   
+   Ako jeste kliknete "commit changes"
+   
+   TODO: git10
+   
+   Ako niste promenite granu,
+   
+   TODO: git11 i git12
+   
+   Pa tek onda kliknete "commit changes"
+
+6. 
 
 ### NAPOMENA:
 
