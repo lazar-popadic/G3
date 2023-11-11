@@ -79,3 +79,5 @@
    
 ![git11](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git11.PNG)
 
+![git13](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git13.PNG)
+
