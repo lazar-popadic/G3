@@ -16,11 +16,12 @@
 
 2. U Github Desktop kliknete "Fetch origin" na main grani (branch)
    
-   TODO: git1
+![git1](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git1.PNG)
 
 3. U stm32cubeide otvorite taj projekat, tako što izaberete direktorijum (folder) gde ste klonirali taj repo
    
-   TODO: git2 i git3
+![git2](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git2.PNG)
+![git2](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git3.PNG)
 
 ### Dalji radi na kodu:
 
