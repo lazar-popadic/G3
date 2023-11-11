@@ -38,10 +38,9 @@
 ##### Izmena koda i guranje (push) istog na novu (testing) granu:
 
 ### NAPOMENA:
+##### Ništa ne gurati na main granu!    Ja ću mergovati kada proverimo da li radi.
 
-###### Ništa ne gurati na main granu!    Ja ću mergovati kada proverimo da li radi.
-
-1. Napravite novu granu i nazovete je "testing-datum(-vreme)
+1. Napravite novu granu i nazovete je "testing-datum(-vreme)"
    
 ![git6](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git6.PNG)
 ![git7](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git7.PNG)
