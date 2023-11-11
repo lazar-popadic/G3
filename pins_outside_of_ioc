@@ -1,0 +1,11 @@
+	port A:
+	0 - PWM output
+	5 - output - LED
+
+	port B:
+	4 - kanal A enkodera 1
+	5 - kanal B enkodera 1
+	
+	port C:
+	6 - uart6 tx
+	7 - uart6 rx
