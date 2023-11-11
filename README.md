@@ -50,7 +50,7 @@
    
    TODO: git9
 
-5. ###### Proverite da ste na grani koju ste vi napravili!
+5. ##### Proverite da ste na grani koju ste vi napravili!
    
    5.1 Ako jeste kliknete "commit changes"
    
@@ -62,7 +62,7 @@
    
    Pa tek onda kliknete "commit changes"
 
-6. ###### Opet proverite da ste na vašoj grani!
+6. ##### Opet proverite da ste na vašoj grani!
    
    6.1 Ako jeste kliknete "push origin"
    
