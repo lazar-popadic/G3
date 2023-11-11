@@ -21,7 +21,7 @@
 3. U stm32cubeide otvorite taj projekat, tako što izaberete direktorijum (folder) gde ste klonirali taj repo
    
 ![git2](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git2.PNG)
-![git2](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git3.PNG)
+![git3](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git3.PNG)
 
 ### Dalji radi na kodu:
 
@@ -29,37 +29,43 @@
 
 1. U Github Desktop izaberete granu na kojoj hocete da radite (uglavnom ce to biti main grana)
    
-   TODO: git4
+![git4](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git4.PNG)
 
 2. Kliknete "Fetch origin" da bi vam skinulo najnoviji kod
    
-   TODO: git5
+![git5](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git5.PNG)
 
 ##### Izmena koda i guranje (push) istog na novu (testing) granu:
 
+### NAPOMENA:
+
+###### Ništa ne gurati na main granu!    Ja ću mergovati kada proverimo da li radi.
+
 1. Napravite novu granu i nazovete je "testing-datum(-vreme)
    
-   TODO: git6 i git7
+![git6](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git6.PNG)
+![git7](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git7.PNG)
 
 2. Kliknete "Publish branch"
    
-   TODO: git8
+![git8](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git8.PNG)
 
 3. Radite na kodu
 
 4. U Github Desktop upišete naziv i opis promena kojih ste uradili na kodu
    
-   TODO: git9
+![git9](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git9.PNG)
 
 5. ##### Proverite da ste na grani koju ste vi napravili!
    
    5.1 Ako jeste kliknete "commit changes"
    
-   TODO: git10
+![git10](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git10.PNG)
    
    5.2 Ako niste, promenite granu,
    
-   TODO: git11 i git12
+![git11](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git11.PNG)
+![git12](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git12.PNG)
    
    Pa tek onda kliknete "commit changes"
 
@@ -67,12 +73,9 @@
    
    6.1 Ako jeste kliknete "push origin"
    
-   TODO: git13
+![git13](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git13.PNG)
    
    6.2 Ako niste, promenite granu, pa tek onda kliknete "push origin"
    
-   TODO: git11
+![git11](https://github.com/lazuskica/G3/blob/testing-11.11.23/slike%20za%20readme/git11.PNG)
 
-### NAPOMENA:
-
-###### Ništa ne gurati na main granu!    Ja ću mergovati kada proverimo da li radi.
