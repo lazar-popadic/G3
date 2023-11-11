@@ -52,17 +52,25 @@
 
 5. ###### Proverite da ste na grani koju ste vi napravili!
    
-   Ako jeste kliknete "commit changes"
+   5.1 Ako jeste kliknete "commit changes"
    
    TODO: git10
    
-   Ako niste promenite granu,
+   5.2 Ako niste, promenite granu,
    
    TODO: git11 i git12
    
    Pa tek onda kliknete "commit changes"
 
-6. 
+6. ###### Opet proverite da ste na vašoj grani!
+   
+   6.1 Ako jeste kliknete "push origin"
+   
+   TODO: git13
+   
+   6.2 Ako niste, promenite granu, pa tek onda kliknete "push origin"
+   
+   TODO: git11
 
 ### NAPOMENA:
 
