@@ -6,12 +6,15 @@
  */
 /*
  TIM2 - za vreme
- TIM3 - za enkoder
+ TIM3 - enkoder 1
+ TIM4 - enkoder 2
  TIM5 - pwm
  */
 
 #include "../../periphery/timer/timer.h"
-#include "../../Modules/odometrija/odometrija.h"
+#include "../../modules/odometrija/odometrija.h"
+
+#define END_TIME 10*1000
 
 static void
 tim2_init ();
@@ -20,18 +23,20 @@ static void
 tim3_init ();
 
 static void
+tim4_init ();
+
+static void
 tim5_init ();
 
 volatile uint32_t sys_time_ms = 0; //volatile da kompajler ne vrsi optimizaciju
 bool flag_delay = true;
-
-volatile int16_t speed_test;	// za test samo zadajemo u u irq handleru
 
 void
 timer_init ()
 {
   tim2_init ();
   tim3_init ();			//enkoder
+  tim4_init ();
   odometrija_init ();
   tim5_init (); 			//PWM
 }
@@ -59,7 +64,21 @@ tim2_init ()
   uint8_t const TIM2_PREKID = 28;
   NVIC->ISER[0] |= (0b1 << TIM2_PREKID);
 
-  TIM2->CR1 |= (0b1 << 0);			//ukljucivanje timera
+  //ne bi trebalo da je jos ukljucen
+}
+
+void
+timer_start_sys_time ()
+{
+  TIM2->CR1 |= (0b1 << 0);	//tek ga ovo ukljucuje
+}
+
+bool
+timer_end ()
+{
+  if (sys_time_ms == END_TIME)
+    return true;
+  return false;
 }
 
 bool
@@ -115,11 +134,57 @@ tim3_init ()					//ENKODER
   TIM3->CR1 |= (0b1 << 0);			//ukljucivanje timera
 }
 
+static void
+tim4_init ()					//ENKODER
+{
+  RCC->APB1ENR |= (0b1 << 1);	//dozvola takta za tim4 pa za gpio port B
+  RCC->AHB1ENR |= (0b1 << 1);
+
+  uint8_t const KANAL_A = 6;
+  uint8_t const KANAL_B = 7;
+
+  GPIOB->MODER &= ~(0b11 << 2 * KANAL_A);//podesavanje pinova da rade kao alternativna funkcija
+  GPIOB->MODER &= ~(0b11 << 2 * KANAL_B);
+  GPIOB->MODER |= (0b10 << 2 * KANAL_A);
+  GPIOB->MODER |= (0b10 << 2 * KANAL_B);
+
+  GPIOB->AFR[0] &= ~(0b1111 << 4 * KANAL_A);//podesavanje odabira alternativne funkcije
+  GPIOB->AFR[0] &= ~(0b1111 << 4 * KANAL_B);
+  uint8_t const ALT_FUNKCIJA = 2;
+  GPIOB->AFR[0] |= (ALT_FUNKCIJA << 4 * KANAL_A);
+  GPIOB->AFR[0] |= (ALT_FUNKCIJA << 4 * KANAL_B);
+
+  TIM4->PSC = 0;				// zbog max rezolucije
+  TIM4->ARR = 0xFFFF;// bitno je da najveci bit bude 1 zbog minusa i negativne brzine
+
+  TIM4->SMCR &= ~(0b111 << 0);
+  TIM4->SMCR |= (0b011 << 0);
+
+  TIM4->CCMR1 &= ~(0b11 << 0);//povezujemo kanale enkodera timera sa kanalom samog timera
+  TIM4->CCMR1 |= (0b01 << 0);
+  TIM4->CCMR1 &= ~(0b11 << 8);
+  TIM4->CCMR1 |= (0b01 << 8);
+
+  TIM4->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
+  TIM4->CCER |= (0b001 << 1);
+  TIM4->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
+
+  TIM4->CR1 |= (0b1 << 0);			//ukljucivanje timera
+}
+
 int16_t
-timer_speed_of_encoder ()
+timer_speed_of_encoder1 ()
 {
   int16_t speed = TIM3->CNT;
   TIM3->CNT = 0;
+  return speed;
+}
+
+int16_t
+timer_speed_of_encoder2 ()
+{
+  int16_t speed = TIM4->CNT;
+  TIM4->CNT = 0;
   return speed;
 }
 

@@ -1,10 +1,18 @@
+in .ioc:
+	port C:
+	13 - button
+
+
+outside of .ioc:
 	port A:
 	0 - PWM output
-	5 - output - LED
+	5 - LED
 
 	port B:
 	4 - kanal A enkodera 1
 	5 - kanal B enkodera 1
+	6 - kanal A enkodera 2
+	7 - kanal B enkodera 2
 	
 	port C:
 	6 - uart6 tx

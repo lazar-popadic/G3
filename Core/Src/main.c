@@ -12,10 +12,10 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "main.h"
 
 /* USER CODE END Includes */
 
@@ -26,7 +26,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define START 0xff 	//255
+#define END 0xfa	//250
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,8 +44,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void
 SystemClock_Config (void);
-static void
-MX_GPIO_Init (void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -71,7 +70,10 @@ main (void)
   HAL_Init ();
 
   /* USER CODE BEGIN Init */
-
+  io_init ();
+  timer_init ();
+  odometrija_init ();
+  uart_init ();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -82,19 +84,12 @@ main (void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init ();
   /* USER CODE BEGIN 2 */
-  io ();
-  timer_init ();
-  odometrija_init ();
-  uart_init ();
-
-  uint8_t state = 0;
-  bool flag_fsm = true;
-  uint32_t wait = 0;
+  uint8_t state = START;
+//  bool flag_fsm = true;
+//  uint32_t wait = 0;
 
   __enable_irq ();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,62 +99,24 @@ main (void)
       /* USER CODE END WHILE */
 
       /* USER CODE BEGIN 3 */
+      if (timer_end())
+	state = END;
 
       switch (state)
 	{
+	default:
+	  break;
+	case START:
+	  cinc_loop ();
+	  timer_start_sys_time ();
+	  state = 0;
+	  break;
 	case 0:
-	  //inicijalizacija
-	  //telo stanja
-	  io_led (false);
-	  ax_move (4, 1023, 21);
-	  ax_move (5, 203, 554);
-	  ax_move (6, 674, 825);
-	  ax_move (7, 511, 100);
-	  //uslov prelaska
-	  state++;
+	  if (ax_test())
+	    state ++;
 	  break;
-
-	case 1:
-	  //inicijalizacija
-	  if (flag_fsm == true)
-	    {
-	      wait = 3000;
-	      flag_fsm = false;
-	    }
-	  //telo stanja
-	  //uslov prelaska
-	  if (timer_delay_nonblocking (wait))
-	    {
-	      state++;
-	      flag_fsm = true;
-	    }
-
-	  break;
-	case 2:
-	  //inicijalizacija
-	  //telo stanja
-	  io_led (true);
-	  ax_move (4, 1023, 21);
-	  ax_move (5, 203, 554);
-	  ax_move (6, 674, 825);
-	  ax_move (7, 511, 100);
-	  //uslov prelaska
-	  state++;
-	  break;
-	case 3:
-	  //inicijalizacija
-	  if (flag_fsm == true)
-	    {
-	      wait = 1000;
-	      flag_fsm = false;
-	    }
-	  //telo stanja
-	  //uslov prelaska
-	  if (timer_delay_nonblocking (wait))
-	    {
-	      state = 0;
-	      flag_fsm = true;
-	    }
+	case END:
+	  io_led(true);
 	  break;
 	}
     }
@@ -213,32 +170,6 @@ SystemClock_Config (void)
     {
       Error_Handler ();
     }
-}
-
-/**
- * @brief GPIO Initialization Function
- * @param None
- * @retval None
- */
-static void
-MX_GPIO_Init (void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct =
-    { 0 };
-  /* USER CODE BEGIN MX_GPIO_Init_1 */
-  /* USER CODE END MX_GPIO_Init_1 */
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init (GPIOC, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN MX_GPIO_Init_2 */
-  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */

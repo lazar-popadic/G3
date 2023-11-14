@@ -6,6 +6,7 @@
  */
 
 #include "odometrija.h"
+
 #include <stdint.h>
 #include "../../periphery/timer/timer.h"
 #include <math.h>
@@ -25,7 +26,7 @@ void
 odometrija_init ()
 {
   d_odometrijskog = 60;		//mm
-  d = 320;			//mm
+  d = 320;			//razmak izmedju odometrijskih tockova [mm]
   inc2rad = (d * M_PI) / (d_odometrijskog * M_PI) * 2048 * 4;
   inc2rad = (2 * M_PI) / inc2rad;
 }
@@ -33,8 +34,8 @@ odometrija_init ()
 void
 odometrija_robot ()		//racun pozicije i orijentacije
 {
-  int16_t Vd_inc = timer_speed_of_encoder ();	//inc = inkrementi
-  int16_t Vl_inc = timer_speed_of_encoder ();	//ovde treba drugi enkoder
+  int16_t Vd_inc = timer_speed_of_encoder1 ();	//inc = inkrementi
+  int16_t Vl_inc = timer_speed_of_encoder2 ();
 
   // translacija
   // N = 1000mm / ObimOdometrijskogTocka		//koliko odometrijski predje za 1 metar
