@@ -75,7 +75,7 @@ io_led (bool status)
 }
 
 void
-cinc_loop ()
+io_cinc_loop ()
 {
   for (uint8_t i = 0; i < 6; i++)
     {

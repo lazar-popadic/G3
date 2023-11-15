@@ -15,7 +15,7 @@ io_init ();
 void
 io_led (bool status);
 void
-cinc_loop ();
+io_cinc_loop ();
 
 
 #endif /* IO_H_ */

@@ -8,7 +8,7 @@
 #ifndef LIB_PERIPHERY_TIMER_TIMER_H_
 #define LIB_PERIPHERY_TIMER_TIMER_H_
 
-#include <stdint.h>		//za tip uint
+#include <stdint.h>
 #include <stdbool.h>
 #include "stm32f4xx.h"
 

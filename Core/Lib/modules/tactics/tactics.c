@@ -31,9 +31,9 @@ ax_test()
   	  break;
   	case 1:
   	  //inicijalizacija
-  	  if (flag_fsm == true)     //delay funkcija da bude oba ova if,
-  	    {
-  	      wait = 3000;
+  	  if (flag_fsm == true)		//da samo jednom udje ovde i zada vrednost wait
+  	    {				//mozda moze ovo samo da se preskoci
+  	      wait = 3000;		//i da dole ide samo: if (timer_delay_nonblocking (3000))
   	      flag_fsm = false;
   	    }
   	  //telo stanja
@@ -68,6 +68,54 @@ ax_test()
   	      state++;
   	      flag_fsm = true;
   	    }
+  	  break;
+  	case 4:
+  	  tactic_finished = true;
+  	  return tactic_finished;
+  	}
+  return tactic_finished;
+}
+
+bool
+ax_test_kraci_fsm()
+{
+  switch (state)
+  	{
+  	case 0:
+  	  //inicijalizacija
+  	  tactic_finished = false;
+  	  io_led(false);
+  	  //telo stanja
+  	  ax_move (4, 1023, 21);
+  	  ax_move (5, 203, 554);
+  	  ax_move (6, 674, 825);
+  	  ax_move (7, 511, 100);
+  	  //uslov prelaska
+  	  state++;
+  	  break;
+  	case 1:
+  	  //inicijalizacija
+  	  //telo stanja
+  	  //uslov prelaska
+  	  if (timer_delay_nonblocking (3000))
+  	    state++;
+  	  break;
+  	case 2:
+  	  //inicijalizacija
+  	  //telo stanja
+  	  ax_move (4, 1023, 21);
+  	  ax_move (5, 203, 554);
+  	  ax_move (6, 674, 825);
+  	  ax_move (7, 511, 100);
+  	  //uslov prelaska
+  	  state++;
+  	  break;
+  	case 3:
+  	  //inicijalizacija
+  	  //telo stanja
+  	  //uslov prelaska
+  	  if (timer_delay_nonblocking (3000))
+  	    state++;
   	  break;
   	case 4:
   	  tactic_finished = true;

@@ -7,6 +7,7 @@ outside of .ioc:
 	port A:
 	0 - PWM output
 	5 - LED
+	6 - cinc input
 
 	port B:
 	4 - kanal A enkodera 1
