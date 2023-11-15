@@ -31,7 +31,7 @@ ax_test()
   	  break;
   	case 1:
   	  //inicijalizacija
-  	  if (flag_fsm == true)
+  	  if (flag_fsm == true)     //delay funkcija da bude oba ova if,
   	    {
   	      wait = 3000;
   	      flag_fsm = false;

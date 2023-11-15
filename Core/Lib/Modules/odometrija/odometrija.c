@@ -49,12 +49,12 @@ odometrija_robot ()		//racun pozicije i orijentacije
   // x = 2Pi / n					//iz impulsa u radijane
 
   // nemoj odmah da konvertujes brzine tockova u float, nego koristi inkremente, pa samo na kraju konvertuj
-  Vd = Vd_inc * inc2rad;
-  Vl = Vl_inc * inc2rad;
+//  Vd = Vd_inc * inc2rad;
+ // Vl = Vl_inc * inc2rad;
 
   // desni koordinatni sistem
-  w = (Vd - Vl) / d;
-  V = (Vd + Vl) / 2;
+  w = (Vd_inc - Vl_inc) * inc2rad / d;
+  V = (Vd_inc + Vl_inc) * 0.5;
 
   // TESTIRAJ
   theta += w;

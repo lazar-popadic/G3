@@ -173,7 +173,7 @@ tim4_init ()					//ENKODER
 }
 
 int16_t
-timer_speed_of_encoder1 ()
+timer_speed_of_encoder1 ()  //TODO: promeni da ne vraca brzinu nego poziciju, i da se ne resetuje
 {
   int16_t speed = TIM3->CNT;
   TIM3->CNT = 0;
