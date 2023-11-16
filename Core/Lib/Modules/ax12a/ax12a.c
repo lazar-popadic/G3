@@ -6,6 +6,7 @@
  */
 
 #include "ax12a.h"
+
 #include "../../periphery/uart/uart.h"
 
 /*

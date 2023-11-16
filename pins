@@ -1,0 +1,20 @@
+in .ioc:
+	port C:
+	13 - button
+
+
+outside of .ioc:
+	port A:
+	0 - PWM output
+	5 - LED
+	6 - cinc input
+
+	port B:
+	4 - kanal A enkodera 1
+	5 - kanal B enkodera 1
+	6 - kanal A enkodera 2
+	7 - kanal B enkodera 2
+	
+	port C:
+	6 - uart6 tx - ax12a idu ovde
+	7 - uart6 rx

@@ -1,23 +1,3 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
@@ -33,10 +13,12 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "../Lib/periphery/io/io.h"
 #include <stdbool.h>
+#include <stdint.h>
 #include "../Lib/periphery/timer/timer.h"
-#include "../Lib/Modules/odometrija/odometrija.h"
+#include "../Lib/modules/odometrija/odometrija.h"
 #include "../Lib/periphery/uart/uart.h"
-#include "../Lib/Modules/ax12a/ax12a.h"
+#include "../Lib/modules/ax12a/ax12a.h"
+#include "../Lib/modules/tactics/tactics.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

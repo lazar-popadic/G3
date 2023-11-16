@@ -11,9 +11,11 @@
 #include <stdbool.h>
 
 void
-io ();
+io_init ();
 void
 io_led (bool status);
+void
+io_cinc_loop ();
 
 
 #endif /* IO_H_ */
