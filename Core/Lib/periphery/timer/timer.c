@@ -27,8 +27,8 @@ tim4_init ();
 
 volatile uint32_t sys_time_ms = 0; //volatile da kompajler ne vrsi optimizaciju
 bool flag_delay = true;
-volatile int16_t state_enc1=0;
-volatile int16_t state_enc2=0;
+volatile int16_t state_enc1 = 0;
+volatile int16_t state_enc2 = 0;
 
 void
 timer_init ()
@@ -146,11 +146,11 @@ tim4_init ()					//ENKODER
   GPIOB->MODER |= (0b10 << 2 * KANAL_A);
   GPIOB->MODER |= (0b10 << 2 * KANAL_B);
 
-  GPIOB->AFR[KANAL_A /8] &= ~(0b1111 << 4 * (KANAL_A % 8));//podesavanje odabira alternativne funkcije
-  GPIOB->AFR[KANAL_B /8] &= ~(0b1111 << 4 * (KANAL_B % 8));
+  GPIOB->AFR[KANAL_A / 8] &= ~(0b1111 << 4 * (KANAL_A % 8));//podesavanje odabira alternativne funkcije
+  GPIOB->AFR[KANAL_B / 8] &= ~(0b1111 << 4 * (KANAL_B % 8));
   uint8_t const ALT_FUNKCIJA = 2;
-  GPIOB->AFR[KANAL_A /8] |= (ALT_FUNKCIJA << 4 * (KANAL_A % 8));
-  GPIOB->AFR[KANAL_B /8] |= (ALT_FUNKCIJA << 4 * (KANAL_B % 8));
+  GPIOB->AFR[KANAL_A / 8] |= (ALT_FUNKCIJA << 4 * (KANAL_A % 8));
+  GPIOB->AFR[KANAL_B / 8] |= (ALT_FUNKCIJA << 4 * (KANAL_B % 8));
 
   TIM4->PSC = 0;				// zbog max rezolucije
   TIM4->ARR = 0xFFFF;// bitno je da najveci bit bude 1 zbog minusa i negativne brzine
@@ -165,8 +165,8 @@ tim4_init ()					//ENKODER
 
   TIM4->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
   TIM4->CCER |= (0b001 << 1);
-//  TIM4->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
-  TIM4->CCER &= ~(0b101 << 1);
+  //  TIM4->CCER &= ~(0b101 << 1);	//neinvertovan kanal A
+  TIM4->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
 
   TIM4->CR1 |= (0b1 << 0);			//ukljucivanje timera
 }
@@ -174,16 +174,16 @@ tim4_init ()					//ENKODER
 int16_t
 timer_speed_of_encoder1 () //TODO: promeni da ne vraca brzinu nego poziciju, i da se ne resetuje
 {
-  int16_t speed = (int16_t)TIM3->CNT - (int16_t)state_enc1;
-  state_enc1 = (int16_t)TIM3->CNT;
+  int16_t speed = (int16_t) TIM3->CNT - (int16_t) state_enc1;
+  state_enc1 = (int16_t) TIM3->CNT;
   return speed;
 }
 
 int16_t
 timer_speed_of_encoder2 ()
 {
-  int16_t speed = (int16_t)TIM4->CNT - (int16_t)state_enc2;
-  state_enc2 = (int16_t)TIM4->CNT;
+  int16_t speed = (int16_t) TIM4->CNT - (int16_t) state_enc2;
+  state_enc2 = (int16_t) TIM4->CNT;
   return speed;
 }
 
@@ -197,7 +197,7 @@ TIM2_IRQHandler ()
       TIM2->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
       //if(sys_time_ms % 10)//svakih 10ms
-	odometrija_robot ();//mozda probaj i brze od 1ms		TODO!!!!!!!!!!!!!!
+      odometrija_robot ();//mozda probaj i brze od 1ms		TODO!!!!!!!!!!!!!!
 
       sys_time_ms++;
     }

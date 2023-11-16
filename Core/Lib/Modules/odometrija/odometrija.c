@@ -63,3 +63,21 @@ odometrija_robot ()		//racun pozicije i orijentacije
   x += V*cos(theta);
   y += V*sin(theta);
 }
+
+float
+get_theta ()
+{
+  return theta;
+}
+
+float
+get_x ()
+{
+  return x;
+}
+
+float
+get_y ()
+{
+  return y;
+}

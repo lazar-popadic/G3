@@ -19,6 +19,7 @@ extern "C" {
 #include "../Lib/periphery/uart/uart.h"
 #include "../Lib/modules/ax12a/ax12a.h"
 #include "../Lib/modules/tactics/tactics.h"
+#include "../Lib/modules/regulacija/regulacija.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

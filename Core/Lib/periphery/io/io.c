@@ -13,6 +13,9 @@ static void
 porta_init ();
 
 static void
+portc_init ();
+
+static void
 MX_GPIO_Init ();
 
 void
@@ -20,6 +23,7 @@ io_init ()
 {
   MX_GPIO_Init ();
   porta_init ();
+  portc_init();
 }
 
 static void
@@ -46,8 +50,7 @@ MX_GPIO_Init ()
 static void
 porta_init ()
 {
-
-  uint8_t LED = 5, CINC = 6;
+  uint8_t const LED = 5, CINC = 6;
   RCC->AHB1ENR |= (0b1 << 0);
 
   GPIOA->MODER &= ~(0b11 << 2 * LED);
@@ -60,6 +63,22 @@ porta_init ()
   GPIOA->OSPEEDR &= ~(0b11 << 2 * CINC);	//low speed
   GPIOA->PUPDR &= ~(0b11 << 2 * CINC);		//reset
   GPIOA->PUPDR |= (0b10 << 2 * CINC);		//pull-down
+}
+
+static void
+portc_init ()
+{
+  uint8_t const DIR1 = 14, DIR2 = 15;
+  RCC->AHB1ENR |= (0b1 << 2);
+
+  GPIOC->MODER &= ~(0b11 << 2 * DIR1);
+  GPIOC->MODER &= ~(0b11 << 2 * DIR2);
+  GPIOC->MODER |= (0b01 << 2 * DIR1);
+  GPIOC->MODER |= (0b01 << 2 * DIR2);
+
+  //h-most stop
+  GPIOC->ODR &= ~(0b1 << DIR1);
+  GPIOC->ODR &= ~(0b1 << DIR2);
 }
 
 void
