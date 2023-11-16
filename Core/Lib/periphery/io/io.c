@@ -79,7 +79,7 @@ io_cinc_loop ()
 {
   for (uint8_t i = 0; i < 6; i++)
     {
-      while (GPIOA->IDR & (0b1 << 6))
+      while ((GPIOA->IDR & (0b1 << 6)))
 	;
       HAL_Delay (1);
     }

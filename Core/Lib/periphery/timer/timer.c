@@ -135,7 +135,7 @@ tim3_init ()					//ENKODER
 static void
 tim4_init ()					//ENKODER
 {
-  RCC->APB1ENR |= (0b1 << 1);	//dozvola takta za tim4 pa za gpio port B
+  RCC->APB1ENR |= (0b1 << 2);	//dozvola takta za tim4 pa za gpio port B
   RCC->AHB1ENR |= (0b1 << 1);
 
   uint8_t const KANAL_A = 6;
@@ -146,11 +146,11 @@ tim4_init ()					//ENKODER
   GPIOB->MODER |= (0b10 << 2 * KANAL_A);
   GPIOB->MODER |= (0b10 << 2 * KANAL_B);
 
-  GPIOB->AFR[0] &= ~(0b1111 << 4 * KANAL_A);//podesavanje odabira alternativne funkcije
-  GPIOB->AFR[0] &= ~(0b1111 << 4 * KANAL_B);
+  GPIOB->AFR[KANAL_A /8] &= ~(0b1111 << 4 * (KANAL_A % 8));//podesavanje odabira alternativne funkcije
+  GPIOB->AFR[KANAL_B /8] &= ~(0b1111 << 4 * (KANAL_B % 8));
   uint8_t const ALT_FUNKCIJA = 2;
-  GPIOB->AFR[0] |= (ALT_FUNKCIJA << 4 * KANAL_A);
-  GPIOB->AFR[0] |= (ALT_FUNKCIJA << 4 * KANAL_B);
+  GPIOB->AFR[KANAL_A /8] |= (ALT_FUNKCIJA << 4 * (KANAL_A % 8));
+  GPIOB->AFR[KANAL_B /8] |= (ALT_FUNKCIJA << 4 * (KANAL_B % 8));
 
   TIM4->PSC = 0;				// zbog max rezolucije
   TIM4->ARR = 0xFFFF;// bitno je da najveci bit bude 1 zbog minusa i negativne brzine
@@ -165,7 +165,8 @@ tim4_init ()					//ENKODER
 
   TIM4->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
   TIM4->CCER |= (0b001 << 1);
-  TIM4->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
+//  TIM4->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
+  TIM4->CCER &= ~(0b101 << 1);
 
   TIM4->CR1 |= (0b1 << 0);			//ukljucivanje timera
 }

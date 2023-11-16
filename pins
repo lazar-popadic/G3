@@ -16,5 +16,5 @@ outside of .ioc:
 	7 - kanal B enkodera 2
 	
 	port C:
-	6 - uart6 tx
+	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
