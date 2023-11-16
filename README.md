@@ -5,8 +5,6 @@
 - Da ste skinuli "Github Desktop"
 
 - Da sam vas dodao na repozitorijum (Nalog g3eurobot je dodat svakako)
-  
-![github nalog](https://github.com/lazuskica/G3/blob/main/slike%20za%20readme/github%20nalog.PNG)
 
 - Da imate skinut stm32cubeide
 
