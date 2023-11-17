@@ -58,7 +58,7 @@ main (void)
   /* USER CODE END SysInit */
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-  uint8_t state = START;
+  uint8_t state_main = START;
 //  bool flag_fsm = true;
 //  uint32_t wait = 0;
   __enable_irq ();
@@ -69,26 +69,26 @@ main (void)
     {
       /* USER CODE END WHILE */
       /* USER CODE BEGIN 3 */
-      if (timer_end())
-	state = END;
+      if (timer_end ())
+	state_main = END;
 
-      switch (state)
+      switch (state_main)
 	{
 	default:
 	  break;
 	case START:
 	  io_cinc_loop ();
 	  timer_start_sys_time ();
-	  state = 0;
+	  state_main = 0;
 	  break;
 	case 0:
-	  if (ax_test())
-	    state ++;
-	 // if (ax_test_kraci_fsm())
-	 //   state++;
+	  // if (ax_test())
+	  //   state_main ++;
+	  if (ax_test_kraci_fsm ())
+	    state_main = 0;
 	  break;
 	case END:
-	  io_led(true);
+	  io_led (true);
 	  break;
 	}
     }

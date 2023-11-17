@@ -85,3 +85,18 @@ pwm_duty_cycle (uint16_t duty_cycle)	//FAKTOR ISPUNE: ide od 0 do ARR. TODO: raz
 {
   TIM5->CCR1 = duty_cycle;
 }
+
+/*
+ * saturacija:
+ * if (signal > max)
+ * return max
+ * if (signal < min)
+ * return min
+ * return signal
+ *
+ * prag:
+ * if (signal > max)
+ * return true
+ * else
+ * return false
+ */

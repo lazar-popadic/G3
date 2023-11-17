@@ -18,3 +18,5 @@ outside of .ioc:
 	port C:
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
+	14 - direction 1 za h-most
+	15 - direction 2 za h-most
