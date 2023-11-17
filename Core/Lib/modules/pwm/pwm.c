@@ -90,7 +90,7 @@ pwm_duty_cycle (uint16_t duty_cycle)	//FAKTOR ISPUNE: ide od 0 do ARR. TODO: raz
  * saturacija:
  * if (signal > max)
  * return max
- * else (signal < min)
+ * if (signal < min)
  * return min
  * return signal
  *

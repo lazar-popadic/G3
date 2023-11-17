@@ -37,7 +37,7 @@ ax_move (uint8_t id, uint16_t angle, uint16_t speed)
     { 0xff, 0xff, id, 0x07, 0x03, 0x1E, angle_low, angle_high, speed_low,
 	speed_high, checksum };
 
-  for (uint8_t i = 0; i < 8; i++)
+  for (uint8_t i = 0; i < 11; i++)
     {
       uart_send_byte (ax_move[i]);
     }

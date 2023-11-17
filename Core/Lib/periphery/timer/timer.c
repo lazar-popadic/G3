@@ -14,7 +14,7 @@
 #include "timer.h"
 #include "../../modules/odometrija/odometrija.h"
 
-#define END_TIME 10*1000
+#define END_TIME 20*1000
 
 static void
 tim2_init ();
