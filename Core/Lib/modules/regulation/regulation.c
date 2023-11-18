@@ -15,6 +15,7 @@
 #define EPSILON_THETA		0.1
 #define EPSILON_DISTANCE	0.1
 #define EPSILON_DISTANCE_ROT	0.1
+// TODO: nemoj ovako vec promenljive pravi zbog tipa
 #define KP_SPEED		0
 #define KI_SPEED		0
 #define KD_SPEED		0
@@ -29,13 +30,13 @@
 #define EI_MIN 			0
 #define U_ROT_MAX		0
 #define U_ROT_MIN		0
+#define U_TRAN_MAX		0
+#define U_TRAN_MIN		0
 
-static float
-regulation_rotation (float theta);
-
-static float
+static bool
+regulation_rotation (float theta, float faktor);
+static bool
 regulation_translation (float distance, float theta);
-
 static float
 saturation (float signal, float MAX, float MIN);
 
@@ -45,8 +46,6 @@ static float e = 0;
 static float e_i = 0;
 static float e_d = 0;
 static float e_previous = 0;
-
-					// TODO: izbaci sve promenljive iz funkcija ovde, proveri da li su tako radili +381
 
 static float u = 0;			// TODO: sve u inkremente!!!!!!!!!!
 
@@ -58,6 +57,16 @@ static float distance = 0;
 static float theta_0 = 0;
 static float theta_1 = 0;
 static float theta_2 = 0;
+
+float theta_previous;
+float theta_i;
+float theta_d;
+float u_rot;
+
+float distance_previous;
+float distance_i;
+float distance_d;
+float u_tran;
 
 static uint8_t state_regulation = 0;
 
@@ -95,9 +104,6 @@ regulation_speed ()		//TODO: sve radi u inkrementima!!!!!!!!!!!!!!!!!
 // smer 2
     ;
 
-  //uint16_t u_saturated;
-  // u_saturated = saturation(u)			//U_MAX
-
   //pwm_duty_cycle((uint16_t)fabs(u_saturated));	//fabs je za float apsolutnu vrednost
 
   e_previous = e;
@@ -124,7 +130,7 @@ regulation_position () //TODO: preimenuj ovo, ovo je pronalazenje zeljene pozici
   // isto kao gore ...
   if (state_regulation == 0)
     {
-      regulation_rotation (theta_1);
+      regulation_rotation (theta_1, 1);
       state_regulation++;
     }
   if (state_regulation == 1)
@@ -135,23 +141,19 @@ regulation_position () //TODO: preimenuj ovo, ovo je pronalazenje zeljene pozici
   //treca rotacija, isto kao prva samo theta_2
   if (state_regulation == 2)
     {
-      regulation_rotation (theta_2);
+      regulation_rotation (theta_2, 1);
       state_regulation++;
     }
 }
 
-static float
-regulation_rotation (float theta)
+static bool
+regulation_rotation (float theta, float faktor)
 {
-  float theta_previous;
-  float theta_i;
-  float theta_d;
-  float u_rot;
-
   theta_i += theta;
   theta_d = theta - theta_previous;
   u_rot = KP_ROT * theta + KI_ROT * theta_i + KD_ROT * theta_d;
-  u_rot=saturation(u_rot, U_ROT_MAX, U_ROT_MIN);
+  u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
+  u_rot *= faktor;
   //TODO: na jedan tocak salji plus, na drugo kao minus, brzina_desnog tocka => +u_rot1, brzina_levog_tocka => -u_rot1
 
   theta_previous = theta;
@@ -161,25 +163,22 @@ regulation_rotation (float theta)
       theta_i = 0;
       theta_d = 0;
       theta_previous = 0;
-      return u_rot;
+      return true;
     }
+  return false;
 }
 
-static float
+static bool
 regulation_translation (float distance, float theta)
 {
-  float distance_previous;
-  float distance_i;
-  float distance_d;
-  float u_tran;
-  float u_rot;
   distance_i += distance;
   distance_d = distance - distance_previous;
 
   //ANTIWIND UP!!!!!!!!!!!!!
   u_tran = KP_TRAN * distance + KI_TRAN * distance_i + KD_TRAN * distance_d;
+  u_tran = saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
   if (fabs (distance) > EPSILON_DISTANCE_ROT)
-    regulation_rotation(theta); //radi i reg rotacije dok translira
+    regulation_rotation (theta, 0.5); //radi i reg rotacije dok translira
   else
     u_rot = 0;
   // brzina_desnog = u_tran + u_rot1 * faktor (npr. 0.5)		//OVO SU REF BRZINE ZA REG BRZINE
@@ -191,6 +190,7 @@ regulation_translation (float distance, float theta)
       distance_i = 0;
       distance_d = 0;
       distance_previous = 0;
-      return u_tran;						//TODO: vidi da li da vraca ili da u funkciji vec uradi sta treba!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      return true;//TODO: vidi da li da vraca ili da u funkciji vec uradi sta treba!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
+  return false;
 }

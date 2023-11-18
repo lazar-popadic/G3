@@ -89,8 +89,11 @@ ax_test_kraci_fsm ()
       //telo stanja
 
       ax_move (4, 0, 0);
+      HAL_Delay(10);
       ax_move (5, 0, 0);
+      HAL_Delay(10);
       ax_move (6, 0, 0);
+      HAL_Delay(10);
       ax_move (7, 0, 0);
       //uslov prelaska
       state++;
@@ -106,8 +109,11 @@ ax_test_kraci_fsm ()
       //inicijalizacija
       //telo stanja
       ax_move (4, 1023, 1023);		//TODO: treba delaj izmedju ovih
+      HAL_Delay(10);
       ax_move (5, 1023, 1023);
+      HAL_Delay(10);
       ax_move (6, 1023, 1023);
+      HAL_Delay(10);
       ax_move (7, 1023, 1023);
       //uslov prelaska
       state++;

@@ -15,8 +15,8 @@ static float V = 0;
 static float w = 0;
 static float d = 0;		//rastojanje izmedju 2 pasivna tocka
 static float d_odometrijskog = 0;		// precnik odometrijskog
-//static float inc2rad = 0;	//TODO: eksperimentalno koriguj
-static float inc2mm =0;
+static float inc2rad = 0;	//TODO: eksperimentalno koriguj
+static float inc2mm = 0;
 static float theta;
 static float x;			// inicijalizuj na x_start i y_start u strategiji
 static float y;
@@ -29,6 +29,7 @@ odometrija_init ()
   //inc2rad = d * 2048 * 4 / d_odometrijskog ;	//(d * M_PI) / (d_odometrijskog * M_PI) * 2048 * 4;
   //inc2rad = (2 * M_PI) / inc2rad;		//ovo je bilo na vezbama, al msm da je cilag sjebao
   inc2mm = d_odometrijskog * M_PI / (4 * 2048);
+  inc2rad = 2.0 * inc2mm / d;
 }
 
 void
@@ -56,7 +57,7 @@ odometrija_robot ()		//racun pozicije i orijentacije
   //w = (Vd_inc - Vl_inc) * inc2rad / d;
   //V = (Vd_inc + Vl_inc) * inc2rad * 0.5;
   V = (Vd_inc + Vl_inc) * inc2mm;
-  w = (Vd_inc - Vl_inc) * 2.0 / d;
+  w = (Vd_inc - Vl_inc) * inc2rad;
 
   // TESTIRAJ
   theta += w;

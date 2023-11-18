@@ -59,8 +59,6 @@ main (void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
   uint8_t state_main = START;
-//  bool flag_fsm = true;
-//  uint32_t wait = 0;
   __enable_irq ();
   /* USER CODE END 2 */
   /* Infinite loop */
