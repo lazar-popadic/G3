@@ -8,7 +8,7 @@
 #include "odometrija.h"
 
 #include <stdint.h>
-#include "../../periphery/timer/timer.h"
+#include "../../periphery/encoder/encoder.h"
 #include <math.h>
 
 static float V = 0;

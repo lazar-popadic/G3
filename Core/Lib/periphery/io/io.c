@@ -50,11 +50,11 @@ porta_init ()
   GPIOA->PUPDR &= ~(0b11 << 2 * CINC);		//reset
   GPIOA->PUPDR |= (0b10 << 2 * CINC);		//pull-down
 
-  uint8_t const ALT_FUNC_ENC = 1;
+  uint8_t const ALT_FUNC_ENC = 2;
   GPIOA->MODER &= ~(0b11 << 2 * ENC3_KANAL_A);
   GPIOA->MODER |= (0b10 << 2 * ENC3_KANAL_A);
   GPIOA->AFR[ENC3_KANAL_A / 8] &= ~(0b1111 << 4 * (ENC3_KANAL_A % 8));
-  GPIOA->AFR[ENC3_KANAL_A / 8] |= (ALT_FUNC_ENC << 4 * (ENC3_KANAL_A % 8));
+  GPIOA->AFR[ENC3_KANAL_A / 8] |= (1 << 4 * (ENC3_KANAL_A % 8));//DRUGI JE ALT FUNCTION SAMO ZA TIM2
 
   GPIOA->MODER &= ~(0b11 << 2 * ENC4_KANAL_A);
   GPIOA->MODER &= ~(0b11 << 2 * ENC4_KANAL_B);
@@ -75,16 +75,16 @@ portb_init ()
   GPIOB->MODER &= ~(0b11 << 2 * ENC3_KANAL_B);
   GPIOB->MODER |= (0b10 << 2 * ENC3_KANAL_B);
   GPIOB->AFR[ENC3_KANAL_B / 8] &= ~(0b1111 << 4 * (ENC3_KANAL_B % 8));
-  GPIOB->AFR[ENC3_KANAL_B / 8] |= (ALT_FUNC_ENC << 4 * (ENC3_KANAL_B % 8));
+  GPIOB->AFR[ENC3_KANAL_B / 8] |= (1 << 4 * (ENC3_KANAL_B % 8));//DRUGI JE ALT FUNCTION SAMO ZA TIM2
 
   GPIOB->MODER &= ~(0b11 << 2 * ENC1_KANAL_A);//podesavanje pinova da rade kao alternativna funkcija
   GPIOB->MODER &= ~(0b11 << 2 * ENC1_KANAL_B);
   GPIOB->MODER |= (0b10 << 2 * ENC1_KANAL_A);
   GPIOB->MODER |= (0b10 << 2 * ENC1_KANAL_B);
-  GPIOB->AFR[0] &= ~(0b1111 << 4 * ENC1_KANAL_A);//podesavanje odabira alternativne funkcije
-  GPIOB->AFR[0] &= ~(0b1111 << 4 * ENC1_KANAL_B);
-  GPIOB->AFR[0] |= (ALT_FUNC_ENC << 4 * ENC1_KANAL_A);
-  GPIOB->AFR[0] |= (ALT_FUNC_ENC << 4 * ENC1_KANAL_B);
+  GPIOB->AFR[ENC1_KANAL_A / 8] &= ~(0b1111 << 4 * (ENC1_KANAL_A % 8));//podesavanje odabira alternativne funkcije
+  GPIOB->AFR[ENC1_KANAL_B / 8] &= ~(0b1111 << 4 * (ENC1_KANAL_B % 8));
+  GPIOB->AFR[ENC1_KANAL_A / 8] |= (ALT_FUNC_ENC << 4 * (ENC1_KANAL_A % 8));
+  GPIOB->AFR[ENC1_KANAL_B / 8] |= (ALT_FUNC_ENC << 4 * (ENC1_KANAL_B % 8));
 
   GPIOB->MODER &= ~(0b11 << 2 * ENC2_KANAL_A);//podesavanje pinova da rade kao alternativna funkcija
   GPIOB->MODER &= ~(0b11 << 2 * ENC2_KANAL_B);

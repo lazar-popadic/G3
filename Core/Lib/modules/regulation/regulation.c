@@ -7,14 +7,15 @@
 
 #include "regulation.h"
 #include <stdbool.h>
-#include "../../periphery/timer/timer.h"
+#include "../../periphery/encoder/encoder.h"
 #include "../pwm/pwm.h"
 #include "../odometrija/odometrija.h"
 #include "math.h"
+#include "../../periphery/io/io.h"
 
 #define EPSILON_THETA		0.1
 #define EPSILON_DISTANCE	0.1
-#define EPSILON_DISTANCE_ROT	0.1
+#define EPSILON_DISTANCE_ROT	10
 // TODO: nemoj ovako vec promenljive pravi zbog tipa
 #define KP_SPEED		0
 #define KI_SPEED		0
@@ -28,6 +29,7 @@
 
 #define EI_MAX 			0 // narednih 10 do 100 iteracija  vrednosti, ei ne sme preko toga ??????????
 #define EI_MIN 			0
+#define SPEED_LIMIT		0
 #define U_ROT_MAX		0
 #define U_ROT_MIN		0
 #define U_TRAN_MAX		0
@@ -37,18 +39,29 @@ static bool
 regulation_rotation (float theta, float faktor);
 static bool
 regulation_translation (float distance, float theta);
+static void
+regulation_get_u_rotation (float theta, float faktor);
 static float
 saturation (float signal, float MAX, float MIN);
 
-static float ref_speed = 0;
+static float ref_speed_1 = 0;
+static float ref_speed_2 = 0;
+static float e_1 = 0;
+static float e_i_1 = 0;
+static float e_d_1 = 0;
+static float e_previous_1 = 0;
+static float e_2 = 0;
+static float e_i_2 = 0;
+static float e_d_2 = 0;
+static float e_previous_2 = 0;
+static float u_1 = 0;			// TODO: sve u inkremente!!!!!!!!!!
+static float u_2 = 0;
 
-static float e = 0;
-static float e_i = 0;
-static float e_d = 0;
-static float e_previous = 0;
-
-static float u = 0;			// TODO: sve u inkremente!!!!!!!!!!
-
+/*
+ * p1 - zeljena pozicija u koordinatno sistemu robota
+ * p0 - zeljena pozicija koju smo mi zadali (koordinatni sistem stola)
+ * smisli kako da zadajes vektor p0 u main/tactics
+ */
 static float p1x = 0;
 static float p1y = 0;
 static float p0x = 0;
@@ -89,60 +102,64 @@ saturation (float signal, float MAX, float MIN)
 void
 regulation_speed ()		//TODO: sve radi u inkrementima!!!!!!!!!!!!!!!!!
 {
-  e = ref_speed - timer_speed_of_encoder1 (); //TODO: OBRATI PAZNJU DA SU OBA U ISTIM JEDINICAMA!!!!!!!!!
-  e_i += e;
-  e_d = e - e_previous;
+  e_1 = ref_speed_1 - timer_speed_of_encoder3 (); //TODO: OBRATI PAZNJU DA SU OBA U ISTIM JEDINICAMA!!!!!!!!!
+  e_i_1 += e_1;
+  e_i_1 = saturation (e_i_1, EI_MAX, EI_MIN);
+  e_d_1 = e_1 - e_previous_1;
 
-  e_i = saturation (e_i, EI_MAX, EI_MIN);
+  e_2 = ref_speed_2 - timer_speed_of_encoder3 (); //TODO: OBRATI PAZNJU DA SU OBA U ISTIM JEDINICAMA!!!!!!!!!
+  e_i_2 += e_2;
+  e_i_2 = saturation (e_i_2, EI_MAX, EI_MIN);
+  e_d_2 = e_2 - e_previous_2;
 
-  u = KP_SPEED * e + KI_SPEED * e_i + KD_SPEED * e_d;
-
-  if (u > 0)
-// smer 1
-    ;
+  u_1 = KP_SPEED * e_1 + KI_SPEED * e_i_1 + KD_SPEED * e_d_1;
+  u_1 = saturation (u_1, SPEED_LIMIT, -SPEED_LIMIT);
+  if (u_1 > 0)
+    set_direction_1_wheel_1 ();
   else
-// smer 2
-    ;
+    set_direction_2_wheel_1 ();
 
+  u_2 = KP_SPEED * e_2 + KI_SPEED * e_i_2 + KD_SPEED * e_d_2;
+  u_2 = saturation (u_2, SPEED_LIMIT, -SPEED_LIMIT);
+  if (u_2 > 0)
+    set_direction_1_wheel_2 ();
+  else
+    set_direction_2_wheel_2 ();
   //pwm_duty_cycle((uint16_t)fabs(u_saturated));	//fabs je za float apsolutnu vrednost
 
-  e_previous = e;
+  e_previous_1 = e_1;
 }
 
 void
-regulation_position () //TODO: preimenuj ovo, ovo je pronalazenje zeljene pozicije i ugla, MOZDA I NEMOJ, jer uvek treba da trazi
-{			//TODO: PROMENLJIVE
-  /*
-   * p1 - zeljena pozicija u koordinatno sistemu robota
-   * p0 - zeljena pozicija koju smo mi zadali (koordinatni sistem stola)
-   */
+regulation_position ()
+{
+
   p1x = cos (get_theta ()) * (p0x - get_x ())
       - sin (get_theta ()) * (p0y - get_y ());
   p1y = sin (get_theta ()) * (p0x - get_x ())
       + cos (get_theta ()) * (p0y - get_y ());
+  //translacija
   distance = sqrt (p1x * p1x + p1y * p1y);
   //prva rotacija
   theta_1 = atan2 (p1y, p1x);
   //druga rotacija
   theta_2 = theta_0 - get_theta ();
 
-  //TODO: funkcije za rotaciju i translaciju
-  // isto kao gore ...
   if (state_regulation == 0)
     {
-      regulation_rotation (theta_1, 1);
-      state_regulation++;
+      if (regulation_rotation (theta_1, 1))
+	state_regulation++;
     }
   if (state_regulation == 1)
     {
-      regulation_translation (distance, theta_1);
-      state_regulation++;
+      if (regulation_translation (distance, theta_1))
+	state_regulation++;
     }
   //treca rotacija, isto kao prva samo theta_2
   if (state_regulation == 2)
     {
-      regulation_rotation (theta_2, 1);
-      state_regulation++;
+      if (regulation_rotation (theta_2, 1))
+	state_regulation++;
     }
 }
 
@@ -154,7 +171,9 @@ regulation_rotation (float theta, float faktor)
   u_rot = KP_ROT * theta + KI_ROT * theta_i + KD_ROT * theta_d;
   u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
   u_rot *= faktor;
-  //TODO: na jedan tocak salji plus, na drugo kao minus, brzina_desnog tocka => +u_rot1, brzina_levog_tocka => -u_rot1
+
+  ref_speed_1 = +u_rot;
+  ref_speed_2 = -u_rot;
 
   theta_previous = theta;
 
@@ -174,15 +193,16 @@ regulation_translation (float distance, float theta)
   distance_i += distance;
   distance_d = distance - distance_previous;
 
-  //ANTIWIND UP!!!!!!!!!!!!!
   u_tran = KP_TRAN * distance + KI_TRAN * distance_i + KD_TRAN * distance_d;
   u_tran = saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
   if (fabs (distance) > EPSILON_DISTANCE_ROT)
-    regulation_rotation (theta, 0.5); //radi i reg rotacije dok translira
+    regulation_get_u_rotation (theta, 0.5); //radi i reg rotacije dok translira
   else
     u_rot = 0;
-  // brzina_desnog = u_tran + u_rot1 * faktor (npr. 0.5)		//OVO SU REF BRZINE ZA REG BRZINE
-  // brzina_levog = u_tran - u_rot1 * faktor (npr. 0.5)		//DODAJES ROTACIJU SAMO DOK NIJE BLIZU CILJNE TACKE
+
+  ref_speed_1 = u_tran + u_rot;
+  ref_speed_2 = u_tran - u_rot;
+
   distance_previous = distance;
 
   if (fabs (distance) < EPSILON_DISTANCE)
@@ -190,7 +210,17 @@ regulation_translation (float distance, float theta)
       distance_i = 0;
       distance_d = 0;
       distance_previous = 0;
-      return true;//TODO: vidi da li da vraca ili da u funkciji vec uradi sta treba!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      return true;
     }
   return false;
+}
+
+static void
+regulation_get_u_rotation (float theta, float faktor)
+{
+  theta_i += theta;
+  theta_d = theta - theta_previous;
+  u_rot = KP_ROT * theta + KI_ROT * theta_i + KD_ROT * theta_d;
+  u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
+  u_rot *= faktor;
 }
