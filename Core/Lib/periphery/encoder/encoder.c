@@ -17,10 +17,10 @@ tim2_init ();
 static void
 tim5_init ();
 
-volatile int16_t state_enc1 = 0;
-volatile int16_t state_enc2 = 0;
-volatile int16_t state_enc3 = 0;
-volatile int16_t state_enc4 = 0;
+volatile int16_t state_enc_right_passive = 0;
+volatile int16_t state_enc_left_passive = 0;
+volatile int16_t state_enc_right_maxon = 0;
+volatile int16_t state_enc_left_maxon = 0;
 
 void
 encoder_init ()
@@ -32,34 +32,34 @@ encoder_init ()
 }
 
 int16_t
-timer_speed_of_encoder1 ()
+timer_speed_of_encoder_right_passive ()
 {
-  int16_t speed = (int16_t) TIM3->CNT - (int16_t) state_enc1;
-  state_enc1 = (int16_t) TIM3->CNT;
+  int16_t speed = (int16_t) TIM3->CNT - (int16_t) state_enc_right_passive;
+  state_enc_right_passive = (int16_t) TIM3->CNT;
   return speed;		//inkrementi, tj. impulsi
 }
 
 int16_t
-timer_speed_of_encoder2 ()
+timer_speed_of_encoder_left_passive ()
 {
-  int16_t speed = (int16_t) TIM4->CNT - (int16_t) state_enc2;
-  state_enc2 = (int16_t) TIM4->CNT;
+  int16_t speed = (int16_t) TIM4->CNT - (int16_t) state_enc_left_passive;
+  state_enc_left_passive = (int16_t) TIM4->CNT;
   return speed;
 }
 
 int16_t
-timer_speed_of_encoder3 ()
+timer_speed_of_encoder_right_maxon ()
 {
-  int16_t speed = (int16_t) TIM2->CNT - (int16_t) state_enc3;
-  state_enc3 = (int16_t) TIM2->CNT;
+  int16_t speed = (int16_t) TIM2->CNT - (int16_t) state_enc_right_maxon;
+  state_enc_right_maxon = (int16_t) TIM2->CNT;
   return speed;		//inkrementi, tj. impulsi
 }
 
 int16_t
-timer_speed_of_encoder4 ()
+timer_speed_of_encoder_left_maxon ()
 {
-  int16_t speed = (int16_t) TIM5->CNT - (int16_t) state_enc4;
-  state_enc4 = (int16_t) TIM5->CNT;
+  int16_t speed = (int16_t) TIM5->CNT - (int16_t) state_enc_left_maxon;
+  state_enc_left_maxon = (int16_t) TIM5->CNT;
   return speed;
 }
 

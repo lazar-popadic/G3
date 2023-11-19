@@ -58,7 +58,7 @@ main (void)
   /* USER CODE END SysInit */
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-  uint8_t state_main = START;
+  static uint8_t state_main = START;
   __enable_irq ();
   /* USER CODE END 2 */
   /* Infinite loop */

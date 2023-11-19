@@ -13,8 +13,8 @@
 void
 pwm_init ();
 void
-pwm_duty_cycle_out1 (uint16_t duty_cycle);
+pwm_duty_cycle_right_maxon (float duty_cycle_percentage);
 void
-pwm_duty_cycle_out2 (uint16_t duty_cycle);
+pwm_duty_cycle_left_maxon (float duty_cycle_percentage);
 
 #endif /* LIB_MODULES_PWM_PWM_H_ */

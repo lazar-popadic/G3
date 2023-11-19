@@ -11,12 +11,12 @@
 #include <stdint.h>
 
 int16_t
-timer_speed_of_encoder1 ();
+timer_speed_of_encoder_right_passive ();
 int16_t
-timer_speed_of_encoder2 ();
+timer_speed_of_encoder_left_passive ();
 int16_t
-timer_speed_of_encoder3 ();
+timer_speed_of_encoder_right_maxon ();
 int16_t
-timer_speed_of_encoder4 ();
+timer_speed_of_encoder_left_maxon ();
 
 #endif /* LIB_PERIPHERY_ENCODER_ENCODER_H_ */

@@ -7,6 +7,7 @@
 
 #include "pwm.h"
 #include "stm32f4xx.h"
+#include "../regulation/regulation.h"
 
 static void
 tim1_init ();
@@ -72,8 +73,9 @@ tim1_init ()					// PWM
     ;		//cekanje da se izvrsi reinicijalizacija
   TIM1->SR &= ~(0b1 << 0);
 
-  //ukljucen kanal 1 PWM-a
+  //ukljuceni kanali 1 i 2 PWM-a
   TIM1->CCER |= (0b1 << 0);
+  TIM1->CCER |= (0b1 << 4);
   //ukljucen tajmer
   TIM1->CR1 |= (0b1 << 0);
 
@@ -82,14 +84,16 @@ tim1_init ()					// PWM
 }
 
 void
-pwm_duty_cycle_out1 (uint16_t duty_cycle)	//FAKTOR ISPUNE: ide od 0 do ARR. TODO: razmisli da stavis u procente
-{
+pwm_duty_cycle_out_right_maxon (float duty_cycle_percentage)	// pre ovoga obavezno uradi saturaciju
+{								// TODO: razmisli sta ovde guras: int za registar, procenat, apsolutnu brzinu
+  uint16_t duty_cycle = 40 * duty_cycle_percentage;	// ARR * 0.01 * dc_percentage // 4000 * procenat
   TIM1->CCR1 = duty_cycle;
 }
 
 void
-pwm_duty_cycle_out2 (uint16_t duty_cycle)	//FAKTOR ISPUNE: ide od 0 do ARR. TODO: razmisli da stavis u procente
+pwm_duty_cycle_out_left_maxon (float duty_cycle_percentage)
 {
+  uint16_t duty_cycle = 40 * duty_cycle_percentage;
   TIM1->CCR2 = duty_cycle;
 }
 
