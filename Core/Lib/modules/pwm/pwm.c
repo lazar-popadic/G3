@@ -65,6 +65,9 @@ tim1_init ()					// PWM
   TIM1->CCMR1 |= (0b1 << 3);
   TIM1->CR1 |= (0b1 << 7);
 
+  //DIR bit: upcounting
+  TIM1->CR1 &= ~(0b1 << 4);
+
   // podesavanje tajmera (kopirano od tim2)
   TIM1->CR1 &= ~((0b1 << 1) || (0b1 << 2)); //sta generise dogadjaj | dozvola dogadjaja ILI obrnuto
   TIM1->EGR |= (0b1 << 0);	// Reinicijalizacija timera

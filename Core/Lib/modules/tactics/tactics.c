@@ -143,7 +143,7 @@ pwm_test ()
         //inicijalizacija
         tactic_finished = false;
         //telo stanja
-        pwm_duty_cycle_out_right_maxon(2000);
+        pwm_duty_cycle_out_right_maxon(4000);
         pwm_duty_cycle_out_left_maxon(200);
         //uslov prelaska
         state++;
@@ -152,14 +152,14 @@ pwm_test ()
         //inicijalizacija
         //telo stanja
         //uslov prelaska
-        if (timer_delay_nonblocking (10000))
+        if (timer_delay_nonblocking (15000))
   	state++;
         break;
       case 2:
         //inicijalizacija
         //telo stanja
         pwm_duty_cycle_out_right_maxon(200);
-        pwm_duty_cycle_out_left_maxon(2000);
+        pwm_duty_cycle_out_left_maxon(4000);
         //uslov prelaska
         state++;
         break;

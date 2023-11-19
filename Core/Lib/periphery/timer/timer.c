@@ -15,7 +15,7 @@
 #include "../../modules/odometrija/odometrija.h"
 #include "stm32f4xx.h"
 
-#define END_TIME 20*1000
+#define END_TIME 100*1000
 
 static void
 tim9_init ();

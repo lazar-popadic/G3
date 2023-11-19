@@ -37,6 +37,9 @@
 
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
+uint16_t tim1cnt = 0;
+uint16_t tim1ccr1 = 0;
+uint16_t tim1ccr2 = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,7 +111,7 @@ main (void)
 	  break;
 	case 0:
 	  if (pwm_test ())
-	    state_main = 0;
+	  //  state_main = 0;
 	  break;
 	case END:
 	  io_led (true);
