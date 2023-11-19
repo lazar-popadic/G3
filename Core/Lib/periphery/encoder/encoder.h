@@ -18,5 +18,7 @@ int16_t
 timer_speed_of_encoder_right_maxon ();
 int16_t
 timer_speed_of_encoder_left_maxon ();
+void
+encoder_init ();
 
 #endif /* LIB_PERIPHERY_ENCODER_ENCODER_H_ */
