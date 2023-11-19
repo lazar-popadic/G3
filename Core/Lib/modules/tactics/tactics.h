@@ -12,5 +12,7 @@ bool
 ax_test();
 bool
 ax_test_kraci_fsm();
+bool
+pwm_test ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

@@ -87,7 +87,7 @@ timer_delay_nonblocking (uint32_t delay_ms)
 }
 
 void
-TIM9_IRQHandler ()
+TIM1_BRK_TIM9_IRQHandler ()
 {
   // poziva se svake milisekunde
   // proveri da li je stvarno TIM2 pozvao rutinu

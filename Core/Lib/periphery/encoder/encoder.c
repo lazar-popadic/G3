@@ -114,7 +114,6 @@ tim2_init ()					//ENKODER
 {
   RCC->APB1ENR |= (0b1 << 0);
 
-
   TIM2->PSC = 0;
   TIM2->ARR = 0xFFFF;
 

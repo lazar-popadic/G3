@@ -12,60 +12,86 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "main.h"
+
 /* USER CODE END Includes */
+
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 /* USER CODE END PTD */
+
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define START 0xff 	//255
 #define END 0xfa	//250
 /* USER CODE END PD */
+
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 /* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
+
 /* USER CODE BEGIN PV */
+uint8_t state_main = START;
 /* USER CODE END PV */
+
 /* Private function prototypes -----------------------------------------------*/
 void
 SystemClock_Config (void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
+
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /* USER CODE END 0 */
+
+/**
+ * @brief  The application entry point.
+ * @retval int
+ */
 int
 main (void)
 {
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
+
   /* MCU Configuration--------------------------------------------------------*/
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init ();
+
   /* USER CODE BEGIN Init */
   io_init ();
+  io_led (true);
   timer_init ();
+  encoder_init ();
   odometrija_init ();
+  pwm_init ();
   uart_init ();
+
   /* USER CODE END Init */
+
   /* Configure the system clock */
   SystemClock_Config ();
+
   /* USER CODE BEGIN SysInit */
   /* USER CODE END SysInit */
+
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
-  static uint8_t state_main = START;
   __enable_irq ();
   /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
     {
       /* USER CODE END WHILE */
+
       /* USER CODE BEGIN 3 */
       if (timer_end ())
 	state_main = END;
@@ -77,12 +103,11 @@ main (void)
 	case START:
 	  io_cinc_loop ();
 	  timer_start_sys_time ();
+	  io_led (false);
 	  state_main = 0;
 	  break;
 	case 0:
-	  // if (ax_test())
-	  //   state_main ++;
-	  if (ax_test_kraci_fsm ())
+	  if (pwm_test ())
 	    state_main = 0;
 	  break;
 	case END:
@@ -93,6 +118,10 @@ main (void)
   /* USER CODE END 3 */
 }
 
+/**
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void
 SystemClock_Config (void)
 {
@@ -100,10 +129,12 @@ SystemClock_Config (void)
     { 0 };
   RCC_ClkInitTypeDef RCC_ClkInitStruct =
     { 0 };
+
   /** Configure the main internal regulator output voltage
    */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+
   /** Initializes the RCC Oscillators according to the specified parameters
    * in the RCC_OscInitTypeDef structure.
    */
@@ -120,6 +151,9 @@ SystemClock_Config (void)
     {
       Error_Handler ();
     }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
       | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -132,8 +166,14 @@ SystemClock_Config (void)
       Error_Handler ();
     }
 }
+
 /* USER CODE BEGIN 4 */
 /* USER CODE END 4 */
+
+/**
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void
 Error_Handler (void)
 {

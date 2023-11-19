@@ -1,10 +1,10 @@
 outside of .ioc:
 	port A:
 	0 - kanal A enkodera 4	- levi maxon
-	1 - kanal A enkodera 4
+	1 - kanal B enkodera 4
 	8 - PWM output 1 - desni maxon
 	9 - PWM output 2 - levi maxon
-	5 - LED
+	5 - Internal LED
 	6 - cinc input
 	15 - kanal A enkodera 3	- desni maxon
 

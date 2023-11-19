@@ -11,14 +11,17 @@
 #include "../../periphery/encoder/encoder.h"
 #include <math.h>
 
+#define d 320
+#define d_odometrijskog 60
+
 static float V = 0;
 static float w = 0;
-static float d = 320;				//razmak izmedju odometrijskih tockova [mm]
-static float d_odometrijskog = 60;		//precnik odometrijskog tocka [mm]
-static float inc2rad = 0;	//broj inkremenata na pasivnom tocku za 1 krug robota
+//static float d = 320;				//razmak izmedju odometrijskih tockova [mm]
+//static float d_odometrijskog = 60;		//precnik odometrijskog tocka [mm]
+static float inc2rad = 0;//broj inkremenata na pasivnom tocku za 1 krug robota
 static float inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
 static float theta;
-static float x;			// inicijalizuj na x_start i y_start u strategiji
+static float x;		// inicijalizuj na x_start i y_start u strategiji
 static float y;
 
 void
@@ -33,7 +36,7 @@ odometrija_init ()
 void
 odometrija_robot ()		//racun pozicije i orijentacije
 {
-  int16_t Vd_inc = timer_speed_of_encoder_right_passive ();	//inc = inkrementi
+  int16_t Vd_inc = timer_speed_of_encoder_right_passive ();//inc = inkrementi
   int16_t Vl_inc = timer_speed_of_encoder_left_passive ();
 
   // translacija
@@ -55,8 +58,8 @@ odometrija_robot ()		//racun pozicije i orijentacije
 
   // TESTIRAJ
   theta += w;
-  x += V*cos(theta);
-  y += V*sin(theta);
+  x += V * cos (theta);
+  y += V * sin (theta);
 }
 
 float

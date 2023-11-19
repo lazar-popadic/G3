@@ -6,6 +6,7 @@
  */
 
 #include "main.h"
+#include "../pwm/pwm.h"
 
 uint8_t state = 0;
 bool flag_fsm = true;
@@ -124,11 +125,55 @@ ax_test_kraci_fsm ()
       //uslov prelaska
       if (timer_delay_nonblocking (1500))
 	//state++;
-	state = 0;
+	state = 4;
       break;
     case 4:
       tactic_finished = true;
       return tactic_finished;
     }
   return tactic_finished;
+}
+
+bool
+pwm_test ()
+{
+  switch (state)
+      {
+      case 0:
+        //inicijalizacija
+        tactic_finished = false;
+        //telo stanja
+        pwm_duty_cycle_out_right_maxon(2000);
+        pwm_duty_cycle_out_left_maxon(200);
+        //uslov prelaska
+        state++;
+        break;
+      case 1:
+        //inicijalizacija
+        //telo stanja
+        //uslov prelaska
+        if (timer_delay_nonblocking (10000))
+  	state++;
+        break;
+      case 2:
+        //inicijalizacija
+        //telo stanja
+        pwm_duty_cycle_out_right_maxon(200);
+        pwm_duty_cycle_out_left_maxon(2000);
+        //uslov prelaska
+        state++;
+        break;
+      case 3:
+        //inicijalizacija
+        //telo stanja
+        //uslov prelaska
+        if (timer_delay_nonblocking (3000))
+  	//state++;
+  	state = 4;
+        break;
+      case 4:
+        tactic_finished = true;
+        return tactic_finished;
+      }
+    return tactic_finished;
 }

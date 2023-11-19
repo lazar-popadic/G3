@@ -58,7 +58,6 @@ tim1_init ()					// PWM
   TIM1->PSC = 0;
   TIM1->ARR = 4000 - 1;
 
-  // TODO: uradi i za ostale kanale, ukupno da budu 2
   // pwm mode 1
   TIM1->CCMR1 &= ~(0b111 << 4);
   TIM1->CCMR1 |= (0b110 << 4);
@@ -84,16 +83,14 @@ tim1_init ()					// PWM
 }
 
 void
-pwm_duty_cycle_out_right_maxon (float duty_cycle_percentage)	// pre ovoga obavezno uradi saturaciju
+pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle)	// pre ovoga obavezno uradi saturaciju
 {								// TODO: razmisli sta ovde guras: int za registar, procenat, apsolutnu brzinu
-  uint16_t duty_cycle = 40 * duty_cycle_percentage;	// ARR * 0.01 * dc_percentage // 4000 * procenat
   TIM1->CCR1 = duty_cycle;
 }
 
 void
-pwm_duty_cycle_out_left_maxon (float duty_cycle_percentage)
+pwm_duty_cycle_out_left_maxon (uint16_t duty_cycle)
 {
-  uint16_t duty_cycle = 40 * duty_cycle_percentage;
   TIM1->CCR2 = duty_cycle;
 }
 
