@@ -15,7 +15,7 @@ tim4_init ();
 static void
 tim2_init ();
 static void
-tim5_init ();
+tim1_init ();
 
 volatile int16_t state_enc_right_passive = 0;
 volatile int16_t state_enc_left_passive = 0;
@@ -28,7 +28,7 @@ encoder_init ()
   tim3_init ();			//enkoder 1 - desni pasivni tocak
   tim4_init ();			//enkoder 2 - levi pasivni tocak
   tim2_init ();			//enkoder 3 - desni maxon
-  tim5_init ();			//enkoder 4 - levi maxon
+  tim1_init ();			//enkoder 4 - levi maxon
 }
 
 int16_t
@@ -132,24 +132,24 @@ tim2_init ()					//ENKODER
 }
 
 static void
-tim5_init ()					//ENKODER
+tim1_init ()					//ENKODER
 {
-  RCC->APB1ENR |= (0b1 << 3);
+  RCC->APB2ENR |= (0b1 << 0);
 
-  TIM5->PSC = 0;
-  TIM5->ARR = 0xFFFF;
+  TIM1->PSC = 0;
+  TIM1->ARR = 0xFFFF;
 
-  TIM5->SMCR &= ~(0b111 << 0);
-  TIM5->SMCR |= (0b011 << 0);
+  TIM1->SMCR &= ~(0b111 << 0);
+  TIM1->SMCR |= (0b011 << 0);
 
-  TIM5->CCMR1 &= ~(0b11 << 0);//povezujemo kanale enkodera timera sa kanalom samog timera
-  TIM5->CCMR1 |= (0b01 << 0);
-  TIM5->CCMR1 &= ~(0b11 << 8);
-  TIM5->CCMR1 |= (0b01 << 8);
+  TIM1->CCMR1 &= ~(0b11 << 0);//povezujemo kanale enkodera timera sa kanalom samog timera
+  TIM1->CCMR1 |= (0b01 << 0);
+  TIM1->CCMR1 &= ~(0b11 << 8);
+  TIM1->CCMR1 |= (0b01 << 8);
 
-  TIM5->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
-  TIM5->CCER |= (0b001 << 1);
-  TIM5->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
+  TIM1->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
+  TIM1->CCER |= (0b001 << 1);
+  TIM1->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
 
-  TIM5->CR1 |= (0b1 << 0);			//ukljucivanje timera
+  TIM1->CR1 |= (0b1 << 0);			//ukljucivanje timera
 }
