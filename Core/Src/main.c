@@ -66,14 +66,6 @@ main (void)
   HAL_Init ();
 
   /* USER CODE BEGIN Init */
-  io_init ();
-  io_led (true);
-  timer_init ();
-  encoder_init ();
-  odometrija_init ();
-  pwm_init ();
-  uart_init ();
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -84,6 +76,13 @@ main (void)
 
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
+  io_init ();
+  timer_init ();
+  encoder_init ();
+  odometrija_init ();
+  pwm_init ();
+  uart_init ();
+
   __enable_irq ();
   /* USER CODE END 2 */
 
@@ -109,9 +108,8 @@ main (void)
 	  break;
 	case 0:
 	  //if (pwm_test ())
-	    //  state_main = 0;
-		cnt = TIM3->CNT;
-	    break;
+	  //  state_main = 0;
+	  break;
 	case END:
 	  io_led (true);
 	  break;

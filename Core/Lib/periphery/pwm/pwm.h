@@ -5,8 +5,8 @@
  *      Author: lazar
  */
 
-#ifndef LIB_MODULES_PWM_PWM_H_
-#define LIB_MODULES_PWM_PWM_H_
+#ifndef LIB_PERIPHERY_PWM_PWM_H_
+#define LIB_PERIPHERY_PWM_PWM_H_
 
 #include <stdint.h>
 
@@ -17,4 +17,4 @@ pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle);
 void
 pwm_duty_cycle_out_left_maxon (uint16_t duty_cycle);
 
-#endif /* LIB_MODULES_PWM_PWM_H_ */
+#endif /* LIB_PERIPHERY_PWM_PWM_H_ */

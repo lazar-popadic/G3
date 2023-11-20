@@ -1,11 +1,9 @@
-outside of .ioc:
 	port A:
-	0 - PWM output 1 - desni maxon
-	1 - PWM output 2 - levi maxon
+	0 - 
+	1 - 
 	5 - Internal LED
 	6 - cinc input
-	8 - kanal A enkodera 4	- levi maxon
-	9 - kanal B enkodera 4
+	8 - 
 	15 - kanal A enkodera 3	- desni maxon
 
 	port B:
@@ -14,6 +12,7 @@ outside of .ioc:
 	5 - kanal B enkodera 1	
 	6 - kanal A enkodera 2	- levi pasivni tocak
 	7 - kanal B enkodera 2
+	14 - 
 	
 	port C:
 	2 - direction 1 za h-most 2
@@ -23,3 +22,7 @@ outside of .ioc:
 	13 - button
 	14 - direction 1 za h-most 1
 	15 - direction 2 za h-most 1
+	
+	
+ne rade:
+	PA9

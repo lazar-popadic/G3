@@ -40,7 +40,7 @@ extern "C" {
 #include "../Lib/modules/ax12a/ax12a.h"
 #include "../Lib/modules/tactics/tactics.h"
 #include "../Lib/modules/regulation/regulation.h"
-#include "../Lib/modules/pwm/pwm.h"
+#include "../Lib/periphery/pwm/pwm.h"
 #include "../Lib/periphery/encoder/encoder.h"
 /* USER CODE END Includes */
 

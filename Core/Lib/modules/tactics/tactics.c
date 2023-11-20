@@ -6,7 +6,8 @@
  */
 
 #include "main.h"
-#include "../pwm/pwm.h"
+
+#include "../../periphery/pwm/pwm.h"
 
 uint8_t state = 0;
 bool flag_fsm = true;
