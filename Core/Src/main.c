@@ -37,9 +37,7 @@
 
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
-uint16_t tim1cnt = 0;
-uint16_t tim1ccr1 = 0;
-uint16_t tim1ccr2 = 0;
+int16_t cnt = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -110,8 +108,9 @@ main (void)
 	  state_main = 0;
 	  break;
 	case 0:
-	  if (pwm_test ())
+	  //if (pwm_test ())
 	    //  state_main = 0;
+		cnt = TIM3->CNT;
 	    break;
 	case END:
 	  io_led (true);
@@ -121,10 +120,6 @@ main (void)
   /* USER CODE END 3 */
 }
 
-/**
- * @brief System Clock Configuration
- * @retval None
- */
 void
 SystemClock_Config (void)
 {
@@ -173,10 +168,6 @@ SystemClock_Config (void)
 /* USER CODE BEGIN 4 */
 /* USER CODE END 4 */
 
-/**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
 void
 Error_Handler (void)
 {

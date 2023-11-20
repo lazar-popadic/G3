@@ -147,9 +147,9 @@ tim1_init ()					//ENKODER
   TIM1->CCMR1 &= ~(0b11 << 8);
   TIM1->CCMR1 |= (0b01 << 8);
 
-  TIM1->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
-  TIM1->CCER |= (0b001 << 1);
-  TIM1->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
+  TIM1->CCER &= ~(0b100 << 0);		//invertovan kanal A	0b xxxx 0x1x
+  TIM1->CCER |= (0b001 << 0);
+  TIM1->CCER &= ~(0b101 << 4);		//neinvertovan kanal B	0b xxxx 0x0x
 
   TIM1->CR1 |= (0b1 << 0);			//ukljucivanje timera
 }
