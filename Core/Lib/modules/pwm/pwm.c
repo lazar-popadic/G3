@@ -74,7 +74,7 @@ tim5_init ()
 
 void
 pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle)// pre ovoga obavezno uradi saturaciju
-{// TODO: razmisli sta ovde guras: int za registar, procenat, apsolutnu brzinu
+{
   TIM5->CCR1 = duty_cycle;
 }
 

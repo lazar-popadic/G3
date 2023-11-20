@@ -109,7 +109,7 @@ ax_test_kraci_fsm ()
     case 2:
       //inicijalizacija
       //telo stanja
-      ax_move (4, 1023, 1023);		//TODO: treba delaj izmedju ovih
+      ax_move (4, 1023, 1023);
       HAL_Delay(10);
       ax_move (5, 1023, 1023);
       HAL_Delay(10);

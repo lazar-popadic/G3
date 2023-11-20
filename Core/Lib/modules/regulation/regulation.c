@@ -56,7 +56,7 @@ static float e_left = 0;
 static float e_i_left = 0;
 static float e_d_left = 0;
 static float e_previous_left = 0;
-static float u_right = 0;		// TODO: sve u inkremente!!!!!!!!!!
+static float u_right = 0;		// TODO: jedinice, razmisli
 static float u_left = 0;
 
 /*

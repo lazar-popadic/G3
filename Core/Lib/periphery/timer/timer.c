@@ -90,7 +90,7 @@ TIM1_BRK_TIM9_IRQHandler ()
       TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
       //if(sys_time_ms % 10)//svakih 10ms
-      odometrija_robot ();//mozda probaj i brze od 1ms		TODO!!!!!!!!!!!!!!
+      odometrija_robot ();
 
       sys_time_ms++;
     }
