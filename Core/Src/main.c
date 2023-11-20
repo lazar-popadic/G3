@@ -111,8 +111,8 @@ main (void)
 	  break;
 	case 0:
 	  if (pwm_test ())
-	  //  state_main = 0;
-	  break;
+	    //  state_main = 0;
+	    break;
 	case END:
 	  io_led (true);
 	  break;

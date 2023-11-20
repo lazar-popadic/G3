@@ -4,12 +4,6 @@
  *  Created on: Oct 19, 2023
  *      Author: lazar
  */
-/*
- TIM2 - za vreme
- TIM3 - enkoder 1
- TIM4 - enkoder 2
- TIM5 - pwm
- */
 
 #include "timer.h"
 #include "../../modules/odometrija/odometrija.h"
@@ -27,7 +21,7 @@ void
 timer_init ()
 {
   tim9_init ();			// vreme
-//  odometrija_init ();		// zasto sam ovo uradio???????????????????????
+  odometrija_init ();		// zasto sam ovo uradio? Mozda jer se odometrija zove u prekidu tajmera
 }
 
 static void

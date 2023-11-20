@@ -29,7 +29,7 @@ odometrija_init ()
 {
   //inc2rad = d * 2048 * 4 / d_odometrijskog ;	//(d * M_PI) / (d_odometrijskog * M_PI) * 2048 * 4;
   //inc2rad = (2 * M_PI) / inc2rad;		//ovo je bilo na vezbama, al msm da je cilag sjebao
-  inc2mm = d_odometrijskog * M_PI / (4 * 2048);
+  inc2mm = d_odometrijskog * M_PI / (4.0 * 2048.0);
   inc2rad = 2.0 * inc2mm / d;
 }
 
@@ -53,7 +53,7 @@ odometrija_robot ()		//racun pozicije i orijentacije
   // desni koordinatni sistem
   //w = (Vd_inc - Vl_inc) * inc2rad / d;
   //V = (Vd_inc + Vl_inc) * inc2rad * 0.5;
-  V = (Vd_inc + Vl_inc) * inc2mm;
+  V = (Vd_inc + Vl_inc) * 0.5 * inc2mm;
   w = (Vd_inc - Vl_inc) * inc2rad;
 
   // TESTIRAJ

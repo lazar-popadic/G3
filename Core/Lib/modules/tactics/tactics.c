@@ -144,7 +144,7 @@ pwm_test ()
         tactic_finished = false;
         //telo stanja
         pwm_duty_cycle_out_right_maxon(4000);
-        pwm_duty_cycle_out_left_maxon(200);
+        pwm_duty_cycle_out_left_maxon(400);
         //uslov prelaska
         state++;
         break;
@@ -152,26 +152,18 @@ pwm_test ()
         //inicijalizacija
         //telo stanja
         //uslov prelaska
-        if (timer_delay_nonblocking (15000))
+        if (timer_delay_nonblocking (25000))
   	state++;
         break;
       case 2:
         //inicijalizacija
         //telo stanja
-        pwm_duty_cycle_out_right_maxon(200);
+        pwm_duty_cycle_out_right_maxon(400);
         pwm_duty_cycle_out_left_maxon(4000);
         //uslov prelaska
         state++;
         break;
       case 3:
-        //inicijalizacija
-        //telo stanja
-        //uslov prelaska
-        if (timer_delay_nonblocking (3000))
-  	//state++;
-  	state = 4;
-        break;
-      case 4:
         tactic_finished = true;
         return tactic_finished;
       }
