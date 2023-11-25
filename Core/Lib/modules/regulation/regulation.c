@@ -27,24 +27,21 @@
 #define U_TRAN_MIN		0
 
 static bool
-regulation_rotation (float theta, float faktor);
+regulation_rotation (float theta);
 static bool
-regulation_translation (float distance, float theta);
-static void
-regulation_get_u_rotation (float theta, float faktor);
+regulation_translation (float distance);
 static float
 saturation (float signal, float MAX, float MIN);
 
-
-static const float KP_SPEED	= 0;
-static const float KI_SPEED	= 0;
-static const float KD_SPEED	= 0;
-static const float KP_ROT	= 0;
-static const float KI_ROT	= 0;
-static const float KD_ROT	= 0;
-static const float KP_TRAN	= 0;
-static const float KI_TRAN	= 0;
-static const float KD_TRAN	= 0;
+static const float KP_SPEED = 0;
+static const float KI_SPEED = 0;
+static const float KD_SPEED = 0;
+static const float KP_ROT = 0;
+static const float KI_ROT = 0;
+static const float KD_ROT = 0;
+static const float KP_TRAN = 0;
+static const float KI_TRAN = 0;
+static const float KD_TRAN = 0;
 
 static float ref_speed_right = 0;
 static float ref_speed_left = 0;
@@ -59,11 +56,6 @@ static float e_previous_left = 0;
 static float u_right = 0;		// TODO: jedinice, razmisli
 static float u_left = 0;
 
-/*
- * p1 - zeljena pozicija u koordinatno sistemu robota
- * p0 - zeljena pozicija koju smo mi zadali (koordinatni sistem stola)
- * smisli kako da zadajes vektor p0 u main/tactics
- */
 static float p1x = 0;
 static float p1y = 0;
 static float p0x = 0;
@@ -71,19 +63,21 @@ static float p0y = 0;
 static float distance = 0;
 static float theta_0 = 0;
 
+static float theta_error = 0;
+static float distance_error = 0;
+
 static float theta_1 = 0;
 static float theta_2 = 0;
-static float theta_previous;
-static float theta_i;
-static float theta_d;
+static float theta_er_previous;
+static float theta_er_i;
+static float theta_er_d;
 static float u_rot;
 
-static float distance_previous;
-static float distance_i;
-static float distance_d;
+static float distance_er_previous;
+static float distance_er_i;
+static float distance_er_d;
 static float u_tran;
 
-static uint8_t state_regulation = 0;
 static float inc2rad_deltaT = 0;
 
 void
@@ -105,12 +99,14 @@ saturation (float signal, float MAX, float MIN)
 void
 regulation_speed ()
 {
-  e_right = ref_speed_right - inc2rad_deltaT * timer_speed_of_encoder_right_maxon (); //[rad/deltaT]
+  e_right = ref_speed_right
+      - inc2rad_deltaT * timer_speed_of_encoder_right_maxon (); //[rad/deltaT]
   e_i_right += e_right;
   e_i_right = saturation (e_i_right, EI_LIMIT, - EI_LIMIT);
   e_d_right = e_right - e_previous_right;
 
-  e_left = ref_speed_left - inc2rad_deltaT * timer_speed_of_encoder_left_maxon ();
+  e_left = ref_speed_left
+      - inc2rad_deltaT * timer_speed_of_encoder_left_maxon ();
   e_i_left += e_left;
   e_i_left = saturation (e_i_left, EI_LIMIT, - EI_LIMIT);
   e_d_left = e_left - e_previous_left;
@@ -140,6 +136,11 @@ regulation_speed ()
 void
 regulation_position ()
 {
+  /*
+   * p1 - zeljena pozicija u koordinatno sistemu robota
+   * p0 - zeljena pozicija koju smo mi zadali (koordinatni sistem stola)
+   * TODO: smisli kako da zadajes p0x, p0y i theta_0 u main/tactics
+   */
 
   p1x = cos (get_theta ()) * (p0x - get_x ())
       - sin (get_theta ()) * (p0y - get_y ());
@@ -152,85 +153,78 @@ regulation_position ()
   //druga rotacija
   theta_2 = theta_0 - get_theta ();
 
-  if (state_regulation == 0)
+  //TODO: proveri da li svuda ovde ide theta_1
+
+  if (fabs(theta_1) > EPSILON_THETA && fabs(distance) > EPSILON_DISTANCE_ROT)
     {
-      if (regulation_rotation (theta_1, 1))
-	state_regulation++;
+      theta_error = theta_1;
+      distance_error = 0;
     }
-  if (state_regulation == 1)
+  if (fabs(theta_1) < EPSILON_THETA && fabs(distance) > EPSILON_DISTANCE)
     {
-      if (regulation_translation (distance, theta_1))
-	state_regulation++;
+      theta_error = 0;
+      // TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
+      if ( fabs(theta_1) > (M_PI / 2) )
+	distance_error = -distance;
+      else
+	distance_error = distance;
     }
-  //treca rotacija, isto kao prva samo theta_2
-  if (state_regulation == 2)
+  if (fabs(distance) < EPSILON_DISTANCE)
     {
-      if (regulation_rotation (theta_2, 1))
-	state_regulation = 0;
+      theta_error = theta_2;
+      distance_error = 0;
     }
-}
 
-static bool
-regulation_rotation (float theta, float faktor)
-{
-  theta_i += theta;
-  theta_i = saturation (theta_i, THETA_I_LIMIT, -THETA_I_LIMIT);
-  theta_d = theta - theta_previous;
-  u_rot = KP_ROT * theta + KI_ROT * theta_i + KD_ROT * theta_d;
-  u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
-  u_rot *= faktor;
-
-  ref_speed_right = +u_rot;
-  ref_speed_left = -u_rot;
-
-  theta_previous = theta;
-
-  if (fabs (theta) < EPSILON_THETA)
-    {
-      theta_i = 0;
-      theta_d = 0;
-      theta_previous = 0;
-      return true;
-    }
-  return false;
-}
-
-static bool
-regulation_translation (float distance, float theta)
-{
-  distance_i += distance;
-  distance_i = saturation (distance_i, DISTANCE_I_LIMIT, -DISTANCE_I_LIMIT);
-  distance_d = distance - distance_previous;
-
-  u_tran = KP_TRAN * distance + KI_TRAN * distance_i + KD_TRAN * distance_d;
-  u_tran = saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
-  if (fabs (distance) > EPSILON_DISTANCE_ROT)
-    regulation_get_u_rotation (theta, 0.5); // blaga reg rotacije, vidi da li ovde lepo postavi u_rot
-  else
-    u_rot = 0;
+  if(theta_error)
+    regulation_rotation (theta_error);
+  if(distance_error)
+    regulation_translation (distance_error);
 
   ref_speed_right = u_tran + u_rot;
   ref_speed_left = u_tran - u_rot;
+}
 
-  distance_previous = distance;
+static bool
+regulation_rotation (float theta_er)
+{
+  theta_er_i += theta_er;
+  theta_er_i = saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
+  theta_er_d = theta_er - theta_er_previous;
+  u_rot = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
+  u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
 
-  if (fabs (distance) < EPSILON_DISTANCE)
+  theta_er_previous = theta_er;
+
+  if (fabs (theta_er) < EPSILON_THETA)
     {
-      distance_i = 0;
-      distance_d = 0;
-      distance_previous = 0;
+      theta_er_i = 0;
+      theta_er_d = 0;
+      theta_er_previous = 0;
       return true;
     }
   return false;
 }
 
-static void
-regulation_get_u_rotation (float theta, float faktor)
+static bool
+regulation_translation (float distance_er)
 {
-  theta_i += theta;
-  theta_i = saturation (theta_i, THETA_I_LIMIT, -THETA_I_LIMIT);
-  theta_d = theta - theta_previous;
-  u_rot = KP_ROT * theta + KI_ROT * theta_i + KD_ROT * theta_d;
-  u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
-  u_rot *= faktor;
+  distance_er_i += distance_er;
+  distance_er_i = saturation (distance_er_i, DISTANCE_I_LIMIT,
+			      -DISTANCE_I_LIMIT);
+  distance_er_d = distance_er - distance_er_previous;
+
+  u_tran = KP_TRAN * distance_er + KI_TRAN * distance_er_i
+      + KD_TRAN * distance_er_d;
+  u_tran = saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
+
+  distance_er_previous = distance_er;
+
+  if (fabs (distance_er) < EPSILON_DISTANCE)
+    {
+      distance_er_i = 0;
+      distance_er_d = 0;
+      distance_er_previous = 0;
+      return true;
+    }
+  return false;
 }
