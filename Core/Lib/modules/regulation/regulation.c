@@ -179,7 +179,11 @@ regulation_position ()
     case TRANSLATION_WITH_ROTATION:
       theta_error = theta_1;
       rot_faktor = 0.5;
-      // TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
+      /*
+       * TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
+       * TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
+       * TODO: ako menjas nesto i u donjoj funkciji moras da izmenis
+       */
       if (fabs (theta_1) > (M_PI / 2))
 	distance_error = -distance;
       else
@@ -188,7 +192,6 @@ regulation_position ()
 
     case TRANSLATION_WITHOUT_ROTATION:
       theta_error = 0;
-      // TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
       if (fabs (theta_1) > (M_PI / 2))
 	distance_error = -distance;
       else
@@ -218,7 +221,10 @@ regulation_position ()
   ref_speed_right = u_tran + u_rot;
   ref_speed_left = u_tran - u_rot;
 }
-//TODO: razmisli da li pokriva svaki slucaj!
+
+/*
+ * TODO: razmisli da li pokriva svaki slucaj!
+ */
 static void
 regulation_phase_calculator ()
 {
