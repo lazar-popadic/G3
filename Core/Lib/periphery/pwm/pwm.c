@@ -11,80 +11,75 @@
 #include "../../modules/regulation/regulation.h"
 
 static void
-tim9_init ();
+tim1_init ();
 
 void
 pwm_init ()
 {
-  tim9_init ();
+  tim1_init ();
 }
 
 static void
-tim9_init ()
+tim1_init ()
 {
-  RCC->AHB1ENR |= (0b1 << 0);
-  RCC->APB2ENR |= (0b1 << 16);
-
-  uint8_t const KANAL1 = 2;
-  uint8_t const KANAL2 = 3;
-
-  GPIOA->MODER &= ~(0b11 << KANAL1 * 2);
-  GPIOA->MODER |= (0b10 << KANAL1 * 2);
-  GPIOA->MODER &= ~(0b11 << KANAL2 * 2);
-  GPIOA->MODER |= (0b10 << KANAL2 * 2);
-
-  uint8_t const AF = 3;
-
-  GPIOA->AFR[KANAL1 / 8] &= ~(0xF << (KANAL1 % 8) * 4);
-  GPIOA->AFR[KANAL1 / 8] |= (AF << (KANAL1 % 8) * 4);
-  GPIOA->AFR[KANAL2 / 8] &= ~(0xF << (KANAL2 % 8) * 4);
-  GPIOA->AFR[KANAL2 / 8] |= (AF << (KANAL2 % 8) * 4);
+  RCC->APB2ENR |= (0b1 << 0);
 
   // Željena frekvencija za DC motor: 21kHz
-  TIM9->PSC = 0;
-  TIM9->ARR = 4000 - 1;
+  TIM1->PSC = 0;
+  TIM1->ARR = 4000 - 1;
   // Željena frekvencija za RC servo motor: 50Hz
 
-  // Podešavanje "PWM mode 1"
-  TIM9->CCMR1 &= ~(0b111 << 4);
-  TIM9->CCMR1 |= (0b110 << 4);
-  TIM9->CCMR1 &= ~(0b111 << 12);
-  TIM9->CCMR1 |= (0b110 << 12);
+  // Podešavanje "PWM mode 1" za sva 4 kanala
+  TIM1->CCMR1 &= ~(0b111 << 4);
+  TIM1->CCMR1 |= (0b110 << 4);
+  TIM1->CCMR1 &= ~(0b111 << 12);
+  TIM1->CCMR1 |= (0b110 << 12);
+  TIM1->CCMR2 &= ~(0b111 << 4);
+  TIM1->CCMR2 |= (0b110 << 4);
+  TIM1->CCMR2 &= ~(0b111 << 12);
+  TIM1->CCMR2 |= (0b110 << 12);
 
-  // preload, da bi moglo u kodu da se menja
-  TIM9->CCMR1 |= (0b1 << 3);
-  TIM9->CCMR1 |= (0b1 << 11);
-  TIM9->CR1 |= (0b1 << 7);
+  // preload, da bi moglo u kodu da se menja, za sva 4 kanala
+  TIM1->CCMR1 |= (0b1 << 3);
+  TIM1->CCMR1 |= (0b1 << 11);
+  TIM1->CCMR2 |= (0b1 << 3);
+  TIM1->CCMR2 |= (0b1 << 11);
+  TIM1->CR1 |= (0b1 << 7);
 
-  TIM9->CR1 &= ~(0b1 << 1); // Dozvola događaja
-  TIM9->CR1 &= ~(0b1 << 2); // Šta generiše događaj
-  TIM9->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
-  while (!(TIM9->SR & (0b1 << 0)))
+  // Uključujemo kanal PWM-a
+  TIM1->CCER |= (0b1 << 0);
+  TIM1->CCER |= (0b1 << 4);
+  TIM1->CCER |= (0b1 << 8);
+  TIM1->CCER |= (0b1 << 12);
+
+  // Uključivanje tajmera
+  TIM1->CR1 |= (0b1 << 0);
+
+  TIM1->CCR1 = 2000; //ide do ARR, pa je ovo 50%
+  TIM1->CCR2 = 1212;
+  TIM1->CCR3 = 606;
+  TIM1->CCR4 = 4000;
+
+  TIM1->CR1 &= ~(0b1 << 1); // Dozvola događaja
+  TIM1->CR1 &= ~(0b1 << 2); // Šta generiše događaj
+  TIM1->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
+  while (!(TIM1->SR & (0b1 << 0)))
     {
       __NOP();
     }
-  TIM9->SR &= ~(0b1 << 0);
-
-  // Uključujemo kanal PWM-a
-  TIM9->CCER |= (0b1 << 0);
-  TIM9->CCER |= (0b1 << 4);
-
-  // Uključivanje tajmera
-  TIM9->CR1 |= (0b1 << 0);
-
-  //TIM9->CCR1 = 2000; //ide do ARR, pa je ovo 50%
+  TIM1->SR &= ~(0b1 << 0);
 }
 
 void
 pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle)// pre ovoga obavezno uradi saturaciju
 {
-  TIM9->CCR1 = duty_cycle;
+  TIM1->CCR1 = duty_cycle;
 }
 
 void
 pwm_duty_cycle_out_left_maxon (uint16_t duty_cycle)
 {
-  TIM9->CCR2 = duty_cycle;
+  TIM1->CCR2 = duty_cycle;
 }
 
 /*

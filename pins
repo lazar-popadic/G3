@@ -3,7 +3,10 @@
 	1 - kanal B enkodera 4
 	5 - Internal LED
 	6 - cinc input
-	8 - 
+	8 - PWM kanal 1
+	9 - PWM kanal 2
+	10 - PWM kanal 3
+	11 - PWM kanal 4
 	15 - kanal A enkodera 3	- desni maxon
 
 	port B:
@@ -25,4 +28,5 @@
 	
 	
 ne rade:
-	PA9
+	PA2
+	PA3
