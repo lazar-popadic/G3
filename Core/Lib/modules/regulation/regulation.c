@@ -26,11 +26,10 @@
 #define U_TRAN_MAX		0
 #define U_TRAN_MIN		0
 
-#define WAITING					0
-#define INITIAL_ROTATION			0
+#define FIRST_ROTATION		0
 #define TRANSLATION_WITH_ROTATION		1
 #define TRANSLATION_WITHOUT_ROTATION		2
-#define FINAL_ROTATION				3
+#define FINAL_ROTATION_AND_WAITING				3
 
 static void
 regulation_rotation (float theta, float faktor);
@@ -42,6 +41,8 @@ static void
 regulation_rotation_finished ();
 static void
 regulation_translation_finished ();
+static void
+regulation_phase_calculator ();
 
 static const float KP_SPEED = 0;
 static const float KI_SPEED = 0;
@@ -90,7 +91,7 @@ static float distance_er_d;
 static float u_tran;
 
 static float inc2rad_deltaT = 0;
-static uint8_t state_regulation = 0;
+static uint8_t regulation_phase = 0;
 
 void
 regulation_init ()
@@ -165,20 +166,17 @@ regulation_position ()
   //druga rotacija
   theta_2 = theta_0 - get_theta ();
 
-  switch (state_regulation)
+  regulation_phase_calculator ();
+
+  switch (regulation_phase)
     {
-    case INITIAL_ROTATION:					// SAMO ROTACIJA
+    case FIRST_ROTATION:
       theta_error = theta_1;
       rot_faktor = 1;
       distance_error = 0;
-      if (fabs (theta_1) < EPSILON_THETA)	// DOK SE NE ORIJENTISE KA CILJU
-	{
-	  regulation_rotation_finished ();
-	  state_regulation = TRANSLATION_WITH_ROTATION;
-	}
       break;
 
-    case TRANSLATION_WITH_ROTATION:	// TRANSLACIJA SA BLAGOM ROTACIJOM
+    case TRANSLATION_WITH_ROTATION:
       theta_error = theta_1;
       rot_faktor = 0.5;
       // TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
@@ -186,36 +184,21 @@ regulation_position ()
 	distance_error = -distance;
       else
 	distance_error = distance;
-      if (fabs (distance) < EPSILON_DISTANCE_ROT)// DOK NE DODJE DO EPSILON_ROT OKOLINE CILJA
-	{
-	  regulation_rotation_finished ();
-	  state_regulation = TRANSLATION_WITHOUT_ROTATION;
-	}
       break;
 
-    case TRANSLATION_WITHOUT_ROTATION:	// SAMO TRANSLACIJA
+    case TRANSLATION_WITHOUT_ROTATION:
       theta_error = 0;
       // TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
       if (fabs (theta_1) > (M_PI / 2))
 	distance_error = -distance;
       else
 	distance_error = distance;
-      if (fabs (distance) < EPSILON_DISTANCE)	// DOK NE DODJE DO CILJA
-	{
-	  regulation_translation_finished ();
-	  state_regulation = FINAL_ROTATION;
-	}
       break;
 
-    case FINAL_ROTATION:	// SAMO ROTACIJA
+    case FINAL_ROTATION_AND_WAITING:
       theta_error = theta_2;
       rot_faktor = 1;
       distance_error = 0;
-      if (fabs (theta_2) < EPSILON_THETA)
-	{
-	  regulation_rotation_finished ();
-	  state_regulation = WAITING;
-	}
       break;
     }
 
@@ -234,6 +217,60 @@ regulation_position ()
 
   ref_speed_right = u_tran + u_rot;
   ref_speed_left = u_tran - u_rot;
+}
+//TODO: razmisli da li pokriva svaki slucaj!
+static void
+regulation_phase_calculator ()
+{
+  /*
+   * NEMA GRESKE U POZICIJI
+   * onda
+   * DRZI ZADATI UGAO
+   */
+  if (distance < EPSILON_DISTANCE)
+    {
+      regulation_translation_finished ();
+      regulation_phase = FINAL_ROTATION_AND_WAITING;
+      return;
+    }
+  /*
+   * IMA GRESKU U POZICIJI
+   * i
+   * NIJE ORIJENTISAN KA CILJU
+   * onda
+   * OKRECE SE KA CILJU
+   */
+  if (fabs (theta_1) > EPSILON_THETA)
+    {
+      regulation_translation_finished ();
+      regulation_phase = FIRST_ROTATION;
+      return;
+    }
+  /*
+   * IMA GRESKU U POZICIJI, koja je VECA od EPSILON_DISTANCE_ROT
+   * i
+   * JESTE ORIJENTISAN KA CILJU
+   * onda
+   * IDE KA CILJU SA regulacijom ugla
+   */
+  if (fabs (distance) > EPSILON_DISTANCE_ROT)
+    {
+      regulation_rotation_finished ();
+      regulation_phase = TRANSLATION_WITH_ROTATION;
+      return;
+    }
+  /*
+   * IMA GRESKU U POZICIJI, koja je MANJA od EPSILON_DISTANCE_ROT
+   * i
+   * JESTE ORIJENTISAN KA CILJU
+   * onda
+   * IDE KA CILJU BEZ regulacijom ugla
+   */
+    {
+      regulation_rotation_finished ();
+      regulation_phase = TRANSLATION_WITHOUT_ROTATION;
+      return;
+    }
 }
 
 static void
