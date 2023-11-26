@@ -109,6 +109,7 @@ main (void)
 	case 0:
 	  //if (pwm_test ())
 	  //  state_main = 0;
+	  cnt = TIM10->CNT;
 	  break;
 	case END:
 	  io_led (true);
