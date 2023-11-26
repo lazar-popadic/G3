@@ -224,6 +224,10 @@ regulation_position ()
 
 /*
  * TODO: razmisli da li pokriva svaki slucaj!
+ * TODO: dodaj slucaj kada premasi poziciju, tada je distance pozitivan, on prepravi distance_error da bude negativan,
+ * ali ce mozda uci u deo za prvu rotaciju,
+ * ako stavis da je distance veci od epsilon_distance_rot onda nece moci da se vrati iz faze 3 u fazu 1 ako ga nesto sjebe
+ * mozda u trecoj fazi stavi uslov za vracanje u prvu,
  */
 static void
 regulation_phase_calculator ()
@@ -233,7 +237,7 @@ regulation_phase_calculator ()
    * onda
    * DRZI ZADATI UGAO
    */
-  if (distance < EPSILON_DISTANCE)
+  if (fabs(distance) < EPSILON_DISTANCE)
     {
       regulation_translation_finished ();
       regulation_phase = FINAL_ROTATION_AND_WAITING;
