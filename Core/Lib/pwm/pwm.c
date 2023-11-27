@@ -5,10 +5,10 @@
  *      Author: lazar
  */
 
-#include "../../periphery/pwm/pwm.h"
+#include "../pwm/pwm.h"
 
 #include "stm32f4xx.h"
-#include "../../modules/regulation/regulation.h"
+#include "../regulation/regulation.h"
 
 static void
 tim1_init ();

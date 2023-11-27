@@ -8,7 +8,7 @@
 #include "odometrija.h"
 
 #include <stdint.h>
-#include "../../periphery/encoder/encoder.h"
+#include "../encoder/encoder.h"
 #include <math.h>
 
 #define d 320

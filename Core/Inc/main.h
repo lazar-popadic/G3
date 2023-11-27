@@ -31,17 +31,17 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../Lib/periphery/io/io.h"
+#include "../Lib/io/io.h"
 #include <stdbool.h>
 #include <stdint.h>
-#include "../Lib/periphery/timer/timer.h"
-#include "../Lib/modules/odometrija/odometrija.h"
-#include "../Lib/periphery/uart/uart.h"
-#include "../Lib/modules/ax12a/ax12a.h"
-#include "../Lib/modules/tactics/tactics.h"
-#include "../Lib/modules/regulation/regulation.h"
-#include "../Lib/periphery/pwm/pwm.h"
-#include "../Lib/periphery/encoder/encoder.h"
+#include "../Lib/timer/timer.h"
+#include "../Lib/odometrija/odometrija.h"
+#include "../Lib/uart/uart.h"
+#include "../Lib/ax12a/ax12a.h"
+#include "../Lib/tactics/tactics.h"
+#include "../Lib/regulation/regulation.h"
+#include "../Lib/pwm/pwm.h"
+#include "../Lib/encoder/encoder.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

@@ -7,11 +7,11 @@
 
 #include "regulation.h"
 #include <stdbool.h>
-#include "../../periphery/encoder/encoder.h"
+#include "../encoder/encoder.h"
 #include "../odometrija/odometrija.h"
 #include "math.h"
-#include "../../periphery/io/io.h"
-#include "../../periphery/pwm/pwm.h"
+#include "../io/io.h"
+#include "../pwm/pwm.h"
 
 #define EPSILON_THETA		0.1
 #define EPSILON_DISTANCE	0.1

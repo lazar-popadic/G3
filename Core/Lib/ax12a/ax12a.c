@@ -7,7 +7,7 @@
 
 #include "ax12a.h"
 
-#include "../../periphery/uart/uart.h"
+#include "../uart/uart.h"
 
 /*
  * ugao: (OD 0 DO 1023 => 0D 0 stepeni DO 300 stepeni)

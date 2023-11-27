@@ -5,7 +5,7 @@
  *      Author: lazar
  */
 
-#include "../../periphery/io/io.h"
+#include "../io/io.h"
 #include "stm32f4xx.h"
 
 static void

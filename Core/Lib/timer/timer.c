@@ -6,7 +6,7 @@
  */
 
 #include "timer.h"
-#include "../../modules/odometrija/odometrija.h"
+#include "../odometrija/odometrija.h"
 #include "stm32f4xx.h"
 
 #define END_TIME 100*1000
