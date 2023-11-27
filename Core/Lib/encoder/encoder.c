@@ -17,8 +17,6 @@ tim2_init ();
 static void
 tim5_init ();
 static void
-tim1_init ();
-static void
 io_init ();
 
 volatile int16_t state_enc_right_passive = 0;
@@ -32,11 +30,8 @@ uint8_t const ENC2_A = 6;	//tim4
 uint8_t const ENC2_B = 7;
 uint8_t const ENC3_A = 15;	//tim2
 uint8_t const ENC3_B = 3;
-//uint8_t const ENC4_A = 0;	//tim5
-//uint8_t const ENC4_B = 1;
-uint8_t const ENC4_A = 0;	//tim1
-uint8_t const ENC4_B = 1;	//DOLE PROMENI AF ZA ENC4
-uint8_t const AF_TIM1 = 1;
+uint8_t const ENC4_A = 0;	//tim5
+uint8_t const ENC4_B = 1;
 uint8_t const AF_TIM2 = 1;
 uint8_t const AF_TIM3 = 2;
 uint8_t const AF_TIM4 = 2;
@@ -48,8 +43,7 @@ encoder_init ()
   tim3_init ();			//enkoder 1 - desni pasivni tocak
   tim4_init ();			//enkoder 2 - levi pasivni tocak
   tim2_init ();			//enkoder 3 - desni maxon
-  //tim5_init ();			//enkoder 4 - levi maxon
-  tim1_init();
+  tim5_init ();			//enkoder 4 - levi maxon
   io_init ();
 }
 
@@ -177,29 +171,6 @@ tim5_init ()					//ENKODER
 }
 
 static void
-tim1_init ()					//ENKODER
-{
-  RCC->APB2ENR |= (0b1 << 0);
-
-  TIM1->PSC = 0;
-  TIM1->ARR = 0xFFFF;
-
-  TIM1->SMCR &= ~(0b111 << 0);
-  TIM1->SMCR |= (0b011 << 0);
-
-  TIM1->CCMR1 &= ~(0b11 << 0);//povezujemo kanale enkodera timera sa kanalom samog timera
-  TIM1->CCMR1 |= (0b01 << 0);
-  TIM1->CCMR1 &= ~(0b11 << 8);
-  TIM1->CCMR1 |= (0b01 << 8);
-
-  TIM1->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
-  TIM1->CCER |= (0b001 << 1);
-  TIM1->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
-
-  TIM1->CR1 |= (0b1 << 0);			//ukljucivanje timera
-}
-
-static void
 io_init ()
 {
   RCC->AHB1ENR |= (0b1 << 0);
@@ -212,12 +183,12 @@ io_init ()
   GPIOA->MODER &= ~(0b11 << 2 * ENC4_A);
   GPIOA->MODER |= (0b10 << 2 * ENC4_A);
   GPIOA->AFR[ENC4_A / 8] &= ~(0b1111 << 4 * (ENC4_A % 8));
-  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM1 << 4 * (ENC4_A % 8));
+  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM5 << 4 * (ENC4_A % 8));
 
   GPIOA->MODER &= ~(0b11 << 2 * ENC4_B);
   GPIOA->MODER |= (0b10 << 2 * ENC4_B);
   GPIOA->AFR[ENC4_B / 8] &= ~(0b1111 << 4 * (ENC4_B % 8));
-  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM1 << 4 * (ENC4_B % 8));
+  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM5 << 4 * (ENC4_B % 8));
 
   RCC->AHB1ENR |= (0b1 << 1);
 
