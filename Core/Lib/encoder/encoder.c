@@ -32,10 +32,10 @@ uint8_t const ENC2_A = 6;	//tim4
 uint8_t const ENC2_B = 7;
 uint8_t const ENC3_A = 15;	//tim2
 uint8_t const ENC3_B = 3;
-uint8_t const ENC4_A = 0;	//tim5
-uint8_t const ENC4_B = 1;
-//uint8_t const ENC4_A = 0;	//tim1
-//uint8_t const ENC4_B = 1;	//DOLE PROMENI AF ZA ENC4
+//uint8_t const ENC4_A = 0;	//tim5
+//uint8_t const ENC4_B = 1;
+uint8_t const ENC4_A = 0;	//tim1
+uint8_t const ENC4_B = 1;	//DOLE PROMENI AF ZA ENC4
 uint8_t const AF_TIM1 = 1;
 uint8_t const AF_TIM2 = 1;
 uint8_t const AF_TIM3 = 2;
@@ -48,8 +48,8 @@ encoder_init ()
   tim3_init ();			//enkoder 1 - desni pasivni tocak
   tim4_init ();			//enkoder 2 - levi pasivni tocak
   tim2_init ();			//enkoder 3 - desni maxon
-  tim5_init ();			//enkoder 4 - levi maxon
-  //tim1_init();
+  //tim5_init ();			//enkoder 4 - levi maxon
+  tim1_init();
   io_init ();
 }
 
@@ -212,12 +212,12 @@ io_init ()
   GPIOA->MODER &= ~(0b11 << 2 * ENC4_A);
   GPIOA->MODER |= (0b10 << 2 * ENC4_A);
   GPIOA->AFR[ENC4_A / 8] &= ~(0b1111 << 4 * (ENC4_A % 8));
-  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM5 << 4 * (ENC4_A % 8));
+  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM1 << 4 * (ENC4_A % 8));
 
   GPIOA->MODER &= ~(0b11 << 2 * ENC4_B);
   GPIOA->MODER |= (0b10 << 2 * ENC4_B);
   GPIOA->AFR[ENC4_B / 8] &= ~(0b1111 << 4 * (ENC4_B % 8));
-  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM5 << 4 * (ENC4_B % 8));
+  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM1 << 4 * (ENC4_B % 8));
 
   RCC->AHB1ENR |= (0b1 << 1);
 

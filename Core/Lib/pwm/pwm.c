@@ -23,9 +23,9 @@ static uint8_t const PWM_KANAL2 = 9;
 void
 pwm_init ()
 {
-  tim1_init ();
-  //tim5_init ();	->	ovo je samo prekopirano. moras da zakomentarises i io_init
-  io_init ();			//TODO: izbaci iz tim5_init u io_init ako radi tako
+  //tim1_init ();
+  tim5_init ();		//->	ovo je samo prekopirano. moras da zakomentarises i io_init
+  //io_init ();			//TODO: izbaci iz tim5_init u io_init ako radi tako
 }
 
 static void
