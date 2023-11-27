@@ -16,11 +16,27 @@ static void
 tim2_init ();
 static void
 tim5_init ();
+static void
+io_init ();
 
 volatile int16_t state_enc_right_passive = 0;
 volatile int16_t state_enc_left_passive = 0;
 volatile int16_t state_enc_right_maxon = 0;
 volatile int16_t state_enc_left_maxon = 0;
+
+uint8_t const ENC1_KANAL_A = 4;
+uint8_t const ENC1_KANAL_B = 5;
+uint8_t const ENC2_KANAL_A = 6;
+uint8_t const ENC2_KANAL_B = 7;
+uint8_t const ENC3_KANAL_A = 15;
+uint8_t const ENC3_KANAL_B = 3;
+uint8_t const ENC4_KANAL_A = 0;
+uint8_t const ENC4_KANAL_B = 1;
+uint8_t const AF_TIM1 = 1;
+uint8_t const AF_TIM2 = 1;
+uint8_t const AF_TIM3 = 2;
+uint8_t const AF_TIM4 = 2;
+uint8_t const AF_TIM5 = 2;
 
 void
 encoder_init ()
@@ -29,6 +45,7 @@ encoder_init ()
   tim4_init ();			//enkoder 2 - levi pasivni tocak
   tim2_init ();			//enkoder 3 - desni maxon
   tim5_init ();			//enkoder 4 - levi maxon
+  io_init ();
 }
 
 int16_t
@@ -152,4 +169,50 @@ tim5_init ()					//ENKODER
   TIM5->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
 
   TIM5->CR1 |= (0b1 << 0);			//ukljucivanje timera
+}
+
+static void
+io_init ()
+{
+  RCC->AHB1ENR |= (0b1 << 0);
+
+  GPIOA->MODER &= ~(0b11 << 2 * ENC3_KANAL_A);
+  GPIOA->MODER |= (0b10 << 2 * ENC3_KANAL_A);
+  GPIOA->AFR[ENC3_KANAL_A / 8] &= ~(0b1111 << 4 * (ENC3_KANAL_A % 8));
+  GPIOA->AFR[ENC3_KANAL_A / 8] |= (AF_TIM2 << 4 * (ENC3_KANAL_A % 8));
+
+  GPIOA->MODER &= ~(0b11 << 2 * ENC4_KANAL_A);
+  GPIOA->MODER |= (0b10 << 2 * ENC4_KANAL_A);
+  GPIOA->AFR[ENC4_KANAL_A / 8] &= ~(0b1111 << 4 * (ENC4_KANAL_A % 8));
+  GPIOA->AFR[ENC4_KANAL_A / 8] |= (AF_TIM5 << 4 * (ENC4_KANAL_A % 8));
+
+  GPIOA->MODER &= ~(0b11 << 2 * ENC4_KANAL_B);
+  GPIOA->MODER |= (0b10 << 2 * ENC4_KANAL_B);
+  GPIOA->AFR[ENC4_KANAL_B / 8] &= ~(0b1111 << 4 * (ENC4_KANAL_B % 8));
+  GPIOA->AFR[ENC4_KANAL_B / 8] |= (AF_TIM5 << 4 * (ENC4_KANAL_B % 8));
+
+  RCC->AHB1ENR |= (0b1 << 1);
+
+  GPIOB->MODER &= ~(0b11 << 2 * ENC3_KANAL_B);
+  GPIOB->MODER |= (0b10 << 2 * ENC3_KANAL_B);
+  GPIOB->AFR[ENC3_KANAL_B / 8] &= ~(0b1111 << 4 * (ENC3_KANAL_B % 8));
+  GPIOB->AFR[ENC3_KANAL_B / 8] |= (AF_TIM2 << 4 * (ENC3_KANAL_B % 8));
+
+  GPIOB->MODER &= ~(0b11 << 2 * ENC1_KANAL_A);//podesavanje pinova da rade kao alternativna funkcija
+  GPIOB->MODER &= ~(0b11 << 2 * ENC1_KANAL_B);
+  GPIOB->MODER |= (0b10 << 2 * ENC1_KANAL_A);
+  GPIOB->MODER |= (0b10 << 2 * ENC1_KANAL_B);
+  GPIOB->AFR[ENC1_KANAL_A / 8] &= ~(0b1111 << 4 * (ENC1_KANAL_A % 8));//podesavanje odabira alternativne funkcije
+  GPIOB->AFR[ENC1_KANAL_B / 8] &= ~(0b1111 << 4 * (ENC1_KANAL_B % 8));
+  GPIOB->AFR[ENC1_KANAL_A / 8] |= (AF_TIM3 << 4 * (ENC1_KANAL_A % 8));
+  GPIOB->AFR[ENC1_KANAL_B / 8] |= (AF_TIM3 << 4 * (ENC1_KANAL_B % 8));
+
+  GPIOB->MODER &= ~(0b11 << 2 * ENC2_KANAL_A);//podesavanje pinova da rade kao alternativna funkcija
+  GPIOB->MODER &= ~(0b11 << 2 * ENC2_KANAL_B);
+  GPIOB->MODER |= (0b10 << 2 * ENC2_KANAL_A);
+  GPIOB->MODER |= (0b10 << 2 * ENC2_KANAL_B);
+  GPIOB->AFR[ENC2_KANAL_A / 8] &= ~(0b1111 << 4 * (ENC2_KANAL_A % 8));//podesavanje odabira alternativne funkcije
+  GPIOB->AFR[ENC2_KANAL_B / 8] &= ~(0b1111 << 4 * (ENC2_KANAL_B % 8));
+  GPIOB->AFR[ENC2_KANAL_A / 8] |= (AF_TIM4 << 4 * (ENC2_KANAL_A % 8));
+  GPIOB->AFR[ENC2_KANAL_B / 8] |= (AF_TIM4 << 4 * (ENC2_KANAL_B % 8));
 }

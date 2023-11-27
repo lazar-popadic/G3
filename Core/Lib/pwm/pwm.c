@@ -12,11 +12,17 @@
 
 static void
 tim1_init ();
+static void
+io_init ();
+
+static uint8_t const PWM_KANAL1 = 8;
+static uint8_t const PWM_KANAL2 = 9;
 
 void
 pwm_init ()
 {
   tim1_init ();
+  io_init ();
 }
 
 static void
@@ -64,14 +70,30 @@ tim1_init ()
   TIM1->CR1 &= ~(0b1 << 2); // Šta generiše događaj
   TIM1->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
   while (!(TIM1->SR & (0b1 << 0)))
-    {
-      __NOP();
-    }
+    ;
   TIM1->SR &= ~(0b1 << 0);
 }
 
+static void
+io_init ()
+{
+  RCC->AHB1ENR |= (0b1 << 0);
+
+  GPIOA->MODER &= ~(0b11 << PWM_KANAL1 * 2);
+  GPIOA->MODER &= ~(0b11 << PWM_KANAL2 * 2);
+  GPIOA->MODER |= (0b10 << PWM_KANAL1 * 2);
+  GPIOA->MODER |= (0b10 << PWM_KANAL2 * 2);
+
+  uint8_t const AF = 1;
+
+  GPIOA->AFR[PWM_KANAL1 / 8] &= ~(0xF << (PWM_KANAL1 % 8) * 4);
+  GPIOA->AFR[PWM_KANAL2 / 8] &= ~(0xF << (PWM_KANAL2 % 8) * 4);
+  GPIOA->AFR[PWM_KANAL1 / 8] |= (AF << (PWM_KANAL1 % 8) * 4);
+  GPIOA->AFR[PWM_KANAL2 / 8] |= (AF << (PWM_KANAL2 % 8) * 4);
+}
+
 void
-pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle)// pre ovoga obavezno uradi saturaciju
+pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle) // pre ovoga obavezno uradi saturaciju
 {
   TIM1->CCR1 = duty_cycle;
 }
