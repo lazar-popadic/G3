@@ -111,8 +111,8 @@ int main(void)
 	  //if (pwm_test ())
 	  //  state_main = 0;
 	  //TIM9->CCR1=1300;
-	  debug1=TIM1->CCR1;
-	  debug2=TIM1->CCR2;
+	  debug1=TIM2->CNT;
+	  debug2=TIM5->CNT;
 	  debug3=TIM1->CNT;
 
 
