@@ -1,5 +1,5 @@
 	port A:
-	0 - kanal A enkodera 4 - levi maxon
+	0 - kanal A enkodera 4 - levi maxon - tim5
 	1 - kanal B enkodera 4
 	5 - Internal LED
 	6 - cinc input
@@ -7,13 +7,13 @@
 	9 - tim1 CH 2
 	10 - PWM kanal 3
 	11 - PWM kanal 4
-	15 - kanal A enkodera 3	- desni maxon
+	15 - kanal A enkodera 3	- desni maxon - tim2
 
 	port B:
 	3 - kanal B enkodera 3
-	4 - kanal A enkodera 1	- desni pasivni tocak
+	4 - kanal A enkodera 1	- desni pasivni tocak - tim3
 	5 - kanal B enkodera 1	
-	6 - kanal A enkodera 2	- levi pasivni tocak
+	6 - kanal A enkodera 2	- levi pasivni tocak - tim4
 	7 - kanal B enkodera 2
 	
 	port C:
