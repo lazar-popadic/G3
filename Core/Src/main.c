@@ -37,9 +37,11 @@
 
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
-uint16_t debug1 = 0;
-uint16_t debug2 = 0;
-uint16_t debug3 = 0;
+uint16_t timer_counter9 = 0;
+uint16_t timer_counter2 = 0;
+uint16_t timer_counter3 = 0;
+uint16_t timer_counter4 = 0;
+uint16_t timer_counter5 = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,9 +113,11 @@ int main(void)
 	  //if (pwm_test ())
 	  //  state_main = 0;
 	  //TIM9->CCR1=1300;
-	  debug1=TIM2->CNT;
-	  debug2=TIM5->CNT;
-	  debug3=TIM1->CNT;
+	  timer_counter2=TIM2->CNT;
+	  timer_counter3=TIM3->CNT;
+	  timer_counter4=TIM4->CNT;
+	  timer_counter5=TIM5->CNT;
+	  timer_counter9=TIM9->CNT;
 
 
 	  break;
