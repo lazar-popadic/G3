@@ -15,17 +15,20 @@ tim1_init ();
 static void
 tim5_init ();
 static void
+tim9_init ();
+static void
 io_init ();
 
-static uint8_t const PWM_KANAL1 = 8;
-static uint8_t const PWM_KANAL2 = 9;
+static uint8_t const PWM_KANAL1 = 2;
+static uint8_t const PWM_KANAL2 = 3;
 
 void
 pwm_init ()
 {
   //tim1_init ();
+  tim9_init ();
   //tim5_init ();		//->	ovo je samo prekopirano. moras da zakomentarises i io_init
-  //io_init ();			//TODO: izbaci iz tim5_init u io_init ako radi tako
+  io_init ();			//TODO: izbaci iz tim5_init u io_init ako radi tako
 }
 
 static void
@@ -61,6 +64,13 @@ tim1_init ()
   TIM1->CCER |= (0b1 << 8);
   TIM1->CCER |= (0b1 << 12);
 
+  TIM1->CR1 &= ~(0b1 << 1); // Dozvola događaja
+  TIM1->CR1 &= ~(0b1 << 2); // Šta generiše događaj
+  TIM1->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
+  while (!(TIM1->SR & (0b1 << 0)))
+    ;
+  TIM1->SR &= ~(0b1 << 0);
+
   // Uključivanje tajmera
   TIM1->CR1 |= (0b1 << 0);
 
@@ -68,13 +78,6 @@ tim1_init ()
   TIM1->CCR2 = 1212;
   TIM1->CCR3 = 606;
   TIM1->CCR4 = 4000;
-
-  TIM1->CR1 &= ~(0b1 << 1); // Dozvola događaja
-  TIM1->CR1 &= ~(0b1 << 2); // Šta generiše događaj
-  TIM1->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
-  while (!(TIM1->SR & (0b1 << 0)))
-    ;
-  TIM1->SR &= ~(0b1 << 0);
 }
 
 static void
@@ -134,6 +137,45 @@ tim5_init ()
 }
 
 static void
+tim9_init ()
+{
+  RCC->APB2ENR |= (0b1 << 16);
+
+  // Željena frekvencija za DC motor: 21kHz
+  TIM9->PSC = 0;
+  TIM9->ARR = 4000 - 1;
+  // Željena frekvencija za RC servo motor: 50Hz
+
+  // Podešavanje "PWM mode 1" za sva 4 kanala
+  TIM9->CCMR1 &= ~(0b111 << 4);
+  TIM9->CCMR1 |= (0b110 << 4);
+  TIM9->CCMR1 &= ~(0b111 << 12);
+  TIM9->CCMR1 |= (0b110 << 12);
+
+  // preload, da bi moglo u kodu da se menja, za sva 4 kanala
+  TIM9->CCMR1 |= (0b1 << 3);
+  TIM9->CCMR1 |= (0b1 << 11);
+  TIM9->CR1 |= (0b1 << 7);
+
+  // Uključujemo kanal PWM-a
+  TIM9->CCER |= (0b1 << 0);
+  TIM9->CCER |= (0b1 << 4);
+
+  TIM9->CR1 &= ~(0b1 << 1); // Dozvola događaja
+  TIM9->CR1 &= ~(0b1 << 2); // Šta generiše događaj
+  TIM9->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
+  while (!(TIM9->SR & (0b1 << 0)))
+    ;
+  TIM9->SR &= ~(0b1 << 0);
+
+  // Uključivanje tajmera
+  TIM9->CR1 |= (0b1 << 0);
+
+  TIM9->CCR1 = 2424;
+  TIM9->CCR2 = 1212;
+}
+
+static void
 io_init ()
 {
   RCC->AHB1ENR |= (0b1 << 0);
@@ -154,13 +196,13 @@ io_init ()
 void
 pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle) // pre ovoga obavezno uradi saturaciju
 {
-  TIM1->CCR1 = duty_cycle;
+  TIM9->CCR1 = duty_cycle;
 }
 
 void
 pwm_duty_cycle_out_left_maxon (uint16_t duty_cycle)
 {
-  TIM1->CCR2 = duty_cycle;
+  TIM9->CCR2 = duty_cycle;
 }
 
 /*

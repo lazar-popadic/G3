@@ -184,7 +184,7 @@ regulation_position ()
        * TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
        * TODO: ako menjas nesto i u donjoj funkciji moras da izmenis
        */
-      if (fabs (theta_1) > (M_PI / 2))
+      if (fabs (theta_1) > (M_PI / 2))		// lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
 	distance_error = -distance;
       else
 	distance_error = distance;

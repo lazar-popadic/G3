@@ -1,6 +1,8 @@
 	port A:
 	0 - kanal A enkodera 4 - levi maxon - tim5
 	1 - kanal B enkodera 4
+	2 - tim9 CH1
+	3 - tim9 CH2
 	5 - Internal LED
 	6 - cinc input
 	8 - tim1 CH 1
