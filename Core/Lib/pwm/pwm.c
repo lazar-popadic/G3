@@ -19,16 +19,16 @@ tim9_init ();
 static void
 io_init ();
 
-static uint8_t const PWM_KANAL1 = 2;
-static uint8_t const PWM_KANAL2 = 3;
+static uint8_t const PWM_KANAL1 = 0;
+static uint8_t const PWM_KANAL2 = 1;
 
 void
 pwm_init ()
 {
   //tim1_init ();
-  tim9_init ();
-  //tim5_init ();		//->	ovo je samo prekopirano. moras da zakomentarises i io_init
-  io_init ();			//TODO: izbaci iz tim5_init u io_init ako radi tako
+  //tim9_init ();
+  tim5_init ();
+  io_init ();
 }
 
 static void
@@ -83,23 +83,7 @@ tim1_init ()
 static void
 tim5_init ()
 {
-  RCC->AHB1ENR |= (0b1 << 0);
   RCC->APB1ENR |= (0b1 << 3);
-
-  uint8_t const KANAL1 = 0; // PA0
-  uint8_t const KANAL2 = 1; // PA1
-
-  GPIOA->MODER &= ~(0b11 << KANAL1 * 2);
-  GPIOA->MODER &= ~(0b11 << KANAL2 * 2);
-  GPIOA->MODER |= (0b10 << KANAL1 * 2);
-  GPIOA->MODER |= (0b10 << KANAL2 * 2);
-
-  uint8_t const AF = 2;
-
-  GPIOA->AFR[KANAL1 / 8] &= ~(0xF << (KANAL1 % 8) * 4);
-  GPIOA->AFR[KANAL2 / 8] &= ~(0xF << (KANAL2 % 8) * 4);
-  GPIOA->AFR[KANAL1 / 8] |= (AF << (KANAL1 % 8) * 4);
-  GPIOA->AFR[KANAL2 / 8] |= (AF << (KANAL2 % 8) * 4);
 
   // Željena frekvencija za DC motor: 21kHz
   TIM5->PSC = 0;
@@ -176,7 +160,7 @@ tim9_init ()
 }
 
 static void
-io_init ()
+io_init ()	// tim5
 {
   RCC->AHB1ENR |= (0b1 << 0);
 
@@ -185,7 +169,7 @@ io_init ()
   GPIOA->MODER |= (0b10 << PWM_KANAL1 * 2);
   GPIOA->MODER |= (0b10 << PWM_KANAL2 * 2);
 
-  uint8_t const AF = 1;
+  uint8_t const AF = 2;
 
   GPIOA->AFR[PWM_KANAL1 / 8] &= ~(0xF << (PWM_KANAL1 % 8) * 4);
   GPIOA->AFR[PWM_KANAL2 / 8] &= ~(0xF << (PWM_KANAL2 % 8) * 4);
@@ -196,13 +180,13 @@ io_init ()
 void
 pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle) // pre ovoga obavezno uradi saturaciju
 {
-  TIM9->CCR1 = duty_cycle;
+  TIM5->CCR1 = duty_cycle;
 }
 
 void
 pwm_duty_cycle_out_left_maxon (uint16_t duty_cycle)
 {
-  TIM9->CCR2 = duty_cycle;
+  TIM5->CCR2 = duty_cycle;
 }
 
 /*

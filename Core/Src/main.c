@@ -84,7 +84,7 @@ main (void)
   timer_init ();
   encoder_init ();
   odometrija_init ();
-  //pwm_init ();
+  pwm_init ();
   uart_init ();
 
   io_led (true);
