@@ -109,17 +109,11 @@ main (void)
 	case START:
 	  io_cinc_loop ();
 	  timer_start_sys_time ();
-	  io_led (false);
 	  state_main = 0;
 	  break;
 	case 0:
-	  //if (pwm_test ())
-	  //  state_main = 0;
-	  timer_counter2 = TIM2->CNT;
-	  timer_counter3 = TIM3->CNT;
-	  timer_counter4 = TIM4->CNT;
-	  timer_counter5 = TIM5->CNT;
-	  timer_counter9 = TIM9->CNT;
+	  if (pwm_test ())
+	    state_main++;
 
 	  break;
 	case END:

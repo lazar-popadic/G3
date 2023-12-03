@@ -113,27 +113,27 @@ stop_wheel_2 ()
 }
 
 void
-set_direction_1_wheel_1 ()
+wheel_1_forwards ()
 {
   GPIOC->ODR &= ~(0b1 << H1_DIR2);
   GPIOC->ODR |= (0b1 << H1_DIR1);
 }
 
 void
-set_direction_2_wheel_1 ()
+wheel_1_backwards ()
 {
   GPIOC->ODR &= ~(0b1 << H1_DIR1);
   GPIOC->ODR |= (0b1 << H1_DIR2);
 }
 
 void
-set_direction_1_wheel_2 ()
+wheel_2_forwards ()
 {
   GPIOC->ODR &= ~(0b1 << H2_DIR2);
   GPIOC->ODR |= (0b1 << H2_DIR1);
 }
 void
-set_direction_2_wheel_2 ()
+wheel_2_backwards ()
 {
   GPIOC->ODR &= ~(0b1 << H2_DIR1);
   GPIOC->ODR |= (0b1 << H2_DIR2);

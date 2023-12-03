@@ -9,9 +9,7 @@
 #define LIB_MODULES_TACTICS_TACTICS_H_
 
 bool
-ax_test();
-bool
-ax_test_kraci_fsm();
+ax_test2 ();
 bool
 pwm_test ();
 

@@ -178,13 +178,13 @@ io_init ()	// tim5
 }
 
 void
-pwm_duty_cycle_out_right_maxon (uint16_t duty_cycle) // pre ovoga obavezno uradi saturaciju
+pwm_duty_cycle_right (uint16_t duty_cycle) // pre ovoga obavezno uradi saturaciju
 {
   TIM5->CCR1 = duty_cycle;
 }
 
 void
-pwm_duty_cycle_out_left_maxon (uint16_t duty_cycle)
+pwm_duty_cycle_left (uint16_t duty_cycle)
 {
   TIM5->CCR2 = duty_cycle;
 }

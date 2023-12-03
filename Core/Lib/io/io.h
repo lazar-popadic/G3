@@ -21,13 +21,13 @@ stop_wheel_1 ();
 void
 stop_wheel_2 ();
 void
-set_direction_1_wheel_1();
+wheel_1_forwards ();
 void
-set_direction_2_wheel_1();
+wheel_1_backwards ();
 void
-set_direction_1_wheel_2();
+wheel_2_forwards ();
 void
-set_direction_2_wheel_2();
+wheel_2_backwards ();
 
 
 #endif /* IO_H_ */
