@@ -16,6 +16,10 @@ enum direction
   FORWARDS = 1, STOP = 0, BACKWARDS = -1
 };
 
+uint16_t dc = 0;
+enum direction wheel = STOP;
+
+
 bool
 ax_test2 ()
 {
@@ -70,9 +74,6 @@ ax_test2 ()
 bool
 pwm_test ()
 {
-  static uint16_t dc = 0;
-  static enum direction wheel = STOP;
-
   switch (state)
     {
     case 0:
