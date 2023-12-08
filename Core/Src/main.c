@@ -112,8 +112,9 @@ main (void)
 	  state_main = 0;
 	  break;
 	case 0:
-	  if (pwm_test ())
+	  if (pwm_test2 ())
 	    state_main++;
+
 
 	  break;
 	case END:

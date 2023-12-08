@@ -88,9 +88,9 @@ pwm_test ()
       break;
     case 1:
       if (wheel_direction == BACKWARDS)
-	wheel_1_backwards ();
+	wheel_2_backwards ();
       else if (wheel_direction == FORWARDS)
-	wheel_1_forwards ();
+	wheel_2_forwards ();
       else
 	stop_wheel_1 ();
       pwm_duty_cycle_left (abs (dc));
@@ -116,15 +116,15 @@ pwm_test2 ()
       state_init = false;
       break;
     case 1:
-      dc = TIM3->CNT / 24;
+      dc += timer_speed_of_encoder_right_passive();
       dc = saturation (dc, 2824, -2824);
 
       if (abs (dc) < 500)
 	stop_wheel_1 ();
       else if (dc > 500)
-	wheel_1_forwards ();
+	wheel_2_forwards ();
       else if (dc < -500)
-	wheel_1_backwards ();
+	wheel_2_backwards ();
 
       pwm_duty_cycle_left (abs (dc));
 

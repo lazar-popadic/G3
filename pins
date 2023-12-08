@@ -1,14 +1,12 @@
 	port A:
-	0 - kanal A enkodera 4 - levi maxon - tim5
-	1 - kanal B enkodera 4
+	0 - tim5 CH1
+	1 - tim5 CH2
 	2 - tim9 CH1
 	3 - tim9 CH2
 	5 - Internal LED
 	6 - cinc input
 	8 - tim1 CH 1
 	9 - tim1 CH 2
-	10 - PWM kanal 3
-	11 - PWM kanal 4
 	15 - kanal A enkodera 3	- desni maxon - tim2
 
 	port B:
@@ -24,10 +22,9 @@
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
 	13 - button
-	14 - direction 1 za h-most 1
-	15 - direction 2 za h-most 1
-	
+
+	RADE: PA2 I PA3
 	
 ne rade:
-	PA2
-	PA3
+	PC14 - direction 1 za h-most 1
+	PC15 - direction 2 za h-most 1
