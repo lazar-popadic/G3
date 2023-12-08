@@ -16,9 +16,8 @@ enum direction
   FORWARDS = 1, STOP = 0, BACKWARDS = -1
 };
 
-uint16_t dc = 0;
-enum direction wheel = STOP;
-
+int16_t dc = 0;
+enum direction wheel_direction = STOP;
 
 bool
 ax_test2 ()
@@ -88,13 +87,46 @@ pwm_test ()
       state_init = false;
       break;
     case 1:
-      if (wheel == STOP)
-	stop_wheel_1 ();
-      else if (wheel == FORWARDS)
+      if (wheel_direction == BACKWARDS)
+	wheel_1_backwards ();
+      else if (wheel_direction == FORWARDS)
 	wheel_1_forwards ();
       else
-	wheel_2_backwards ();
-      pwm_duty_cycle_left(dc);
+	stop_wheel_1 ();
+      pwm_duty_cycle_left (abs (dc));
+      break;
+    }
+  return tactic_finished;
+}
+
+bool
+pwm_test2 ()
+{
+  switch (state)
+    {
+    case 0:
+      if (!state_init)
+	{
+	  state_init = true;
+	  tactic_finished = false;
+	  io_led (false);
+
+	}
+      state++;
+      state_init = false;
+      break;
+    case 1:
+      dc = TIM3->CNT / 24;
+      dc = saturation (dc, 2824, -2824);
+
+      if (abs (dc) < 500)
+	stop_wheel_1 ();
+      else if (dc > 500)
+	wheel_1_forwards ();
+      else if (dc < -500)
+	wheel_1_backwards ();
+
+      pwm_duty_cycle_left (abs (dc));
 
       break;
     }

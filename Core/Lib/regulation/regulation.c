@@ -35,8 +35,6 @@ static void
 regulation_rotation (float theta, float faktor);
 static void
 regulation_translation (float distance);
-static float
-saturation (float signal, float MAX, float MIN);
 static void
 regulation_rotation_finished ();
 static void
@@ -99,7 +97,7 @@ regulation_init ()
   inc2rad_deltaT = M_PI / 4096;	//2*Pi / 4*2048
 }
 
-static float
+float
 saturation (float signal, float MAX, float MIN)
 {
   if (signal > MAX)
@@ -129,6 +127,7 @@ regulation_speed ()
   u_left = KP_SPEED * e_left + KI_SPEED * e_i_left + KD_SPEED * e_d_left;
   u_left = saturation (u_left, SPEED_LIMIT, -SPEED_LIMIT);
 
+  //TODO: ispravi nazive ovih funkcija
   if (u_right > 0)
     set_direction_1_wheel_1 ();
   else

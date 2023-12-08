@@ -70,7 +70,7 @@ portc_init ()
   GPIOC->MODER |= (0b01 << 2 * H2_DIR1);
   GPIOC->MODER |= (0b01 << 2 * H2_DIR2);
 
-  //h-most 1 stop
+  //h-most 2 stop
   GPIOC->ODR &= ~(0b1 << H2_DIR1);
   GPIOC->ODR &= ~(0b1 << H2_DIR2);
 }

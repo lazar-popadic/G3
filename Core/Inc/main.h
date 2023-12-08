@@ -33,7 +33,9 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "../Lib/io/io.h"
 #include <stdbool.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
 #include "../Lib/timer/timer.h"
 #include "../Lib/odometrija/odometrija.h"
 #include "../Lib/uart/uart.h"

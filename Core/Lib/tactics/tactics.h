@@ -12,5 +12,7 @@ bool
 ax_test2 ();
 bool
 pwm_test ();
+bool
+pwm_test2 ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */
