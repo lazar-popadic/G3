@@ -10,16 +10,11 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "stm32f4xx.h"
 
 void
 timer_init ();
 bool
 timer_delay_nonblocking (uint32_t delay_ms);
-int16_t
-timer_speed_of_encoder1 ();
-int16_t
-timer_speed_of_encoder2 ();
 void
 timer_start_sys_time ();
 bool

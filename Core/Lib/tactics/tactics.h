@@ -9,8 +9,10 @@
 #define LIB_MODULES_TACTICS_TACTICS_H_
 
 bool
-ax_test();
+ax_test2 ();
 bool
-ax_test_kraci_fsm();
+pwm_test ();
+bool
+pwm_test2 ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

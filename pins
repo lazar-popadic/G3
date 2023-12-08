@@ -1,22 +1,30 @@
-in .ioc:
-	port C:
-	13 - button
-
-
-outside of .ioc:
 	port A:
-	0 - PWM output
-	5 - LED
+	0 - tim5 CH1
+	1 - tim5 CH2
+	2 - tim9 CH1
+	3 - tim9 CH2
+	5 - Internal LED
 	6 - cinc input
+	8 - tim1 CH 1
+	9 - tim1 CH 2
+	15 - kanal A enkodera 3	- desni maxon - tim2
 
 	port B:
-	4 - kanal A enkodera 1
-	5 - kanal B enkodera 1
-	6 - kanal A enkodera 2
+	3 - kanal B enkodera 3
+	4 - kanal A enkodera 1	- desni pasivni tocak - tim3
+	5 - kanal B enkodera 1	
+	6 - kanal A enkodera 2	- levi pasivni tocak - tim4
 	7 - kanal B enkodera 2
 	
 	port C:
+	2 - direction 1 za h-most 2
+	3 - direction 2 za h-most 2
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
-	14 - direction 1 za h-most
-	15 - direction 2 za h-most
+	13 - button
+
+	RADE: PA2 I PA3
+	
+ne rade:
+	PC14 - direction 1 za h-most 1
+	PC15 - direction 2 za h-most 1

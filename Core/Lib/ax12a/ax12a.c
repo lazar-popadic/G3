@@ -7,7 +7,7 @@
 
 #include "ax12a.h"
 
-#include "../../periphery/uart/uart.h"
+#include "../uart/uart.h"
 
 /*
  * ugao: (OD 0 DO 1023 => 0D 0 stepeni DO 300 stepeni)
@@ -18,7 +18,7 @@
  * brzina: (OD 1 DO 1023 => OD minimalne DO maksimalne) (0 je takodje maksimalna za dat napon, NEMA KONTROLE BRZINE!)
  * 0 = max bez kontrole
  * 1 = minimum
- * 0x3ff = 1023 = maximum (114 rpm, ali pise da je max zapravo oko 59 rpm. TODO: proveri max brzinu)
+ * 0x3ff = 1023 = maximum (114 rpm, ali pise da je max zapravo oko 59 rpm.
  */
 
 void
