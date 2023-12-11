@@ -42,8 +42,8 @@ encoder_init ()
 {
   tim3_init ();			//enkoder 1 - desni pasivni tocak
   tim4_init ();			//enkoder 2 - levi pasivni tocak
-  //tim2_init ();			//enkoder 3 - desni maxon
-  //tim5_init ();			//enkoder 4 - levi maxon
+  tim2_init ();			//enkoder 3 - desni maxon
+  tim5_init ();			//enkoder 4 - levi maxon
   io_init ();
 }
 
