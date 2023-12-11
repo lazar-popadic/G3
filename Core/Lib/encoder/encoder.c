@@ -175,27 +175,27 @@ io_init ()
 {
   RCC->AHB1ENR |= (0b1 << 0);
 
-//  GPIOA->MODER &= ~(0b11 << 2 * ENC3_A);
-//  GPIOA->MODER |= (0b10 << 2 * ENC3_A);
-//  GPIOA->AFR[ENC3_A / 8] &= ~(0b1111 << 4 * (ENC3_A % 8));
-//  GPIOA->AFR[ENC3_A / 8] |= (AF_TIM2 << 4 * (ENC3_A % 8));
-//
-//  GPIOA->MODER &= ~(0b11 << 2 * ENC4_A);
-//  GPIOA->MODER |= (0b10 << 2 * ENC4_A);
-//  GPIOA->AFR[ENC4_A / 8] &= ~(0b1111 << 4 * (ENC4_A % 8));
-//  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM5 << 4 * (ENC4_A % 8));
-//
-//  GPIOA->MODER &= ~(0b11 << 2 * ENC4_B);
-//  GPIOA->MODER |= (0b10 << 2 * ENC4_B);
-//  GPIOA->AFR[ENC4_B / 8] &= ~(0b1111 << 4 * (ENC4_B % 8));
-//  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM5 << 4 * (ENC4_B % 8));
+  GPIOA->MODER &= ~(0b11 << 2 * ENC3_A);
+  GPIOA->MODER |= (0b10 << 2 * ENC3_A);
+  GPIOA->AFR[ENC3_A / 8] &= ~(0b1111 << 4 * (ENC3_A % 8));
+  GPIOA->AFR[ENC3_A / 8] |= (AF_TIM2 << 4 * (ENC3_A % 8));
+
+  GPIOA->MODER &= ~(0b11 << 2 * ENC4_A);
+  GPIOA->MODER |= (0b10 << 2 * ENC4_A);
+  GPIOA->AFR[ENC4_A / 8] &= ~(0b1111 << 4 * (ENC4_A % 8));
+  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM5 << 4 * (ENC4_A % 8));
+
+  GPIOA->MODER &= ~(0b11 << 2 * ENC4_B);
+  GPIOA->MODER |= (0b10 << 2 * ENC4_B);
+  GPIOA->AFR[ENC4_B / 8] &= ~(0b1111 << 4 * (ENC4_B % 8));
+  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM5 << 4 * (ENC4_B % 8));
 
   RCC->AHB1ENR |= (0b1 << 1);
 
-//  GPIOB->MODER &= ~(0b11 << 2 * ENC3_B);
-//  GPIOB->MODER |= (0b10 << 2 * ENC3_B);
-//  GPIOB->AFR[ENC3_B / 8] &= ~(0b1111 << 4 * (ENC3_B % 8));
-//  GPIOB->AFR[ENC3_B / 8] |= (AF_TIM2 << 4 * (ENC3_B % 8));
+  GPIOB->MODER &= ~(0b11 << 2 * ENC3_B);
+  GPIOB->MODER |= (0b10 << 2 * ENC3_B);
+  GPIOB->AFR[ENC3_B / 8] &= ~(0b1111 << 4 * (ENC3_B % 8));
+  GPIOB->AFR[ENC3_B / 8] |= (AF_TIM2 << 4 * (ENC3_B % 8));
 
   GPIOB->MODER &= ~(0b11 << 2 * ENC1_A);//podesavanje pinova da rade kao alternativna funkcija
   GPIOB->MODER &= ~(0b11 << 2 * ENC1_B);

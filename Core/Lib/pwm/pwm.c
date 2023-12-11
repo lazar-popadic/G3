@@ -21,9 +21,7 @@ static uint8_t const PWM_KANAL2 = 3;
 void
 pwm_init ()
 {
-  //tim1_init ();
   tim9_init ();
-  //tim5_init ();
   io_init ();
 }
 
@@ -97,13 +95,6 @@ pwm_duty_cycle_left (uint16_t duty_cycle)
 }
 
 /*
- * saturacija:
- * if (signal > max)
- * return max
- * if (signal < min)
- * return min
- * return signal
- *
  * prag:
  * if (signal > max)
  * return true
