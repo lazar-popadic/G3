@@ -116,17 +116,23 @@ pwm_test2 ()
       state_init = false;
       break;
     case 1:
-      dc += timer_speed_of_encoder_right_passive();
+      dc += timer_speed_of_encoder_left_passive();
       dc = saturation (dc, 2824, -2824);
 
-      if (abs (dc) < 500)
-	stop_wheel_1 ();
-      else if (dc > 500)
-	wheel_2_forwards ();
-      else if (dc < -500)
-	wheel_2_backwards ();
 
-      pwm_duty_cycle_left (abs (dc));
+      if (dc > 500)
+      {
+    	  //wheel_1_forwards ();
+    	  wheel_2_forwards ();
+      }
+      else if (dc < -500)
+      {
+    	  //wheel_1_backwards ();
+    	  wheel_2_backwards ();
+      }
+
+      pwm_duty_cycle_right(abs (dc));
+      pwm_duty_cycle_left(abs (2824 - dc));
 
       break;
     }

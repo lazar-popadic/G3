@@ -112,9 +112,12 @@ main (void)
 	  state_main = 0;
 	  break;
 	case 0:
-	  if (pwm_test2 ())
-	    state_main++;
-
+	 //if (pwm_test2 ())
+	 //   state_main++;
+		timer_counter2 = TIM2->CNT;
+		timer_counter3 = TIM3->CNT;
+		timer_counter4 = TIM4->CNT;
+		timer_counter5 = TIM5->CNT;
 
 	  break;
 	case END:
