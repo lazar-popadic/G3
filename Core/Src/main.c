@@ -42,6 +42,7 @@ uint16_t timer_counter2 = 0;
 uint16_t timer_counter3 = 0;
 uint16_t timer_counter4 = 0;
 uint16_t timer_counter5 = 0;
+uint16_t dc_main = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,18 +107,24 @@ main (void)
 	{
 	default:
 	  break;
+//	case START:
+//	  io_protocinc ();
+//	  timer_start_sys_time ();
+//	  state_main = 0;
+//	  break;
 	case START:
-	  io_cinc_loop ();
-	  timer_start_sys_time ();
-	  state_main = 0;
+	  if (io_cinc ())
+	    {
+	      timer_start_sys_time ();
+	      state_main = 0;
+	    }
 	  break;
 	case 0:
-	 //if (pwm_test2 ())
-	 //   state_main++;
-		timer_counter2 = TIM2->CNT;
-		timer_counter3 = TIM3->CNT;
-		timer_counter4 = TIM4->CNT;
-		timer_counter5 = TIM5->CNT;
+	  //if (pwm_test2 ())
+	  //   state_main++;
+//	  wheel_2_forwards();
+//	  pwm_duty_cycle_right (dc_main);
+//	  pwm_duty_cycle_left (dc_main/2);
 
 	  break;
 	case END:

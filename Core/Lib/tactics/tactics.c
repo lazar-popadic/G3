@@ -31,13 +31,13 @@ ax_test2 ()
 	  tactic_finished = false;
 	  io_led (false);
 	}
-      ax_move (4, 0, 0);
+      ax_move (4, 511, 0);
       HAL_Delay (10);
-      ax_move (5, 0, 0);
+      ax_move (5, 511, 0);
       HAL_Delay (10);
-      ax_move (6, 0, 0);
+      ax_move (6, 511, 0);
       HAL_Delay (10);
-      ax_move (7, 0, 0);
+      ax_move (7, 511, 0);
 
       state++;
       state_init = false;

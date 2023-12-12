@@ -15,7 +15,9 @@ io_init ();
 void
 io_led (bool status);
 void
-io_cinc_loop ();
+io_protocinc ();
+bool
+io_cinc ();
 void
 stop_wheel_1 ();
 void
