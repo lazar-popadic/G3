@@ -103,15 +103,10 @@ main (void)
       if (timer_end ())
 	state_main = END;
 
-      switch (state_main)
+       switch (state_main)
 	{
 	default:
 	  break;
-//	case START:
-//	  io_protocinc ();
-//	  timer_start_sys_time ();
-//	  state_main = 0;
-//	  break;
 	case START:
 	  if (io_cinc ())
 	    {
@@ -123,8 +118,8 @@ main (void)
 	  //if (pwm_test2 ())
 	  //   state_main++;
 //	  wheel_2_forwards();
-//	  pwm_duty_cycle_right (dc_main);
-//	  pwm_duty_cycle_left (dc_main/2);
+	  pwm_duty_cycle_right (dc_main);
+	  pwm_duty_cycle_left (dc_main/2);
 
 	  break;
 	case END:

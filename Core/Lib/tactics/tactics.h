@@ -11,6 +11,8 @@
 bool
 ax_test2 ();
 bool
+grabulja_test ();
+bool
 pwm_test ();
 bool
 pwm_test2 ();

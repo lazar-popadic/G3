@@ -71,6 +71,45 @@ ax_test2 ()
 }
 
 bool
+grabulja_test ()
+{
+  switch (state)
+    {
+    case 0:
+      if (!state_init)
+	{
+	  state_init = true;
+	  tactic_finished = false;
+	  io_led (false);
+	}
+      ax_move (7, 364, 100);
+
+      state++;
+      state_init = false;
+      break;
+    case 1:
+      if (timer_delay_nonblocking (1500))
+	state++;
+      break;
+    case 2:
+      //inicijalizacija
+      //telo stanja
+      ax_move (7, 1023, 100);
+      //uslov prelaska
+      state++;
+      break;
+    case 3:
+      if (timer_delay_nonblocking (1500))
+	state = 0;
+      break;
+    case 4:
+      tactic_finished = true;
+      return tactic_finished;
+    }
+  return tactic_finished;
+}
+
+bool
 pwm_test ()
 {
   switch (state)
