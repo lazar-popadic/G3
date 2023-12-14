@@ -18,18 +18,6 @@ void
 io_protocinc ();
 bool
 io_cinc ();
-void
-stop_wheel_1 ();
-void
-stop_wheel_2 ();
-void
-wheel_1_forwards ();
-void
-wheel_1_backwards ();
-void
-wheel_2_forwards ();
-void
-wheel_2_backwards ();
 
 
 #endif /* IO_H_ */

@@ -12,6 +12,7 @@
 #include "../io/io.h"
 #include "../odometry/odometry.h"
 #include "../pwm/pwm.h"
+#include "../h-bridge/h-bridge.h"
 
 #define EPSILON_THETA		0.1
 #define EPSILON_DISTANCE	0.1

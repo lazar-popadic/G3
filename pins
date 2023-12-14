@@ -1,15 +1,15 @@
-	port A:
+port A:
 	0 - enc4 A - levi maxon - tim5
 	1 - enc4 B	
 	2 - PWM 1
 	3 - PWM 2
 	5 - led
 	6 - cinc
-	11 - direction 1 za h-most 1
-	12 - direction 2 za h-most 1
+	11 - dir1 h-most1
+	12 - dir2 h-most1
 	15 - enc3 A	- desni maxon - tim2
 
-	port B:
+port B:
 	3 - enc3 B
 	4 - enc1 A	- desni pasivni tocak - tim3
 	5 - enc1 B	
@@ -17,14 +17,14 @@
 	7 - enc2 B
 	8 - senzor1
 	9 - senzor2
-	12 - senzor3
-	13 - senzor4
-	14 - senzor5
-	15 - senzor6
-	
-	port C:
-	2 - direction 1 za h-most 2
-	3 - direction 2 za h-most 2
+
+port C:
+	0 - senzor3
+	1 - senzor4
+	2 - dir1 h-most2
+	3 - dir2 h-most2
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
+	10 - senzor5
+	11 - senzor6
 	13 - button

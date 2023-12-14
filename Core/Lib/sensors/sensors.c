@@ -11,13 +11,16 @@
 static void
 io_init ();
 
+//PortB
 uint8_t s1 = 8;
 uint8_t s2 = 9;
-uint8_t s3 = 12;
-uint8_t s4 = 13;
+
 uint8_t s5 = 14;
 uint8_t s6 = 15;
-uint8_t button = 13; //PC13
+//PortC
+uint8_t s3 = 0;
+uint8_t s4 = 1;
+uint8_t button = 13;
 
 void
 sensors_init ()
@@ -28,7 +31,7 @@ sensors_init ()
 void
 io_init ()
 {
-  RCC->AHB1ENR |= (0b1 << 1);
+  RCC->AHB1ENR |= (0b1 << 1);		//PortB
 
   GPIOB->MODER &= ~(0b11 << 2 * s1);
   GPIOB->MODER &= ~(0b11 << 2 * s2);
@@ -37,7 +40,7 @@ io_init ()
   GPIOB->MODER &= ~(0b11 << 2 * s5);
   GPIOB->MODER &= ~(0b11 << 2 * s6);
 
-  RCC->AHB1ENR |= (0b1 << 2);
+  RCC->AHB1ENR |= (0b1 << 2);		//PortC
 
   GPIOB->MODER &= ~(0b11 << 2 * button);
 }

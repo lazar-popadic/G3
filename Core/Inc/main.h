@@ -45,6 +45,7 @@ extern "C" {
 #include "../Lib/pwm/pwm.h"
 #include "../Lib/encoder/encoder.h"
 #include "../Lib/sensors/sensors.h"
+#include "../Lib/h-bridge/h-bridge.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
