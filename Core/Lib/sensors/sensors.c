@@ -12,14 +12,14 @@ static void
 io_init ();
 
 //PortB
-uint8_t s1 = 8;
-uint8_t s2 = 9;
+uint8_t infra1 = 8;
+uint8_t infra2 = 9;
 
-uint8_t s5 = 14;
-uint8_t s6 = 15;
 //PortC
-uint8_t s3 = 0;
-uint8_t s4 = 1;
+uint8_t infra3 = 0;
+uint8_t infra4 = 1;
+uint8_t infra5 = 10;
+uint8_t infra6 = 11;
 uint8_t button = 13;
 
 void
@@ -33,12 +33,12 @@ io_init ()
 {
   RCC->AHB1ENR |= (0b1 << 1);		//PortB
 
-  GPIOB->MODER &= ~(0b11 << 2 * s1);
-  GPIOB->MODER &= ~(0b11 << 2 * s2);
-  GPIOB->MODER &= ~(0b11 << 2 * s3);
-  GPIOB->MODER &= ~(0b11 << 2 * s4);
-  GPIOB->MODER &= ~(0b11 << 2 * s5);
-  GPIOB->MODER &= ~(0b11 << 2 * s6);
+  GPIOB->MODER &= ~(0b11 << 2 * infra1);
+  GPIOB->MODER &= ~(0b11 << 2 * infra2);
+  GPIOB->MODER &= ~(0b11 << 2 * infra3);
+  GPIOB->MODER &= ~(0b11 << 2 * infra4);
+  GPIOB->MODER &= ~(0b11 << 2 * infra5);
+  GPIOB->MODER &= ~(0b11 << 2 * infra6);
 
   RCC->AHB1ENR |= (0b1 << 2);		//PortC
 
@@ -48,7 +48,7 @@ io_init ()
 bool
 sensors_low ()
 {
-  if (!(GPIOB->IDR & ((0b1 << s1) | (0b1 << s2))))
+  if (!(GPIOB->IDR & ((0b1 << infra1) | (0b1 << infra2))))
       return true;
   return false;
 }
@@ -56,7 +56,7 @@ sensors_low ()
 bool
 sensors_high ()
 {
-  if (!(GPIOB->IDR & ((0b1 << s3) | (0b1 << s4))))
+  if (!(GPIOC->IDR & ((0b1 << infra3) | (0b1 << infra4))))
       return true;
   return false;
 }
@@ -64,7 +64,7 @@ sensors_high ()
 bool
 sensors_back ()
 {
-  if (!(GPIOB->IDR & ((0b1 << s5) | (0b1 << s6))))
+  if (!(GPIOC->IDR & ((0b1 << infra5) | (0b1 << infra6))))
       return true;
   return false;
 }
