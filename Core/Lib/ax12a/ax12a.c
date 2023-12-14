@@ -26,9 +26,9 @@ ax_move (uint8_t id, uint16_t angle, uint16_t speed)
 {
   uint8_t angle_low, angle_high, speed_low, speed_high;
   angle_low = angle & 0xff;
-  angle_high = angle << 8;
+  angle_high = angle >> 8;
   speed_low = speed & 0xff;
-  speed_high = speed << 8;
+  speed_high = speed >> 8;
 
   uint16_t checksum_local = id + 7 + 3 + 0x1e + angle_low + angle_high
       + speed_low + speed_high;

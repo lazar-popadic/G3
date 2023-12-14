@@ -8,9 +8,9 @@
 #include "regulation.h"
 #include <stdbool.h>
 #include "../encoder/encoder.h"
-#include "../odometrija/odometrija.h"
 #include "math.h"
 #include "../io/io.h"
+#include "../odometry/odometry.h"
 #include "../pwm/pwm.h"
 
 #define EPSILON_THETA		0.1
@@ -127,16 +127,15 @@ regulation_speed ()
   u_left = KP_SPEED * e_left + KI_SPEED * e_i_left + KD_SPEED * e_d_left;
   u_left = saturation (u_left, SPEED_LIMIT, -SPEED_LIMIT);
 
-  //TODO: ispravi nazive ovih funkcija
   if (u_right > 0)
-    set_direction_1_wheel_1 ();
+    wheel_1_forwards ();
   else
-    set_direction_2_wheel_1 ();
+    wheel_1_backwards ();
 
   if (u_left > 0)
-    set_direction_1_wheel_2 ();
+    wheel_2_forwards ();
   else
-    set_direction_2_wheel_2 ();
+    wheel_2_backwards ();
   //pwm_duty_cycle((uint16_t)fabs(u_saturated));	//fabs je za float apsolutnu vrednost
   //u pwm_dc ide procenat od max brzine, a ovde cu da racunam u rad/deltaT
   // Tj. ovde postavlja referencu za struju

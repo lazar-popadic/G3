@@ -15,6 +15,12 @@
 	5 - enc1 B	
 	6 - enc2 A	- levi pasivni tocak - tim4
 	7 - enc2 B
+	8 - senzor1
+	9 - senzor2
+	12 - senzor3
+	13 - senzor4
+	14 - senzor5
+	15 - senzor6
 	
 	port C:
 	2 - direction 1 za h-most 2

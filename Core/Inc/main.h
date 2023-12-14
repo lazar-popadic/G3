@@ -37,13 +37,14 @@ extern "C" {
 #include <stdint.h>
 #include <math.h>
 #include "../Lib/timer/timer.h"
-#include "../Lib/odometrija/odometrija.h"
+#include "../Lib/odometry/odometry.h"
 #include "../Lib/uart/uart.h"
 #include "../Lib/ax12a/ax12a.h"
 #include "../Lib/tactics/tactics.h"
 #include "../Lib/regulation/regulation.h"
 #include "../Lib/pwm/pwm.h"
 #include "../Lib/encoder/encoder.h"
+#include "../Lib/sensors/sensors.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

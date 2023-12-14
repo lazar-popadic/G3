@@ -5,7 +5,7 @@
  *      Author: lazar
  */
 
-#include "odometrija.h"
+#include "odometry.h"
 
 #include <stdint.h>
 #include "../encoder/encoder.h"

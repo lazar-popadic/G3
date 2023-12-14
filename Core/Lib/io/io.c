@@ -18,7 +18,7 @@ portc_init ();
 uint8_t const INT_LED = 5, CINC = 6;
 uint8_t const H2_DIR1 = 2, H2_DIR2 = 3;
 uint8_t const H1_DIR1 = 11, H1_DIR2 = 12;
-volatile uint32_t counter = 0;
+volatile uint16_t counter = 0;
 
 
 void
@@ -107,7 +107,7 @@ io_cinc ()
       counter++;
   else
     counter = 0;
-  if (counter > 1000000)
+  if (counter > 64000)
     return true;
   return false;
 }

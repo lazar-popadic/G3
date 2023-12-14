@@ -87,6 +87,7 @@ main (void)
   odometrija_init ();
   pwm_init ();
   uart_init ();
+  sensors_init();
 
   io_led (true);
   __enable_irq ();
@@ -117,10 +118,13 @@ main (void)
 	case 0:
 	  //if (pwm_test2 ())
 	  //   state_main++;
-//	  wheel_2_forwards();
-	  pwm_duty_cycle_right (dc_main);
-	  pwm_duty_cycle_left (dc_main/2);
-
+//	  pwm_duty_cycle_right (dc_main);
+//	  pwm_duty_cycle_left (dc_main/2);
+	  if (button_pressed())
+	    io_led(true);
+	  else
+	    io_led(false);
+	  ax_move(4, 1023, 200);
 	  break;
 	case END:
 	  io_led (true);
