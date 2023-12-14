@@ -48,7 +48,7 @@ io_init ()
 bool
 sensors_low ()
 {
-  if (!(GPIOB->IDR & ((0b1 << infra1) | (0b1 << infra2))))
+  if (GPIOB->IDR & ((0b1 << infra1) | (0b1 << infra2)))
       return true;
   return false;
 }
@@ -56,7 +56,7 @@ sensors_low ()
 bool
 sensors_high ()
 {
-  if (!(GPIOC->IDR & ((0b1 << infra3) | (0b1 << infra4))))
+  if (GPIOC->IDR & ((0b1 << infra3) | (0b1 << infra4)))
       return true;
   return false;
 }
@@ -64,7 +64,7 @@ sensors_high ()
 bool
 sensors_back ()
 {
-  if (!(GPIOC->IDR & ((0b1 << infra5) | (0b1 << infra6))))
+  if (GPIOC->IDR & ((0b1 << infra5) | (0b1 << infra6)))
       return true;
   return false;
 }
