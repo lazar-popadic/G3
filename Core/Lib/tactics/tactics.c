@@ -126,13 +126,20 @@ pwm_test ()
       state_init = false;
       break;
     case 1:
-      if (wheel_direction == BACKWARDS)
-	wheel_2_backwards ();
-      else if (wheel_direction == FORWARDS)
-	wheel_2_forwards ();
-      else
-	stop_wheel_1 ();
-      pwm_duty_cycle_left (abs (dc));
+	  dc = saturation(dc, 2800, 0);
+	  pwm_duty_cycle_right (dc);
+	  pwm_duty_cycle_left (dc / 2);
+
+	  if (button_pressed ())
+	    {
+	      io_led (true);
+	      wheel_1_forwards ();
+	    }
+	  else
+	    {
+	      io_led (false);
+	      wheel_1_backwards ();
+	    }
       break;
     }
   return tactic_finished;
@@ -155,19 +162,17 @@ pwm_test2 ()
       state_init = false;
       break;
     case 1:
-      dc += timer_speed_of_encoder_left_passive();
-      dc = saturation (dc, 2824, -2824);
+      dc += timer_speed_of_encoder_right_passive();
+      dc = saturation (dc, 2500, -2500);
 
 
       if (dc > 500)
       {
-    	  //wheel_1_forwards ();
-    	  wheel_2_forwards ();
+    	  wheel_1_forwards ();
       }
       else if (dc < -500)
       {
-    	  //wheel_1_backwards ();
-    	  wheel_2_backwards ();
+    	  wheel_1_backwards ();
       }
 
       pwm_duty_cycle_right(abs (dc));

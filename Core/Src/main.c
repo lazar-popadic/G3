@@ -43,7 +43,6 @@ uint16_t timer_counter3 = 0;
 uint16_t timer_counter4 = 0;
 uint16_t timer_counter5 = 0;
 uint8_t debug1 = 0;
-uint16_t dc_main = 2000;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -119,18 +118,11 @@ main (void)
 	    }
 	  break;
 	case 0:
-	  //if (pwm_test2 ())
-	  //   state_main++;
-//	  pwm_duty_cycle_right (dc_main);
-//	  pwm_duty_cycle_left (dc_main / 2);
-//	  wheel_1_forwards ();
+	  if (pwm_test2 ())
+	     state_main++;
 
-//	  if (button_pressed())
-//	    io_led(true);
-//	  else
-//	    io_led(false);
-	  debug1 = (GPIOC->IDR & (0b1 << 1)) >> 1;
-	  io_led(false);
+//	  debug1 = (GPIOC->IDR & (0b1 << 13)) >> 13;
+//	  io_led(false);
 //	  ax_move(4, 1023, 200);
 	  break;
 	case END:

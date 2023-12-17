@@ -29,7 +29,7 @@ void
 sensors_init ()
 {
   sensors_io_init ();
-  interrupt_init ();
+  //interrupt_init ();
 }
 
 static void
