@@ -22,7 +22,7 @@ void
 timer_init ()
 {
   tim10_init ();			// vreme
-  odometrija_init ();		// zasto sam ovo uradio? Mozda jer se odometrija zove u prekidu tajmera
+  odometry_init ();		// zasto sam ovo uradio? Mozda jer se odometry zove u prekidu tajmera
 }
 
 static void
@@ -45,8 +45,8 @@ tim10_init ()
   TIM10->CR1 |= (0b1 << 2);
 
   //odabir prekidne rutine
-  uint8_t const TIM10_PREKID = 25;
-  NVIC->ISER[0] |= (0b1 << TIM10_PREKID);
+  uint8_t const TIM10_INTERRUPT = 25;
+  NVIC->ISER[0] |= (0b1 << TIM10_INTERRUPT);
 
   //ne bi trebalo da je jos ukljucen
 }
@@ -91,7 +91,7 @@ TIM1_UP_TIM10_IRQHandler ()
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
       //if(sys_time_ms % 10)//svakih 10ms
-      odometrija_robot ();
+      odometry_robot ();
 
       sys_time_ms++;
     }

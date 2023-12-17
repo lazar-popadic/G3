@@ -42,7 +42,8 @@ uint16_t timer_counter2 = 0;
 uint16_t timer_counter3 = 0;
 uint16_t timer_counter4 = 0;
 uint16_t timer_counter5 = 0;
-uint16_t dc_main = 0;
+uint8_t debug1 = 0;
+uint16_t dc_main = 2000;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -84,10 +85,11 @@ main (void)
   io_init ();
   timer_init ();
   encoder_init ();
-  odometrija_init ();
+  odometry_init ();
   pwm_init ();
   uart_init ();
-  sensors_init();
+  sensors_init ();
+  h_bridge_init ();
 
   io_led (true);
   __enable_irq ();
@@ -104,7 +106,7 @@ main (void)
       if (timer_end ())
 	state_main = END;
 
-       switch (state_main)
+      switch (state_main)
 	{
 	default:
 	  break;
@@ -113,18 +115,23 @@ main (void)
 	    {
 	      timer_start_sys_time ();
 	      state_main = 0;
+	      io_led (false);
 	    }
 	  break;
 	case 0:
 	  //if (pwm_test2 ())
 	  //   state_main++;
 //	  pwm_duty_cycle_right (dc_main);
-//	  pwm_duty_cycle_left (dc_main/2);
-	  if (button_pressed())
-	    io_led(true);
-	  else
-	    io_led(false);
-	  ax_move(4, 1023, 200);
+//	  pwm_duty_cycle_left (dc_main / 2);
+//	  wheel_1_forwards ();
+
+//	  if (button_pressed())
+//	    io_led(true);
+//	  else
+//	    io_led(false);
+	  debug1 = (GPIOC->IDR & (0b1 << 1)) >> 1;
+	  io_led(false);
+//	  ax_move(4, 1023, 200);
 	  break;
 	case END:
 	  io_led (true);

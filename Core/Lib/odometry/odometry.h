@@ -1,5 +1,5 @@
 /*
- * odometrija.h
+ * odometry.h
  *
  *  Created on: Nov 2, 2023
  *      Author: lazar
@@ -9,9 +9,9 @@
 #define LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_
 
 void
-odometrija_robot ();
+odometry_robot ();
 void
-odometrija_init ();
+odometry_init ();
 float
 get_theta ();
 float

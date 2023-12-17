@@ -1,5 +1,5 @@
 /*
- * odometrija.c
+ * odometry.c
  *
  *  Created on: Nov 2, 2023
  *      Author: lazar
@@ -25,7 +25,7 @@ static float x;		// inicijalizuj na x_start i y_start u strategiji
 static float y;
 
 void
-odometrija_init ()
+odometry_init ()
 {
   //inc2rad = d * 2048 * 4 / d_odometrijskog ;	//(d * M_PI) / (d_odometrijskog * M_PI) * 2048 * 4;
   //inc2rad = (2 * M_PI) / inc2rad;		//ovo je bilo na vezbama, al msm da je cilag sjebao
@@ -34,7 +34,7 @@ odometrija_init ()
 }
 
 void
-odometrija_robot ()		//racun pozicije i orijentacije
+odometry_robot ()		//racun pozicije i orijentacije
 {
   int16_t Vd_inc = timer_speed_of_encoder_right_passive ();//inc = inkrementi
   int16_t Vl_inc = timer_speed_of_encoder_left_passive ();

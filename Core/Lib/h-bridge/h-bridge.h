@@ -20,5 +20,7 @@ void
 wheel_2_forwards ();
 void
 wheel_2_backwards ();
+void
+h_bridge_init ();
 
 #endif /* LIB_H_BRIDGE_H_BRIDGE_H_ */
