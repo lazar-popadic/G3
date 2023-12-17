@@ -31,37 +31,25 @@ ax_test2 ()
 	  tactic_finished = false;
 	  io_led (false);
 	}
-      ax_move (4, 511, 0);
-      HAL_Delay (10);
-      ax_move (5, 511, 0);
-      HAL_Delay (10);
-      ax_move (6, 511, 0);
-      HAL_Delay (10);
-      ax_move (7, 511, 0);
+      ax_move (6, 0, 0);
 
       state++;
       state_init = false;
       break;
     case 1:
-      if (timer_delay_nonblocking (1500))
+      if (timer_delay_nonblocking (1000))
 	state++;
       break;
     case 2:
       //inicijalizacija
       //telo stanja
-      ax_move (4, 1023, 1023);
-      HAL_Delay (10);
-      ax_move (5, 1023, 1023);
-      HAL_Delay (10);
-      ax_move (6, 1023, 1023);
-      HAL_Delay (10);
-      ax_move (7, 1023, 1023);
+      ax_move (6, 1023, 0);
       //uslov prelaska
       state++;
       break;
     case 3:
-      if (timer_delay_nonblocking (1500))
-	state++;
+      if (timer_delay_nonblocking (1000))
+	state = 0;
       break;
     case 4:
       tactic_finished = true;

@@ -118,12 +118,16 @@ main (void)
 	    }
 	  break;
 	case 0:
-	  if (pwm_test2 ())
-	     state_main++;
+//	  if (pwm_test2 ())
+//	     state_main++;
+	  if (sensors_high ())
+	    io_led(true);
+	  else
+	    io_led(false);
+	  ax_test2();
 
 //	  debug1 = (GPIOC->IDR & (0b1 << 13)) >> 13;
 //	  io_led(false);
-//	  ax_move(4, 1023, 200);
 	  break;
 	case END:
 	  io_led (true);
