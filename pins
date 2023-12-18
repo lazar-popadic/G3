@@ -15,16 +15,16 @@ port B:
 	5 - enc1 B	
 	6 - enc2 A	- levi pasivni tocak - tim4
 	7 - enc2 B
-	8 - infra senzor1 - niski
-	9 - infra senzor2
 
 port C:
-	0 - infra senzor3 - visoki
-	1 - infra senzor4
-	2 - dir1 h-most2
-	3 - dir2 h-most2
+	0 - infra senzor0 - visoki
+	1 - infra senzor1
+	2 - infra senzor2 - grabulja
+	3 - infra senzor3
+	8 - infra senzor4 - niski
+	9 - infra senzor5
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
-	10 - infra senzor5 - grabulja
-	11 - infra senzor6
+	10 - dir1 h-most2
+	11 - dir2 h-most2
 	13 - button
