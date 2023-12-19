@@ -7,6 +7,8 @@
 
 #include "main.h"
 
+#define AX_MAX_SPEED 528
+
 uint8_t state = 0;
 bool state_init = false;
 bool tactic_finished;
@@ -31,24 +33,24 @@ ax_test2 ()
 	  tactic_finished = false;
 	  io_led (false);
 	}
-      ax_move (6, 0, 0);
+      ax_move (5, 0, AX_MAX_SPEED);
 
       state++;
       state_init = false;
       break;
     case 1:
-      if (timer_delay_nonblocking (1000))
+      if (timer_delay_nonblocking (2000))
 	state++;
       break;
     case 2:
       //inicijalizacija
       //telo stanja
-      ax_move (6, 1023, 0);
+      ax_move (5, 1023, AX_MAX_SPEED);
       //uslov prelaska
       state++;
       break;
     case 3:
-      if (timer_delay_nonblocking (1000))
+      if (timer_delay_nonblocking (2000))
 	state = 0;
       break;
     case 4:

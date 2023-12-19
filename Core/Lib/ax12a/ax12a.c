@@ -17,6 +17,7 @@
  *
  * brzina: (OD 1 DO 1023 => OD minimalne DO maksimalne) (0 je takodje maksimalna za dat napon, NEMA KONTROLE BRZINE!)
  * 0 = max bez kontrole
+ * 528 = PRAVI MAX
  * 1 = minimum
  * 0x3ff = 1023 = maximum (114 rpm, ali pise da je max zapravo oko 59 rpm.
  */

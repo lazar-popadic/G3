@@ -17,8 +17,8 @@ h_bridge_init ()
   io_init ();
 }
 
-uint8_t const H2_DIR1 = 2, H2_DIR2 = 3;
-uint8_t const H1_DIR1 = 10, H1_DIR2 = 11;
+uint8_t const H2_DIR1 = 10, H2_DIR2 = 11;
+uint8_t const H1_DIR1 = 11, H1_DIR2 = 12;
 
 void
 io_init ()

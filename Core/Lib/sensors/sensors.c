@@ -113,13 +113,13 @@ sensors_io_init ()
   GPIOC->MODER &= ~(0b11 << 2 * infra4);
   GPIOC->MODER &= ~(0b11 << 2 * infra5);
 
-  GPIOB->MODER &= ~(0b11 << 2 * button);
+  GPIOC->MODER &= ~(0b11 << 2 * button);
 }
 
 bool
 sensors_low ()
 {
-  if (GPIOB->IDR & ((0b1 << infra4) | (0b1 << infra5)))
+  if (GPIOC->IDR & ((0b1 << infra4) | (0b1 << infra5)))
     return true;
   return false;
 }

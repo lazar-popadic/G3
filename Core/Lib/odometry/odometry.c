@@ -11,8 +11,8 @@
 #include "../encoder/encoder.h"
 #include <math.h>
 
-#define d 320
-#define d_odometrijskog 60
+#define d 321
+#define d_odometrijskog 66
 
 static float V = 0;
 static float w = 0;
@@ -30,7 +30,7 @@ odometry_init ()
   //inc2rad = d * 2048 * 4 / d_odometrijskog ;	//(d * M_PI) / (d_odometrijskog * M_PI) * 2048 * 4;
   //inc2rad = (2 * M_PI) / inc2rad;		//ovo je bilo na vezbama, al msm da je cilag sjebao
   inc2mm = d_odometrijskog * M_PI / (4.0 * 2048.0);
-  inc2rad = 2.0 * inc2mm / d;
+  inc2rad = inc2mm / d;
 }
 
 void
