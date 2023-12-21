@@ -118,8 +118,8 @@ main (void)
 	    }
 	  break;
 	case 0:
-//	  if (ax_test2 ())
-//	     state_main++;
+	  if (pwm_test ())
+	     state_main++;
 
 //	  debug1 = (GPIOC->IDR & (0b1 << 13)) >> 13;
 //	  io_led(false);

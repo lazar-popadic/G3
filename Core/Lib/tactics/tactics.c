@@ -116,7 +116,7 @@ pwm_test ()
       state_init = false;
       break;
     case 1:
-	  dc = saturation(dc, 2800, 0);
+	  dc = saturation(dc, 2600, 0);
 	  pwm_duty_cycle_right (dc);
 	  pwm_duty_cycle_left (dc / 2);
 

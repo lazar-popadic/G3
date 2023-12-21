@@ -21,8 +21,8 @@ port C:
 	1 - infra senzor1
 	2 - infra senzor2 - grabulja
 	3 - infra senzor3
-	8 - infra senzor4 - niski
-	9 - infra senzor5
+	4 - infra senzor4 - niski
+	5 - infra senzor5
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
 	10 - dir1 h-most2
