@@ -21,6 +21,7 @@ static float w = 0;
 static float inc2rad = 0;//broj inkremenata na pasivnom tocku za 1 krug robota
 static float inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
 static float theta;
+static float theta_degrees;
 static float x;		// inicijalizuj na x_start i y_start u strategiji
 static float y;
 
@@ -60,6 +61,7 @@ odometry_robot ()		//racun pozicije i orijentacije
   theta += w;
   x += V * cos (theta);
   y += V * sin (theta);
+  theta_degrees = theta * 180 / M_PI;
 }
 
 float
