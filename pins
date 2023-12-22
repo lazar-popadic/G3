@@ -28,3 +28,7 @@ port C:
 	10 - dir1 h-most2
 	11 - dir2 h-most2
 	13 - button
+
+	
+dodaj:
+	pa4 i pa7 za adc (strana 40 u datasheet)
