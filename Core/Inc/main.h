@@ -46,6 +46,7 @@ extern "C" {
 #include "../Lib/encoder/encoder.h"
 #include "../Lib/sensors/sensors.h"
 #include "../Lib/h-bridge/h-bridge.h"
+#include "../Lib/adc/adc.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

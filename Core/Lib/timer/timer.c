@@ -23,7 +23,7 @@ void
 timer_init ()
 {
   tim10_init ();			// vreme
-  odometry_init ();		// zasto sam ovo uradio? Mozda jer se odometry zove u prekidu tajmera
+  //odometry_init ();		// zasto sam ovo uradio? Mozda jer se odometry zove u prekidu tajmera
 }
 
 static void

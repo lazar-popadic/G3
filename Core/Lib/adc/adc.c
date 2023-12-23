@@ -8,6 +8,7 @@
 #include "adc.h"
 #include "stm32f4xx.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 static void
 io_init ();
@@ -17,7 +18,7 @@ uint8_t prvi = 4, drugi = 7;
 void
 adc_init ()
 {
-  io_init();
+  io_init ();
 
   RCC->APB2ENR |= (0b1 << 8);
 

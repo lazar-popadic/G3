@@ -35,15 +35,6 @@ sensors_init ()
 static void
 interrupt_init ()
 {
-  // taster
-  SYSCFG->EXTICR[3] &= ~(0b1111 << 4);
-  SYSCFG->EXTICR[3] |= (0b0010 << 4);	// da PC13 bude input
-  EXTI->FTSR |= (0b1 << button);	// na opadajucu ivicu
-  EXTI->IMR |= (0b1 << button);		// dozvoli interrupt request
-  EXTI->EMR |= (0b1 << button);		// dozvoli interrupt event
-  uint8_t EXTI15_10 = 40;
-  NVIC->ISER[EXTI15_10 / 32] |= (0b1 << (EXTI15_10 % 32));
-
   // infra0
   SYSCFG->EXTICR[0] &= ~(0b1111 << 0);	// da PC0 bude input
   SYSCFG->EXTICR[0] |= (0b0010 << 0);
@@ -146,16 +137,6 @@ button_pressed ()
   if (!(GPIOC->IDR & (0b1 << button)))
     return true;
   return false;
-}
-
-void
-EXTI15_10_IRQHandler ()
-{
-  if (EXTI->PR & (0b1 << button))
-    {
-      EXTI->PR &= ~(0b1 << button);
-      io_led (true);
-    }
 }
 
 void

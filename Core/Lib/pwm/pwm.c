@@ -14,15 +14,19 @@ static void
 tim9_init ();
 static void
 io_init ();
+static void
+interrupt_init ();
 
 static uint8_t const PWM_KANAL1 = 2;
 static uint8_t const PWM_KANAL2 = 3;
+volatile uint32_t irq_counter = 0;
 
 void
 pwm_init ()
 {
   tim9_init ();
   io_init ();
+  interrupt_init ();
 }
 
 static void
@@ -50,18 +54,24 @@ tim9_init ()
   TIM9->CCER |= (0b1 << 0);
   TIM9->CCER |= (0b1 << 4);
 
-  TIM9->CR1 &= ~(0b1 << 1); // Dozvola događaja
-  TIM9->CR1 &= ~(0b1 << 2); // Šta generiše događaj
-  TIM9->EGR |= (0b1 << 0); // Reinicijalizacija tajmera
+  TIM9->CR1 &= ~(0b1 << 1); 	// Dozvola događaja
+  TIM9->CR1 &= ~(0b1 << 2); 	// Šta generiše događaj
+  TIM9->EGR |= (0b1 << 0); 	// Reinicijalizacija tajmera
+  TIM9->DIER |= (0b1 << 0);	//dozvola prekida
   while (!(TIM9->SR & (0b1 << 0)))
     ;
   TIM9->SR &= ~(0b1 << 0);
+  TIM9->CR1 |= (0b1 << 2);
 
+  uint8_t const TIM9_INTERRUPT = 24;
+  NVIC->ISER[0] |= (0b1 << TIM9_INTERRUPT);
+}
+
+void
+pwm_start ()
+{
   // Uključivanje tajmera
   TIM9->CR1 |= (0b1 << 0);
-
-  //TIM9->CCR1 = 2424;
-  //TIM9->CCR2 = 1212;
 }
 
 static void
@@ -93,6 +103,47 @@ pwm_duty_cycle_left (uint16_t duty_cycle)
 {
   TIM9->CCR2 = duty_cycle;
 }
+
+static void
+interrupt_init ()
+{
+//  SYSCFG->EXTICR[3] &= ~(0b1111 << 4);	// MSM da za software interrupt ne moraju
+//  SYSCFG->EXTICR[3] |= (0b0010 << 4);	// da PC13 bude input
+  EXTI->IMR |= (0b1 << 11);		// dozvoli interrupt request
+  EXTI->EMR |= (0b1 << 11);		// dozvoli interrupt event
+//  EXTI->SWIER |= (0b1 << 11);		// OVO pravi prekid
+  uint8_t EXTI15_10 = 40;
+  NVIC->ISER[EXTI15_10 / 32] |= (0b1 << (EXTI15_10 % 32));
+}
+
+void
+TIM1_BRK_TIM9_IRQHandler ()
+{
+  if ((TIM9->SR & (0b1 << 0)) == (0b1 << 0))
+      {
+        TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
+        EXTI->SWIER |= (0b1 << 11);
+      }
+}
+
+void
+EXTI15_10_IRQHandler ()
+{
+  if (EXTI->PR & (0b1 << 11))
+    {
+      EXTI->PR &= ~(0b1 << 11);
+      // ovde pisi interrupt za pocetak adc
+      // testiranje za diodu
+      irq_counter++;
+      if (irq_counter >= 84000)	//valjda svake 4 sekunde
+	{
+	  irq_counter = 0;
+	  GPIOA->ODR &= ~(0b1 << 5); // io_led(false);
+	}
+
+    }
+}
+
 
 /*
  * prag:

@@ -18,7 +18,6 @@ portc_init ();
 uint8_t const INT_LED = 5, CINC = 6;
 volatile uint16_t counter = 0;
 
-
 void
 io_init ()
 {
@@ -65,7 +64,6 @@ io_led (bool status)
     }
   else
     GPIOA->ODR &= ~(0b1 << 5);
-
 }
 
 void
@@ -83,12 +81,11 @@ bool
 io_cinc ()
 {
   if (!(GPIOA->IDR & (0b1 << 6)))
-      counter++;
+    counter++;
   else
     counter = 0;
   if (counter > 64000)
     return true;
   return false;
 }
-
 

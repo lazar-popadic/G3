@@ -91,6 +91,7 @@ main (void)
   uart_init ();
   sensors_init ();
   h_bridge_init ();
+  adc_init();
 
   io_led (true);
   __enable_irq ();
@@ -104,6 +105,8 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms % 2000 ;
+      if (button_pressed())
+	io_led(true);
 
       if (timer_end ())
 	state_main = END;
