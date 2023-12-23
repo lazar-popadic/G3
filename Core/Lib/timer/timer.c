@@ -10,12 +10,13 @@
 
 #include "../odometry/odometry.h"
 
-#define END_TIME 100*1000
+#define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
 static void
 tim10_init ();
 
-volatile uint32_t sys_time_ms = 0; //volatile da kompajler ne vrsi optimizaciju
+volatile uint32_t sys_time_half_ms = 0;
+// volatile uint32_t sys_time_ms = 0; //volatile da kompajler ne vrsi optimizaciju
 bool flag_delay = true;
 
 void
@@ -29,11 +30,11 @@ static void
 tim10_init ()
 {
   RCC->APB2ENR |= (0b1 << 17);
-  // 84MHz -> 1kHz
+  // 84MHz -> 2kHz
   // 1) 84MHz -> 1MHz
   TIM10->PSC = 84 - 1;		// -1 jer brojimo od 0
-  // 2) 1MHz -> 1kHz
-  TIM10->ARR = 1000 - 1;
+  // 2) 1MHz -> 2kHz
+  TIM10->ARR = 500 - 1;
 
   TIM10->CR1 &= ~((0b1 << 1) || (0b1 << 2)); //sta generise dogadjaj | dozvola dogadjaja ILI obrnuto
   TIM10->EGR |= (0b1 << 0);	// Reinicijalizacija timera
@@ -47,8 +48,6 @@ tim10_init ()
   //odabir prekidne rutine
   uint8_t const TIM10_INTERRUPT = 25;
   NVIC->ISER[0] |= (0b1 << TIM10_INTERRUPT);
-
-  //ne bi trebalo da je jos ukljucen
 }
 
 void
@@ -60,7 +59,7 @@ timer_start_sys_time ()
 bool
 timer_end ()
 {
-  if (sys_time_ms == END_TIME)
+  if (sys_time_half_ms == END_TIME)
     return true;
   return false;
 }
@@ -68,14 +67,16 @@ timer_end ()
 bool
 timer_delay_nonblocking (uint32_t delay_ms)
 {
-  static uint32_t start_sys_time_ms;
+  static uint32_t start_sys_time_half_ms;
+  static uint32_t delay_half_ms;
   if (flag_delay == true)				//da samo jednom udje
     {
-      start_sys_time_ms = sys_time_ms;
+      start_sys_time_half_ms = sys_time_half_ms;
+      delay_half_ms = delay_ms * 2;
       flag_delay = false;
     }
 
-  if (sys_time_ms <= start_sys_time_ms + delay_ms)
+  if (sys_time_half_ms <= start_sys_time_half_ms + delay_half_ms)
     return false;
   flag_delay = true;
   return true;
@@ -84,15 +85,16 @@ timer_delay_nonblocking (uint32_t delay_ms)
 void
 TIM1_UP_TIM10_IRQHandler ()
 {
-  // poziva se svake milisekunde
-  // proveri da li je stvarno TIM2 pozvao rutinu
+  // poziva se svakih 0.5ms
+  // proveri da li je stvarno TIM10 pozvao rutinu
   if ((TIM10->SR & (0b1 << 0)) == (0b1 << 0))
     {
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
-      //if(sys_time_ms % 10)//svakih 10ms
+      if(sys_time_half_ms % 10) //svakih 5ms
       odometry_robot ();
 
-      sys_time_ms++;
+      sys_time_half_ms++;
+//      sys_time_ms = 0.5 * sys_time_half_ms;
     }
 }

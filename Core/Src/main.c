@@ -43,6 +43,8 @@ uint16_t timer_counter3 = 0;
 uint16_t timer_counter4 = 0;
 uint16_t timer_counter5 = 0;
 uint8_t debug1 = 0;
+uint8_t sys_time_s = 0;
+extern volatile uint32_t sys_time_half_ms;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,6 +103,7 @@ main (void)
       /* USER CODE END WHILE */
 
       /* USER CODE BEGIN 3 */
+      sys_time_s = sys_time_half_ms % 2000 ;
 
       if (timer_end ())
 	state_main = END;
