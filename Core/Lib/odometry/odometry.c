@@ -11,7 +11,7 @@
 #include "../encoder/encoder.h"
 #include <math.h>
 
-#define d 321
+#define d 321.8
 #define d_odometrijskog 66
 
 static float V = 0;

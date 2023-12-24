@@ -14,5 +14,7 @@ void
 regulation_init ();
 float
 saturation (float signal, float MAX, float MIN);
+void
+regulation_speed ();
 
 #endif /* LIB_MODULES_REGULATION_REGULATION_H_ */

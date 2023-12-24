@@ -26,7 +26,7 @@ pwm_init ()
 {
   tim9_init ();
   io_init ();
-  interrupt_init ();
+  //interrupt_init ();
 }
 
 static void
@@ -57,14 +57,10 @@ tim9_init ()
   TIM9->CR1 &= ~(0b1 << 1); 	// Dozvola događaja
   TIM9->CR1 &= ~(0b1 << 2); 	// Šta generiše događaj
   TIM9->EGR |= (0b1 << 0); 	// Reinicijalizacija tajmera
-  TIM9->DIER |= (0b1 << 0);	//dozvola prekida
   while (!(TIM9->SR & (0b1 << 0)))
     ;
   TIM9->SR &= ~(0b1 << 0);
   TIM9->CR1 |= (0b1 << 2);
-
-  uint8_t const TIM9_INTERRUPT = 24;
-  NVIC->ISER[0] |= (0b1 << TIM9_INTERRUPT);
 }
 
 void
@@ -107,13 +103,16 @@ pwm_duty_cycle_left (uint16_t duty_cycle)
 static void
 interrupt_init ()
 {
-//  SYSCFG->EXTICR[3] &= ~(0b1111 << 4);	// MSM da za software interrupt ne moraju
-//  SYSCFG->EXTICR[3] |= (0b0010 << 4);	// da PC13 bude input
+  SYSCFG->EXTICR[2] &= ~(0b1111 << 12);	// MSM da za software interrupt ne moraju
+  SYSCFG->EXTICR[2] |= (0b0010 << 12);	// da Pin11 bude input
   EXTI->IMR |= (0b1 << 11);		// dozvoli interrupt request
   EXTI->EMR |= (0b1 << 11);		// dozvoli interrupt event
-//  EXTI->SWIER |= (0b1 << 11);		// OVO pravi prekid
   uint8_t EXTI15_10 = 40;
   NVIC->ISER[EXTI15_10 / 32] |= (0b1 << (EXTI15_10 % 32));
+
+  TIM9->DIER |= (0b1 << 0);	//dozvola prekida
+  uint8_t const TIM9_INTERRUPT = 24;
+  NVIC->ISER[0] |= (0b1 << TIM9_INTERRUPT);
 }
 
 void
@@ -135,10 +134,10 @@ EXTI15_10_IRQHandler ()
       // ovde pisi interrupt za pocetak adc
       // testiranje za diodu
       irq_counter++;
-      if (irq_counter >= 84000)	//valjda svake 4 sekunde
+      if (irq_counter >= 84000)	//valjda svake 4 sekunde: 84000
 	{
 	  irq_counter = 0;
-	  GPIOA->ODR &= ~(0b1 << 5); // io_led(false);
+	  GPIOA->ODR |= (0b1 << 5); // io_led(true);
 	}
 
     }

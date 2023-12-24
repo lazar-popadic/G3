@@ -43,7 +43,7 @@ regulation_translation_finished ();
 static void
 regulation_phase_calculator ();
 
-static const float KP_SPEED = 0;
+static const float KP_SPEED = 1;
 static const float KI_SPEED = 0;
 static const float KD_SPEED = 0;
 static const float KP_ROT = 0;
@@ -95,7 +95,7 @@ static uint8_t regulation_phase = 0;
 void
 regulation_init ()
 {
-  inc2rad_deltaT = M_PI / 4096;	//2*Pi / 4*2048
+  inc2rad_deltaT = M_PI / 4096;	// 2*Pi / 4*2048
 }
 
 float
@@ -183,7 +183,7 @@ regulation_position ()
        * TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
        * TODO: ako menjas nesto i u donjoj funkciji moras da izmenis
        */
-      if (fabs (theta_1) > (M_PI / 2))		// lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
+      if (fabs (theta_1) > (M_PI / 2))// lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
 	distance_error = -distance;
       else
 	distance_error = distance;
@@ -236,7 +236,7 @@ regulation_phase_calculator ()
    * onda
    * DRZI ZADATI UGAO
    */
-  if (fabs(distance) < EPSILON_DISTANCE)
+  if (fabs (distance) < EPSILON_DISTANCE)
     {
       regulation_translation_finished ();
       regulation_phase = FINAL_ROTATION_AND_WAITING;

@@ -9,6 +9,8 @@
 #include "stm32f4xx.h"
 
 #include "../odometry/odometry.h"
+#include "../regulation/regulation.h"
+#include "../encoder/encoder.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
@@ -16,8 +18,8 @@ static void
 tim10_init ();
 
 volatile uint32_t sys_time_half_ms = 0;
-// volatile uint32_t sys_time_ms = 0; //volatile da kompajler ne vrsi optimizaciju
 bool flag_delay = true;
+static int16_t timer5_debug = 0;
 
 void
 timer_init ()
@@ -91,8 +93,12 @@ TIM1_UP_TIM10_IRQHandler ()
     {
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
-      if(sys_time_half_ms % 10) //svakih 5ms
-      odometry_robot ();
+      if (!(sys_time_half_ms % 10)) //svakih 5ms
+	{
+	  odometry_robot ();
+	  timer5_debug = timer_speed_of_encoder_left_maxon();
+	  regulation_speed ();
+	}
 
       sys_time_half_ms++;
 //      sys_time_ms = 0.5 * sys_time_half_ms;

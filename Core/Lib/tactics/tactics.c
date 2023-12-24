@@ -110,7 +110,7 @@ pwm_test ()
 	  state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
-
+	  pwm_start();
 	}
       state++;
       state_init = false;
@@ -146,7 +146,7 @@ pwm_test2 ()
 	  state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
-
+	  pwm_start();
 	}
       state++;
       state_init = false;
