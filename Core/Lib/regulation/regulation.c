@@ -109,16 +109,16 @@ saturation (float signal, float MAX, float MIN)
 }
 
 void
-regulation_speed ()
+regulation_speed (int16_t speed_right, int16_t speed_left)
 {
   e_right = ref_speed_right
-      - inc2rad_deltaT * timer_speed_of_encoder_right_maxon (); //[rad/deltaT]
+      - inc2rad_deltaT * speed_right; //[rad/deltaT]
   e_i_right += e_right;
   e_i_right = saturation (e_i_right, EI_LIMIT, - EI_LIMIT);
   e_d_right = e_right - e_previous_right;
 
   e_left = ref_speed_left
-      - inc2rad_deltaT * timer_speed_of_encoder_left_maxon ();
+      - inc2rad_deltaT * speed_left;
   e_i_left += e_left;
   e_i_left = saturation (e_i_left, EI_LIMIT, - EI_LIMIT);
   e_d_left = e_left - e_previous_left;

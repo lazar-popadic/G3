@@ -19,7 +19,7 @@ tim10_init ();
 
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
-static int16_t timer5_debug = 0;
+int16_t speed_right = 0, speed_left = 0;
 
 void
 timer_init ()
@@ -96,8 +96,9 @@ TIM1_UP_TIM10_IRQHandler ()
       if (!(sys_time_half_ms % 10)) //svakih 5ms
 	{
 	  odometry_robot ();
-	  timer5_debug = timer_speed_of_encoder_left_maxon();
-	  regulation_speed ();
+	  speed_right = timer_speed_of_encoder_left_maxon();
+	  speed_left = timer_speed_of_encoder_left_maxon();
+	  regulation_speed (speed_right, speed_left);
 	}
 
       sys_time_half_ms++;
