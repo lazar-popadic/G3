@@ -100,7 +100,7 @@ TIM1_UP_TIM10_IRQHandler ()
 
       sys_time_half_ms++;
 
-      if (!(sys_time_half_ms % (10*100) )) //svakih 5ms
+      if (!(sys_time_half_ms % (10) )) //svakih 5ms
 	{
 	  odometry_robot ();
 	}
