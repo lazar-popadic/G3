@@ -154,7 +154,7 @@ pwm_test2 ()
       state_init = false;
       break;
     case 1:
-      dc += timer_speed_of_encoder_right_passive ();
+      dc += speed_of_encoder_right_passive ();
       dc = saturation (dc, 2500, -2500);
 
       if (dc > 500)

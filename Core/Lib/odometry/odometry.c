@@ -37,8 +37,8 @@ odometry_init ()
 void
 odometry_robot ()		//racun pozicije i orijentacije
 {
-  int16_t Vd_inc = timer_speed_of_encoder_right_passive ();//inc = inkrementi
-  int16_t Vl_inc = timer_speed_of_encoder_left_passive ();
+  int16_t Vd_inc = speed_of_encoder_right_passive ();//inc = inkrementi
+  int16_t Vl_inc = speed_of_encoder_left_passive ();
 
   // translacija
   // N = 1000mm / ObimOdometrijskogTocka	//koliko odometrijski predje za 1 metar

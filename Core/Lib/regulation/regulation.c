@@ -7,6 +7,7 @@
 
 #include "regulation.h"
 #include <stdbool.h>
+#include <stdlib.h>
 #include "../encoder/encoder.h"
 #include "math.h"
 #include "../io/io.h"
@@ -19,7 +20,7 @@
 #define EPSILON_DISTANCE_ROT	10
 
 #define EI_LIMIT 		0 // narednih 10 do 100 iteracija  vrednosti, ei ne sme preko toga ?
-#define SPEED_LIMIT		0
+#define SPEED_LIMIT		2500 // inkrementi, direktno za pwm duty cycle
 #define THETA_I_LIMIT		0
 #define DISTANCE_I_LIMIT	0
 #define U_ROT_MAX		0
@@ -43,8 +44,8 @@ regulation_translation_finished ();
 static void
 regulation_phase_calculator ();
 
-static const float KP_SPEED = 1;
-static const float KI_SPEED = 0;
+static const float KP_SPEED = 70;
+static const float KI_SPEED = 30;
 static const float KD_SPEED = 0;
 static const float KP_ROT = 0;
 static const float KI_ROT = 0;
@@ -53,18 +54,18 @@ static const float KP_TRAN = 0;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-static float ref_speed_right = 0;
-static float ref_speed_left = 0;
-static float e_right = 0;
-static float e_i_right = 0;
-static float e_d_right = 0;
-static float e_previous_right = 0;
-static float e_left = 0;
-static float e_i_left = 0;
-static float e_d_left = 0;
-static float e_previous_left = 0;
-static float u_right = 0;		// TODO: jedinice, razmisli
-static float u_left = 0;
+volatile int16_t ref_speed_right = 0;
+volatile int16_t ref_speed_left = 0;
+static int16_t e_right = 0;
+static int16_t e_i_right = 0;
+static int16_t e_d_right = 0;
+static int16_t e_previous_right = 0;
+static int16_t e_left = 0;
+static int16_t e_i_left = 0;
+static int16_t e_d_left = 0;
+static int16_t e_previous_left = 0;
+static int16_t u_right = 0;
+static int16_t u_left = 0;
 
 static float p1x = 0;
 static float p1y = 0;
@@ -73,7 +74,7 @@ static float p0y = 0;
 static float distance = 0;
 static float theta_0 = 0;
 
-static float theta_error = 0;
+static float theta_error = 0;		// TODO: jedinice, razmisli
 static float distance_error = 0;
 static float rot_faktor = 1;
 
@@ -89,13 +90,13 @@ static float distance_er_i;
 static float distance_er_d;
 static float u_tran;
 
-static float inc2rad_deltaT = 0;
+//static float inc2rad_deltaT = 0;
 static uint8_t regulation_phase = 0;
 
 void
 regulation_init ()
 {
-  inc2rad_deltaT = M_PI / 4096;	// 2*Pi / 4*2048
+  //inc2rad_deltaT = M_PI / 4096;	// 2*Pi / 4*2048
 }
 
 float
@@ -112,13 +113,13 @@ void
 regulation_speed (int16_t speed_right, int16_t speed_left)
 {
   e_right = ref_speed_right
-      - inc2rad_deltaT * speed_right; //[rad/deltaT]
+      - speed_right; //[rad/deltaT]
   e_i_right += e_right;
   e_i_right = saturation (e_i_right, EI_LIMIT, - EI_LIMIT);
   e_d_right = e_right - e_previous_right;
 
   e_left = ref_speed_left
-      - inc2rad_deltaT * speed_left;
+      - speed_left;
   e_i_left += e_left;
   e_i_left = saturation (e_i_left, EI_LIMIT, - EI_LIMIT);
   e_d_left = e_left - e_previous_left;
@@ -137,9 +138,10 @@ regulation_speed (int16_t speed_right, int16_t speed_left)
     wheel_2_forwards ();
   else
     wheel_2_backwards ();
-  //pwm_duty_cycle((uint16_t)fabs(u_saturated));	//fabs je za float apsolutnu vrednost
-  //u pwm_dc ide procenat od max brzine, a ovde cu da racunam u rad/deltaT
+  //pwm_duty_cycle((uint16_t)fabs(u_saturated));//fabs je za float apsolutnu vrednost
   // Tj. ovde postavlja referencu za struju
+  pwm_duty_cycle_right(abs(u_right));
+  pwm_duty_cycle_left(abs(u_left));
 
   e_previous_left = e_left;
   e_previous_right = e_right;

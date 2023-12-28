@@ -123,13 +123,8 @@ TIM1_BRK_TIM9_IRQHandler ()
       TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
       //EXTI->SWIER |= (0b1 << 11);
       // ovde zovi adc start
-      // testiranje za diodu
-      irq_counter++;
-      if (irq_counter >= 84000)	//valjda svake 4 sekunde: 84000
-	{
-	  irq_counter = 0;
-	  GPIOA->ODR |= (0b1 << 5); // io_led(true);
-	}
+
+
     }
 }
 

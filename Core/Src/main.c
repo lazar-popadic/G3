@@ -45,6 +45,7 @@ int16_t timer_counter5 = 0;
 int16_t timer2_debug = 0;
 int16_t timer5_debug = 0;
 uint8_t debug1 = 0;
+
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 /* USER CODE END PV */
@@ -93,7 +94,7 @@ main (void)
   uart_init ();
   sensors_init ();
   h_bridge_init ();
-  regulation_init();
+  regulation_init ();
   //dma_init();
   //adc_init();
 
@@ -108,9 +109,9 @@ main (void)
       /* USER CODE END WHILE */
 
       /* USER CODE BEGIN 3 */
-      sys_time_s = sys_time_half_ms * 0.0005 ;
-      if (button_pressed())
-	io_led(true);
+      sys_time_s = sys_time_half_ms * 0.0005;
+      if (button_pressed ())
+	io_led (true);
 
       if (timer_end ())
 	state_main = END;
@@ -128,9 +129,12 @@ main (void)
 	    }
 	  break;
 	case 0:
-//	  if (pwm_test ())
+//	  if (speed_reg_test  ())
 //	     state_main++;
-	  timer_counter5 = TIM5->CNT;
+//	  pwm_start ();
+	  pwm_start();
+
+
 
 //	  debug1 = (GPIOC->IDR & (0b1 << 13)) >> 13;
 //	  io_led(false);

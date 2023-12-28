@@ -24,6 +24,8 @@ int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
 volatile bool sensors_state = false;
 
+extern volatile int16_t ref_speed_left;
+
 void
 timer_init ()
 {
@@ -96,15 +98,18 @@ TIM1_UP_TIM10_IRQHandler ()
     {
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
-      if ((sys_time_half_ms % 10)) //svakih 5ms
+      sys_time_half_ms++;
+
+      if (!(sys_time_half_ms % (10*100) )) //svakih 5ms
 	{
 	  odometry_robot ();
-	  speed_right = timer_speed_of_encoder_left_maxon ();
-	  speed_left = timer_speed_of_encoder_left_maxon ();
-	  regulation_speed (speed_right, speed_left);
 	}
+	  //speed_right = speed_of_encoder_left_maxon ();
+	  ref_speed_left = saturation(speed_of_encoder_left_passive(), 2500, -2500);
+	  speed_left = speed_of_encoder_left_maxon ();
+	  regulation_speed (speed_right, speed_left);
 
-      sys_time_half_ms++;
+
 
       switch (sensors_case_timer)
 	{
