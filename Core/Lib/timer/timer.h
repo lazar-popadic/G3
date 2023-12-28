@@ -11,6 +11,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define SENSORS_HIGH 1
+#define SENSORS_LOW 2
+#define SENSORS_BACK 3
+#define SENSORS_OFF 0
+
 void
 timer_init ();
 bool

@@ -11,6 +11,7 @@
 #include "../odometry/odometry.h"
 #include "../regulation/regulation.h"
 #include "../encoder/encoder.h"
+#include "../sensors/sensors.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
@@ -20,6 +21,8 @@ tim10_init ();
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
 int16_t speed_right = 0, speed_left = 0;
+volatile uint8_t sensors_case_timer = 0;
+volatile bool sensors_state = false;
 
 void
 timer_init ()
@@ -93,15 +96,31 @@ TIM1_UP_TIM10_IRQHandler ()
     {
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
-      if (!(sys_time_half_ms % 10)) //svakih 5ms
+      if ((sys_time_half_ms % 10)) //svakih 5ms
 	{
 	  odometry_robot ();
-	  speed_right = timer_speed_of_encoder_left_maxon();
-	  speed_left = timer_speed_of_encoder_left_maxon();
+	  speed_right = timer_speed_of_encoder_left_maxon ();
+	  speed_left = timer_speed_of_encoder_left_maxon ();
 	  regulation_speed (speed_right, speed_left);
 	}
 
       sys_time_half_ms++;
+
+      switch (sensors_case_timer)
+	{
+	case SENSORS_HIGH:
+	  sensors_state = sensors_high ();
+	  break;
+	case SENSORS_LOW:
+	  sensors_state = sensors_low ();
+	  break;
+	case SENSORS_BACK:
+	  sensors_state = sensors_back ();
+	  break;
+	default:
+	  sensors_state = false;
+	  break;
+	}
 //      sys_time_ms = 0.5 * sys_time_half_ms;
     }
 }

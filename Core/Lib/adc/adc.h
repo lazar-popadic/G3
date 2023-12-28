@@ -10,5 +10,11 @@
 
 void
 adc_init ();
+void
+adc_start ();
+void
+adc_on ();
+void
+adc_off ();
 
 #endif /* LIB_ADC_ADC_H_ */

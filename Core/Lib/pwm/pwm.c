@@ -26,7 +26,7 @@ pwm_init ()
 {
   tim9_init ();
   io_init ();
-  //interrupt_init ();
+  interrupt_init ();
 }
 
 static void
@@ -103,12 +103,12 @@ pwm_duty_cycle_left (uint16_t duty_cycle)
 static void
 interrupt_init ()
 {
-  SYSCFG->EXTICR[2] &= ~(0b1111 << 12);	// MSM da za software interrupt ne moraju
-  SYSCFG->EXTICR[2] |= (0b0010 << 12);	// da Pin11 bude input
-  EXTI->IMR |= (0b1 << 11);		// dozvoli interrupt request
-  EXTI->EMR |= (0b1 << 11);		// dozvoli interrupt event
-  uint8_t EXTI15_10 = 40;
-  NVIC->ISER[EXTI15_10 / 32] |= (0b1 << (EXTI15_10 % 32));
+//  SYSCFG->EXTICR[2] &= ~(0b1111 << 12);
+//  SYSCFG->EXTICR[2] |= (0b0010 << 12);
+//  EXTI->IMR |= (0b1 << 11);		// dozvoli interrupt request
+//  EXTI->EMR |= (0b1 << 11);		// dozvoli interrupt event
+//  uint8_t EXTI15_10 = 40;
+//  NVIC->ISER[EXTI15_10 / 32] |= (0b1 << (EXTI15_10 % 32));
 
   TIM9->DIER |= (0b1 << 0);	//dozvola prekida
   uint8_t const TIM9_INTERRUPT = 24;
@@ -119,10 +119,18 @@ void
 TIM1_BRK_TIM9_IRQHandler ()
 {
   if ((TIM9->SR & (0b1 << 0)) == (0b1 << 0))
-      {
-        TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
-        EXTI->SWIER |= (0b1 << 11);
-      }
+    {
+      TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
+      //EXTI->SWIER |= (0b1 << 11);
+      // ovde zovi adc start
+      // testiranje za diodu
+      irq_counter++;
+      if (irq_counter >= 84000)	//valjda svake 4 sekunde: 84000
+	{
+	  irq_counter = 0;
+	  GPIOA->ODR |= (0b1 << 5); // io_led(true);
+	}
+    }
 }
 
 void
@@ -142,7 +150,6 @@ EXTI15_10_IRQHandler ()
 
     }
 }
-
 
 /*
  * prag:

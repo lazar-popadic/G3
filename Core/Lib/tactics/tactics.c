@@ -20,6 +20,8 @@ enum direction
 
 int16_t dc = 0;
 enum direction wheel_direction = STOP;
+extern volatile uint8_t sensors_case_timer;
+extern volatile bool sensors_state;
 
 bool
 ax_test2 ()
@@ -110,26 +112,26 @@ pwm_test ()
 	  state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
-	  pwm_start();
+	  pwm_start ();
 	}
       state++;
       state_init = false;
       break;
     case 1:
-	  dc = saturation(dc, 2600, 0);
-	  pwm_duty_cycle_right (dc);
-	  pwm_duty_cycle_left (dc / 2);
+      dc = saturation (dc, 2600, 0);
+      pwm_duty_cycle_right (dc);
+      pwm_duty_cycle_left (dc / 2);
 
-	  if (button_pressed ())
-	    {
-	      io_led (true);
-	      wheel_1_forwards ();
-	    }
-	  else
-	    {
-	      io_led (false);
-	      wheel_1_backwards ();
-	    }
+      if (button_pressed ())
+	{
+	  io_led (true);
+	  wheel_1_forwards ();
+	}
+      else
+	{
+	  io_led (false);
+	  wheel_1_backwards ();
+	}
       break;
     }
   return tactic_finished;
@@ -146,29 +148,58 @@ pwm_test2 ()
 	  state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
-	  pwm_start();
+	  pwm_start ();
 	}
       state++;
       state_init = false;
       break;
     case 1:
-      dc += timer_speed_of_encoder_right_passive();
+      dc += timer_speed_of_encoder_right_passive ();
       dc = saturation (dc, 2500, -2500);
 
-
       if (dc > 500)
-      {
-    	  wheel_1_forwards ();
-      }
+	{
+	  wheel_1_forwards ();
+	}
       else if (dc < -500)
-      {
-    	  wheel_1_backwards ();
-      }
+	{
+	  wheel_1_backwards ();
+	}
 
-      pwm_duty_cycle_right(abs (dc));
-      pwm_duty_cycle_left(abs (2824 - dc));
+      pwm_duty_cycle_right (abs (dc));
+      pwm_duty_cycle_left (abs (2500 - dc));
 
       break;
     }
+  return tactic_finished;
+}
+
+bool
+sensors_timer_test ()
+{
+  switch (state)
+    {
+    case 0:
+      if (!state_init)
+	{
+	  state_init = true;
+	  tactic_finished = false;
+	  io_led (false);
+	  pwm_start ();
+	}
+      state++;
+      state_init = false;
+      break;
+    case SENSORS_HIGH:
+      sensors_case_timer = SENSORS_HIGH;
+      break;
+    case SENSORS_LOW:
+      sensors_case_timer = SENSORS_LOW;
+      break;
+    case SENSORS_BACK:
+      sensors_case_timer = SENSORS_BACK;
+      break;
+    }
+  io_led (sensors_state);
   return tactic_finished;
 }

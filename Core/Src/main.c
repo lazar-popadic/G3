@@ -94,6 +94,7 @@ main (void)
   sensors_init ();
   h_bridge_init ();
   regulation_init();
+  //dma_init();
   //adc_init();
 
   io_led (true);

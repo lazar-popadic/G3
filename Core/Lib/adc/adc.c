@@ -29,14 +29,14 @@ adc_init ()
   // poravnavanje: desno
   ADC1->CR2 &= ~(0b1 << 11);
 
-  // kontinualan rezim
-  ADC1->CR2 |= (0b1 << 1);
+  // kontinualan rezim: za sad iskljucen jer hocu automatski da ga palim u pwm prekidu
+  ADC1->CR2 &= ~(0b1 << 1);
 
   // 2 konverzije
   ADC1->SQR1 &= ~(0b1111 << 20);
   ADC1->SQR1 |= (0b0001 << 20);
 
-  // flag za kraj konverzije
+  // enable flag za kraj konverzije
   ADC1->CR2 |= (1 << 10);
 
   // redosled konverzije: prvo 4, posle 7
@@ -51,4 +51,35 @@ io_init ()
 
   GPIOA->MODER |= (0b11 << 2 * prvi);
   GPIOA->MODER |= (0b11 << 2 * drugi);
+}
+
+void
+adc_on ()
+{
+  ADC1->CR2 |= (0b1 << 0);
+}
+
+void
+adc_off ()
+{
+  ADC1->CR2 &= ~(0b1 << 0);
+}
+
+void
+adc_start ()
+{
+  // Provera da li je ADC isključen
+  if ((ADC1->CR2 & (1 << 0)) != (1 << 0))
+
+    {
+      // Uključivanje ADC-a - ako zelim da ga palim/gasim stalno
+      // ADC1->CR2 |= (1 << 0);
+      //mzd treba delay ovde neki, tamo su stavili 10ms
+      // iskljucena zastavica za kraj konverzije
+      ADC1->SR &= (0b1 << 1);
+      // iskljucena zastavica za pocetak konverzije
+      ADC1->SR &= (0b1 << 4);
+      // Započinjanje konverzije
+      ADC1->CR2 |= (1 << 30);
+    }
 }
