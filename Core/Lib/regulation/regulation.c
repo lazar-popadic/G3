@@ -113,7 +113,7 @@ void
 regulation_speed (int16_t speed_right, int16_t speed_left)
 {
   e_right = ref_speed_right
-      - speed_right; //[rad/deltaT]
+      - speed_right;
   e_i_right += e_right;
   e_i_right = saturation (e_i_right, EI_LIMIT, - EI_LIMIT);
   e_d_right = e_right - e_previous_right;
@@ -130,14 +130,14 @@ regulation_speed (int16_t speed_right, int16_t speed_left)
   u_left = saturation (u_left, SPEED_LIMIT, -SPEED_LIMIT);
 
   if (u_right > 0)
-    wheel_1_forwards ();
+    right_wheel_forwards ();
   else
-    wheel_1_backwards ();
+    right_wheel_backwards ();
 
   if (u_left > 0)
-    wheel_2_forwards ();
+    left_wheel_forwards ();
   else
-    wheel_2_backwards ();
+    left_wheel_backwards ();
   //pwm_duty_cycle((uint16_t)fabs(u_saturated));//fabs je za float apsolutnu vrednost
   // Tj. ovde postavlja referencu za struju
   pwm_duty_cycle_right(abs(u_right));

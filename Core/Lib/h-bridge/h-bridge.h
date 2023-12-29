@@ -9,17 +9,17 @@
 #define LIB_H_BRIDGE_H_BRIDGE_H_
 
 void
-stop_wheel_1 ();
+stop_right_wheel ();
 void
-stop_wheel_2 ();
+stop_left_wheel ();
 void
-wheel_1_forwards ();
+right_wheel_forwards ();
 void
-wheel_1_backwards ();
+right_wheel_backwards ();
 void
-wheel_2_forwards ();
+left_wheel_forwards ();
 void
-wheel_2_backwards ();
+left_wheel_backwards ();
 void
 h_bridge_init ();
 

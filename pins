@@ -5,8 +5,8 @@ port A:
 	3 - PWM 2
 	5 - led
 	6 - cinc
-	11 - dir1 h-most1
-	12 - dir2 h-most1
+	11 - desni h-most dir1
+	12 - desni h-most dir2
 	15 - enc3 A	- desni maxon - tim2
 
 port B:
@@ -25,8 +25,8 @@ port C:
 	5 - infra senzor5
 	6 - uart6 tx - ax12a idu ovde
 	7 - uart6 rx
-	10 - dir1 h-most2
-	11 - dir2 h-most2
+	10 - levi h-most dir1
+	11 - levi h-most dir2
 	13 - button
 
 	

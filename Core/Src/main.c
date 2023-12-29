@@ -132,8 +132,6 @@ main (void)
 //	  if (speed_reg_test  ())
 //	     state_main++;
 //	  pwm_start ();
-	  pwm_start();
-
 
 
 //	  debug1 = (GPIOC->IDR & (0b1 << 13)) >> 13;
