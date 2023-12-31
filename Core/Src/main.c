@@ -13,10 +13,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,14 +35,9 @@
 
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
-uint16_t timer_counter9 = 0;
-int16_t timer_counter2 = 0;
-uint16_t timer_counter3 = 0;
-uint16_t timer_counter4 = 0;
-int16_t timer_counter5 = 0;
-int16_t timer2_debug = 0;
-int16_t timer5_debug = 0;
-uint8_t debug1 = 0;
+
+extern volatile int16_t ref_speed_left;
+extern volatile int16_t ref_speed_right;
 
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
@@ -129,13 +122,10 @@ main (void)
 	    }
 	  break;
 	case 0:
-//	  if (speed_reg_test  ())
+//	  if (ramp_test  ())
 //	     state_main++;
 //	  pwm_start ();
 
-
-//	  debug1 = (GPIOC->IDR & (0b1 << 13)) >> 13;
-//	  io_led(false);
 	  break;
 	case END:
 	  io_led (true);

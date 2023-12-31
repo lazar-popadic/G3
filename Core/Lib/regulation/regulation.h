@@ -13,9 +13,12 @@
 void
 regulation_init ();
 float
-saturation (float signal, float MAX, float MIN);
+float_saturation (float signal, float MAX, float MIN);
+uint32_t
+int_saturation (uint32_t signal, uint32_t MAX, uint32_t MIN);
 void
 regulation_speed (int16_t speed_right, int16_t speed_left);
-
+uint32_t
+int_ramp (uint32_t signal, uint32_t desired_value, uint32_t slope);
 
 #endif /* LIB_MODULES_REGULATION_REGULATION_H_ */

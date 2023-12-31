@@ -100,7 +100,7 @@ regulation_init ()
 }
 
 float
-saturation (float signal, float MAX, float MIN)
+float_saturation (float signal, float MAX, float MIN)
 {
   if (signal > MAX)
     return MAX;
@@ -109,25 +109,43 @@ saturation (float signal, float MAX, float MIN)
   return signal;
 }
 
+uint32_t
+int_saturation (uint32_t signal, uint32_t MAX, uint32_t MIN)
+{
+  if (signal > MAX)
+    return MAX;
+  if (signal < MIN)
+    return MIN;
+  return signal;
+}
+
+uint32_t
+int_ramp (uint32_t signal, uint32_t desired_value, uint32_t slope)
+{
+  if (desired_value - signal > slope)
+    {
+      return signal + slope;
+    }
+  return desired_value;
+}
+
 void
 regulation_speed (int16_t speed_right, int16_t speed_left)
 {
-  e_right = ref_speed_right
-      - speed_right;
+  e_right = ref_speed_right - speed_right;
   e_i_right += e_right;
-  e_i_right = saturation (e_i_right, EI_LIMIT, - EI_LIMIT);
+  e_i_right = int_saturation (e_i_right, EI_LIMIT, - EI_LIMIT);
   e_d_right = e_right - e_previous_right;
 
-  e_left = ref_speed_left
-      - speed_left;
+  e_left = ref_speed_left - speed_left;
   e_i_left += e_left;
-  e_i_left = saturation (e_i_left, EI_LIMIT, - EI_LIMIT);
+  e_i_left = int_saturation (e_i_left, EI_LIMIT, - EI_LIMIT);
   e_d_left = e_left - e_previous_left;
 
   u_right = KP_SPEED * e_right + KI_SPEED * e_i_right + KD_SPEED * e_d_right;
-  u_right = saturation (u_right, SPEED_LIMIT, -SPEED_LIMIT);
+  u_right = int_saturation (u_right, SPEED_LIMIT, -SPEED_LIMIT);
   u_left = KP_SPEED * e_left + KI_SPEED * e_i_left + KD_SPEED * e_d_left;
-  u_left = saturation (u_left, SPEED_LIMIT, -SPEED_LIMIT);
+  u_left = int_saturation (u_left, SPEED_LIMIT, -SPEED_LIMIT);
 
   if (u_right > 0)
     right_wheel_forwards ();
@@ -140,8 +158,8 @@ regulation_speed (int16_t speed_right, int16_t speed_left)
     left_wheel_backwards ();
   //pwm_duty_cycle((uint16_t)fabs(u_saturated));//fabs je za float apsolutnu vrednost
   // Tj. ovde postavlja referencu za struju
-  pwm_duty_cycle_right(abs(u_right));
-  pwm_duty_cycle_left(abs(u_left));
+  pwm_duty_cycle_right (abs (u_right));
+  pwm_duty_cycle_left (abs (u_left));
 
   e_previous_left = e_left;
   e_previous_right = e_right;
@@ -185,7 +203,7 @@ regulation_position ()
        * TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
        * TODO: ako menjas nesto i u donjoj funkciji moras da izmenis
        */
-      if (fabs (theta_1) > (M_PI / 2))// lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
+      if (fabs (theta_1) > (M_PI / 2)) // lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
 	distance_error = -distance;
       else
 	distance_error = distance;
@@ -288,11 +306,11 @@ static void
 regulation_rotation (float theta_er, float faktor)
 {
   theta_er_i += theta_er;
-  theta_er_i = saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
+  theta_er_i = int_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
   theta_er_d = theta_er - theta_er_previous;
 
   u_rot = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
-  u_rot = saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
+  u_rot = int_saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
   u_rot *= faktor;
 
   theta_er_previous = theta_er;
@@ -302,13 +320,13 @@ static void
 regulation_translation (float distance_er)
 {
   distance_er_i += distance_er;
-  distance_er_i = saturation (distance_er_i, DISTANCE_I_LIMIT,
-			      -DISTANCE_I_LIMIT);
+  distance_er_i = int_saturation (distance_er_i, DISTANCE_I_LIMIT,
+				  -DISTANCE_I_LIMIT);
   distance_er_d = distance_er - distance_er_previous;
 
   u_tran = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
-  u_tran = saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
+  u_tran = int_saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
 
   distance_er_previous = distance_er;
 }

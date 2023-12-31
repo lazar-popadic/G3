@@ -25,6 +25,7 @@ volatile uint8_t sensors_case_timer = 0;
 volatile bool sensors_state = false;
 
 extern volatile int16_t ref_speed_left;
+extern volatile int16_t ref_speed_right;
 
 void
 timer_init ()
@@ -105,7 +106,8 @@ TIM1_UP_TIM10_IRQHandler ()
 	  odometry_robot ();
 	}
 	  //speed_right = speed_of_encoder_left_maxon ();
-	  ref_speed_left = saturation(speed_of_encoder_left_passive(), 2500, -2500);
+	  //ref_speed_left = int_saturation(speed_of_encoder_left_passive(), 2500, -2500);
+	  ref_speed_left = int_ramp(ref_speed_left, 2400, 1);
 	  speed_left = speed_of_encoder_left_maxon ();
 	  regulation_speed (speed_right, speed_left);
 
