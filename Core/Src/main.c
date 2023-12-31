@@ -36,9 +36,6 @@
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
 
-extern volatile int16_t ref_speed_left;
-extern volatile int16_t ref_speed_right;
-
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 /* USER CODE END PV */
