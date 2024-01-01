@@ -92,6 +92,7 @@ static float u_tran;
 
 //static float inc2rad_deltaT = 0;
 static uint8_t regulation_phase = 0;
+static uint8_t ramp_counter = 0;
 
 void
 regulation_init ()
@@ -120,8 +121,24 @@ int_saturation (uint32_t signal, uint32_t MAX, uint32_t MIN)
 }
 
 uint32_t
-int_ramp (uint32_t signal, uint32_t desired_value, uint32_t slope)
+int_ramp_simple (uint32_t signal, uint32_t desired_value, uint8_t slope)
 {
+  if (desired_value - signal > slope)
+    {
+      return signal + slope;
+    }
+  return desired_value;
+}
+
+uint32_t
+int_ramp_advanced (uint32_t signal, uint32_t desired_value, uint8_t slope, uint8_t prescaler)
+{
+  if (ramp_counter < prescaler)
+    {
+      ramp_counter ++;
+      return signal;
+    }
+  ramp_counter = 0;
   if (desired_value - signal > slope)
     {
       return signal + slope;
