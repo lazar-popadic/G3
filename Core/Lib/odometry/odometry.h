@@ -12,11 +12,5 @@ void
 odometry_robot ();
 void
 odometry_init ();
-float
-get_theta ();
-float
-get_x ();
-float
-get_y ();
 
 #endif /* LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_ */

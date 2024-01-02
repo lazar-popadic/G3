@@ -104,13 +104,12 @@ TIM1_UP_TIM10_IRQHandler ()
       if (!(sys_time_half_ms % (10))) //svakih 5ms
 	{
 	  odometry_robot ();
-	  //potrebno vreme = desired_value / slope * delay = 2400 / 2 * 5ms = 6s
-	  //ref_speed_left = int_ramp_simple(ref_speed_left, 2400, 2);
+	  regulation_position();
 	}
-      //speed_right = speed_of_encoder_left_maxon ();
       //ref_speed_left = int_saturation(speed_of_encoder_left_passive(), 2500, -2500);
       //potrebno vreme = desired_value / slope * delay = (2400 / 1) * (0.5ms*10) = 12s
-      ref_speed_left = int_ramp_advanced (ref_speed_left, 2400, 1, 10);
+      //ref_speed_left = int_ramp_advanced (ref_speed_left, 2400, 1, 10);
+      speed_right = speed_of_encoder_right_maxon ();
       speed_left = speed_of_encoder_left_maxon ();
       regulation_speed (speed_right, speed_left);
 

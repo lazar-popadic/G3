@@ -20,10 +20,12 @@ static float w = 0;
 //static float d_odometrijskog = 60;		//precnik odometrijskog tocka [mm]
 static float inc2rad = 0;//broj inkremenata na pasivnom tocku za 1 krug robota
 static float inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
-static float theta;
+
+volatile float theta;
+volatile float x;		// inicijalizuj na x_start i y_start u strategiji
+volatile float y;
+
 static float theta_degrees;
-static float x;		// inicijalizuj na x_start i y_start u strategiji
-static float y;
 
 void
 odometry_init ()
@@ -61,23 +63,6 @@ odometry_robot ()		//racun pozicije i orijentacije
   theta += w;
   x += V * cos (theta);
   y += V * sin (theta);
+
   theta_degrees = theta * 180 / M_PI;
-}
-
-float
-get_theta ()
-{
-  return theta;
-}
-
-float
-get_x ()
-{
-  return x;
-}
-
-float
-get_y ()
-{
-  return y;
 }

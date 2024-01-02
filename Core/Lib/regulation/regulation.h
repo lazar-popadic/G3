@@ -12,15 +12,17 @@
 
 void
 regulation_init ();
-float
-float_saturation (float signal, float MAX, float MIN);
-uint32_t
-int_saturation (uint32_t signal, uint32_t MAX, uint32_t MIN);
+void
+regulation_position ();
 void
 regulation_speed (int16_t speed_right, int16_t speed_left);
-uint32_t
-int_ramp_simple (uint32_t signal, uint32_t desired_value, uint8_t slope);
-uint32_t
-int_ramp_advanced (uint32_t signal, uint32_t desired_value, uint8_t slope, uint8_t prescaler);
+float
+float_saturation (float signal, float MAX, float MIN);
+int32_t
+int_saturation (int32_t signal, int32_t MAX, int32_t MIN);
+int32_t
+int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope);
+int32_t
+int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope, uint8_t prescaler);
 
 #endif /* LIB_MODULES_REGULATION_REGULATION_H_ */
