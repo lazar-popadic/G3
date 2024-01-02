@@ -102,11 +102,10 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms * 0.0005;
-      if (button_pressed ())
-	io_led (true);
+      io_led (button_pressed ());
 
-      if (timer_end ())
-	state_main = END;
+      //if (timer_end ())
+	//state_main = END;
 
       switch (state_main)
 	{
@@ -125,7 +124,8 @@ main (void)
 //	  if (ramp_test  ())
 //	     state_main++;
 //	  pwm_start ();
-	  move_full(desired_x_mm, desired_y_mm, desired_theta_degrees/180*M_PI);
+	  move_full (desired_x_mm, desired_y_mm,
+		     desired_theta_degrees / 180 * M_PI);
 
 	  break;
 	case END:

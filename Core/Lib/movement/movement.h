@@ -8,8 +8,12 @@
 #ifndef LIB_MOVEMENT_MOVEMENT_H_
 #define LIB_MOVEMENT_MOVEMENT_H_
 
+#include <stdbool.h>
+
 void
 calculate_movement ();
+bool
+no_movement ();
 
 void
 move_full (float desired_x, float desired_y, float desired_theta);

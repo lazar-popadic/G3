@@ -11,6 +11,9 @@
 #include "stdint.h"
 #include "math.h"
 
+#define W_LIMIT		10
+#define V_LIMIT		10
+
 // meri
 extern volatile float theta;
 extern volatile float x;
@@ -27,6 +30,9 @@ volatile float theta_2_float = 0;
 extern volatile int32_t theta_1;
 extern volatile int32_t distance;
 extern volatile int32_t theta_2;
+
+extern volatile float V;
+extern volatile float w;
 
 void
 calculate_movement ()
@@ -51,6 +57,14 @@ calculate_movement ()
   theta_2_float = theta_0 - theta;
   //theta_2_float = limit_angle(theta_2_float);
   theta_2 = (int32_t) (2000 * theta_2_float);
+}
+
+bool
+no_movement ()
+{
+  if (w < W_LIMIT || V < V_LIMIT)
+    return true;
+  return false;
 }
 
 void
