@@ -38,6 +38,8 @@ uint8_t state_main = START;
 
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
+
+float desired_x_mm = 0, desired_y_mm = 0, desired_theta_degrees = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -116,12 +118,14 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      io_led (false);
+	      set_starting_position (80, 1000, 0);
 	    }
 	  break;
 	case 0:
 //	  if (ramp_test  ())
 //	     state_main++;
 //	  pwm_start ();
+	  move_full(desired_x_mm, desired_y_mm, desired_theta_degrees/180*M_PI);
 
 	  break;
 	case END:

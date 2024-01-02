@@ -113,21 +113,20 @@ TIM1_UP_TIM10_IRQHandler ()
       speed_left = speed_of_encoder_left_maxon ();
       regulation_speed (speed_right, speed_left);
 
-      switch (sensors_case_timer)
-	{
-	case SENSORS_HIGH:
-	  sensors_state = sensors_high ();
-	  break;
-	case SENSORS_LOW:
-	  sensors_state = sensors_low ();
-	  break;
-	case SENSORS_BACK:
-	  sensors_state = sensors_back ();
-	  break;
-	default:
-	  sensors_state = false;
-	  break;
-	}
-//      sys_time_ms = 0.5 * sys_time_half_ms;
+//      switch (sensors_case_timer)
+//	{
+//	case SENSORS_HIGH:
+//	  sensors_state = sensors_high ();
+//	  break;
+//	case SENSORS_LOW:
+//	  sensors_state = sensors_low ();
+//	  break;
+//	case SENSORS_BACK:
+//	  sensors_state = sensors_back ();
+//	  break;
+//	default:
+//	  sensors_state = false;
+//	  break;
+//	}
     }
 }

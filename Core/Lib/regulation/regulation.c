@@ -14,8 +14,9 @@
 #include "../odometry/odometry.h"
 #include "../pwm/pwm.h"
 #include "../h-bridge/h-bridge.h"
+#include "../movement/movement.h"
 
-#define EPSILON_THETA		1	*10
+#define EPSILON_THETA		2	*35	// oko 35 inc za 1 stepen
 #define EPSILON_DISTANCE	10	*10
 #define EPSILON_DISTANCE_ROT	100	*10
 
@@ -23,10 +24,10 @@
 #define SPEED_LIMIT		2500 // inkrementi, direktno za pwm duty cycle
 #define THETA_I_LIMIT		2500*10
 #define DISTANCE_I_LIMIT	2500*10
-#define U_ROT_MAX		2500*10
-#define U_ROT_MIN		0
-#define U_TRAN_MAX		2500*10
-#define U_TRAN_MIN		0
+#define U_ROT_LIMIT		2500*10
+#define U_TRAN_LIMIT		2500*10
+#define MAXON_LIMIT_R		360	//TODO: izmeri ovo
+#define MAXON_LIMIT_L		360
 
 #define FIRST_ROTATION		0
 #define TRANSLATION_WITH_ROTATION		1
@@ -44,13 +45,13 @@ regulation_translation_finished ();
 static void
 regulation_phase_calculator ();
 
-static const float KP_SPEED = 1;
+static const float KP_SPEED = 10;
 static const float KI_SPEED = 0;
 static const float KD_SPEED = 0;
-static const float KP_ROT = 1;
+static const float KP_ROT = 0.1;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 1;
+static const float KP_TRAN = 0.1;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
@@ -67,26 +68,18 @@ volatile static int16_t e_previous_left = 0;
 volatile static int16_t u_right = 0;
 volatile static int16_t u_left = 0;
 
-// zadajem
-volatile float p0x = 0;
-volatile float p0y = 0;
-volatile float theta_0 = 0;
-//izracuna
-volatile static float p1x = 0;
-volatile static float p1y = 0;
-
 volatile static int32_t theta_error = 0;
 volatile static int32_t distance_error = 0;
 volatile static float rot_faktor = 1;
 
-volatile static int32_t theta_1 = 0;
-volatile static int32_t theta_2 = 0;
+volatile int32_t theta_1 = 0;
+volatile int32_t theta_2 = 0;
 volatile static int32_t theta_er_previous;
 volatile static int32_t theta_er_i;
 volatile static int32_t theta_er_d;
 volatile static int32_t u_rot;
 
-volatile static int32_t distance = 0;
+volatile int32_t distance = 0;
 volatile static int32_t distance_er_previous;
 volatile static int32_t distance_er_i;
 volatile static int32_t distance_er_d;
@@ -109,21 +102,7 @@ regulation_init ()
 void
 regulation_position ()
 {
-  /*
-   * p1 - zeljena pozicija u koordinatnom sistemu robota
-   * p0 - zeljena pozicija koju smo mi zadali (koordinatni sistem stola)
-   */
-  // float [mm]
-  p1x = cos (theta) * (p0x - x) - sin (theta) * (p0y - y);
-  p1y = sin (theta) * (p0x - x) + cos (theta) * (p0y - y);
-
-  // uint32_t [1/10 = 0.1]
-  //prva rotacija, da se robot okrene ka tacki ka kojoj treba da ide
-  theta_1 = (uint32_t)(10 * atan2 (p1y, p1x));
-  //translacija
-  distance = (uint32_t)(10 * sqrt (p1x * p1x + p1y * p1y));
-  //druga rotacija
-  theta_2 = theta_0 - (uint32_t)(10 * theta);
+  calculate_movement ();
 
   regulation_phase_calculator ();
 
@@ -143,7 +122,7 @@ regulation_position ()
        * TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
        * TODO: ako menjas nesto i u donjoj funkciji moras da izmenis
        */
-      if (fabs (theta_1) > (M_PI / 2)) // lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
+      if (abs (theta_1) > (M_PI * 1000)) // lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
 	distance_error = -distance;
       else
 	distance_error = distance;
@@ -151,7 +130,7 @@ regulation_position ()
 
     case TRANSLATION_WITHOUT_ROTATION:
       theta_error = 0;
-      if (fabs (theta_1) > (M_PI / 2))
+      if (abs (theta_1) > (M_PI * 1000))
 	distance_error = -distance;
       else
 	distance_error = distance;
@@ -177,8 +156,14 @@ regulation_position ()
   else
     u_tran = 0;
 
-  ref_speed_right = int_ramp_simple(ref_speed_right, u_tran + u_rot, 10);
-  ref_speed_left = int_ramp_simple(ref_speed_left, u_tran - u_rot, 10);
+  ref_speed_right = int_ramp_simple (ref_speed_right, u_tran + u_rot, 1);
+//  ref_speed_right = u_tran + u_rot;
+  ref_speed_right = int_saturation (ref_speed_right, MAXON_LIMIT_R,
+				    -MAXON_LIMIT_R);
+  ref_speed_left = int_ramp_simple (ref_speed_left, u_tran - u_rot, 1);
+//  ref_speed_left = u_tran - u_rot;
+  ref_speed_left = int_saturation (ref_speed_left, MAXON_LIMIT_L,
+				   -MAXON_LIMIT_L);
 }
 
 /*
@@ -196,7 +181,7 @@ regulation_phase_calculator ()
    * onda
    * DRZI ZADATI UGAO
    */
-  if (fabs (distance) < EPSILON_DISTANCE)
+  if (abs (distance) < EPSILON_DISTANCE)
     {
       regulation_translation_finished ();
       regulation_phase = FINAL_ROTATION_AND_WAITING;
@@ -209,7 +194,7 @@ regulation_phase_calculator ()
    * onda
    * OKRECE SE KA CILJU
    */
-  if (fabs (theta_1) > EPSILON_THETA)
+  if (abs (theta_1) > EPSILON_THETA)
     {
       regulation_translation_finished ();
       regulation_phase = FIRST_ROTATION;
@@ -250,7 +235,7 @@ regulation_rotation (int32_t theta_er, float faktor)
   theta_er_d = theta_er - theta_er_previous;
 
   u_rot = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
-  u_rot = int_saturation (u_rot, U_ROT_MAX, U_ROT_MIN);
+  u_rot = int_saturation (u_rot, U_ROT_LIMIT, -U_ROT_LIMIT);
   u_rot *= faktor;
 
   theta_er_previous = theta_er;
@@ -266,7 +251,7 @@ regulation_translation (int32_t distance_er)
 
   u_tran = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
-  u_tran = int_saturation (u_tran, U_TRAN_MAX, U_TRAN_MIN);
+  u_tran = int_saturation (u_tran, U_TRAN_LIMIT, -U_TRAN_LIMIT);
 
   distance_er_previous = distance_er;
 }
@@ -346,9 +331,9 @@ int_saturation (int32_t signal, int32_t MAX, int32_t MIN)
 int32_t
 int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope)
 {
-  if (desired_value - signal > slope)
+  if (abs (desired_value - signal) > slope)
     {
-      return signal + slope;
+      return signal + sign (desired_value - signal) * slope;
     }
   return desired_value;
 }
@@ -363,9 +348,19 @@ int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope,
       return signal;
     }
   ramp_counter = 0;
-  if (desired_value - signal > slope)
+  if (abs (desired_value - signal) > slope)
     {
-      return signal + slope;
+      return signal + sign (desired_value - signal) * slope;
     }
   return desired_value;
+}
+
+int8_t
+sign (int32_t signal)
+{
+  if (signal > 0)
+    return 1;
+  if (signal < 0)
+    return -1;
+  return 0;
 }

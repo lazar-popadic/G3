@@ -9,6 +9,8 @@
 #define LIB_DESIRED_POSITION_DESIRED_POSITION_H_
 
 void
-set_xytheta (float desired_x, float desired_y, float desired_theta);
+set_desired_position (float desired_x, float desired_y, float desired_theta);
+void
+set_starting_position (float starting_x, float starting_y, float starting_theta);
 
 #endif /* LIB_DESIRED_POSITION_DESIRED_POSITION_H_ */

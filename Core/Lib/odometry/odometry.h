@@ -12,5 +12,7 @@ void
 odometry_robot ();
 void
 odometry_init ();
+float
+limit_angle (float angle);
 
 #endif /* LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_ */
