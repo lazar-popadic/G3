@@ -20,6 +20,7 @@ static const float KD_SPEED = 0;
 
 extern volatile int16_t ref_speed_right;
 extern volatile int16_t ref_speed_left;
+
 volatile static int16_t e_right = 0;
 volatile static int16_t e_i_right = 0;
 volatile static int16_t e_d_right = 0;
@@ -28,6 +29,7 @@ volatile static int16_t e_left = 0;
 volatile static int16_t e_i_left = 0;
 volatile static int16_t e_d_left = 0;
 volatile static int16_t e_previous_left = 0;
+
 volatile static int16_t u_right = 0;
 volatile static int16_t u_left = 0;
 

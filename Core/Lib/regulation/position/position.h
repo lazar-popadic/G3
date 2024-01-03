@@ -8,7 +8,11 @@
 #ifndef LIB_REGULATION_POSITION_POSITION_H_
 #define LIB_REGULATION_POSITION_POSITION_H_
 
+#include <stdint.h>
+
 void
 regulation_position ();
+void
+regulation_single_wheel (int16_t referent_position, int16_t measured_position);
 
 #endif /* LIB_REGULATION_POSITION_POSITION_H_ */

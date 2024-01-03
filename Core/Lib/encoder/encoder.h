@@ -10,6 +10,9 @@
 
 #include <stdint.h>
 
+void
+left_wheel_position ();
+
 int16_t
 speed_of_encoder_right_passive ();
 int16_t

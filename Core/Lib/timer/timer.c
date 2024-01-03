@@ -28,7 +28,7 @@ extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
 
 volatile int16_t ref_test = 0;
-volatile int16_t speed_test = 0;
+extern volatile int16_t wheel_position;
 
 void
 timer_init ()
@@ -107,14 +107,16 @@ TIM1_UP_TIM10_IRQHandler ()
       if (!(sys_time_half_ms % (10))) //svakih 5ms
 	{
 	  odometry_robot ();
-//	  regulation_position();
-	  ref_speed_right = ref_test;
+//TODO:	  prvo regulaciju brzine namesti
 	  ref_speed_left = ref_test;
-//	  ref_speed_left = int_ramp_simple(ref_speed_left, ref_test, 1);
-//	  ref_speed_right = int_ramp_simple (ref_speed_left, ref_test, 1);
+
+//TODO:	  pa onda regulaciju pozicije jednog maxona / tocka
+//	  left_wheel_position();
+//	  regulation_single_wheel(ref_test, wheel_position);
+
+//TODO:	  pa tek onda celu regulaciju pozicije
+//	  regulation_position();
 	}
-//      speed_right = speed_test;
-//      speed_left = speed_test;
       speed_right = speed_of_encoder_right_maxon ();
       speed_left = speed_of_encoder_left_maxon ();
       regulation_speed (speed_right, speed_left);

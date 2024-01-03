@@ -47,7 +47,6 @@ extern "C" {
 #include "../Lib/sensors/sensors.h"
 #include "../Lib/h-bridge/h-bridge.h"
 #include "../Lib/adc/adc.h"
-#include "../Lib/desired_position/desired_position.h"
 #include "../Lib/movement/movement.h"
 /* USER CODE END Includes */
 

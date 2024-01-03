@@ -73,6 +73,31 @@ extern volatile float x;
 extern volatile float y;
 extern volatile float theta;
 
+static float const INTERGAL_LIMIT = 100;
+static float const KP = 1;
+static float const KI = 0;
+static float const KD = 0;
+
+volatile static int16_t error = 0;
+volatile static int16_t error_i = 0;
+volatile static int16_t error_d = 0;
+volatile static int16_t error_previous = 0;
+volatile static int16_t u = 0;
+
+void
+regulation_single_wheel (int16_t referent_position, int16_t measured_position)
+{
+  error = referent_position - measured_position;
+  error_i += error;
+  error_i = int_saturation (error_i, INTERGAL_LIMIT, -INTERGAL_LIMIT);
+  error_d = error - error_previous;
+
+  u = KP * error + KI * error_i + KD * error_d;
+  ref_speed_left = int_saturation(u, MAXON_LIMIT_L, -MAXON_LIMIT_L);
+
+  error_previous = error;
+}
+
 void
 regulation_position ()
 {

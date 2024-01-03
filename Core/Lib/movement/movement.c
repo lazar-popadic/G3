@@ -6,7 +6,6 @@
  */
 
 #include "movement.h"
-#include "../desired_position/desired_position.h"
 #include "../odometry/odometry.h"
 #include "stdint.h"
 #include "math.h"
@@ -21,7 +20,7 @@ extern volatile float y;
 // zadajem
 volatile float desired_x = 0;
 volatile float desired_y = 0;
-volatile float theta_0 = 0;
+volatile float desired_theta = 0;
 //izracuna
 volatile float x_error = 0;
 volatile float y_error = 0;
@@ -50,13 +49,21 @@ calculate_movement ()
 
   // translacija
   // [0.1mm]
-  distance = (int32_t) (10 * sqrt (x_error*x_error + y_error * y_error));
+  distance = (int32_t) (10 * sqrt (x_error * x_error + y_error * y_error));
 
   // druga rotacija
   // [0.000 5 rad] = [0.03 degrees]
-  theta_2_float = theta_0 - theta;
+  theta_2_float = desired_theta - theta;
   //theta_2_float = limit_angle(theta_2_float);
   theta_2 = (int32_t) (2000 * theta_2_float);
+}
+
+void
+set_starting_position (float starting_x, float starting_y, float starting_theta)
+{
+  x = starting_x;
+  y = starting_y;
+  theta = starting_theta;
 }
 
 bool
@@ -68,9 +75,11 @@ no_movement ()
 }
 
 void
-move_full (float desired_x, float desired_y, float desired_theta)
+move_full (float x, float y, float theta)
 {
-  set_desired_position (desired_x, desired_y, desired_theta);
+  desired_x = x;			// od	0 	do	3000
+  desired_y = y;			// od	0 	do	2000
+  desired_theta = limit_angle (theta);	// od	-3.14	do	3.14
 }
 
 void

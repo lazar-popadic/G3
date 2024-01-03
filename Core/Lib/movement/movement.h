@@ -14,6 +14,8 @@ void
 calculate_movement ();
 bool
 no_movement ();
+void
+set_starting_position (float starting_x, float starting_y, float starting_theta);
 
 void
 move_full (float desired_x, float desired_y, float desired_theta);

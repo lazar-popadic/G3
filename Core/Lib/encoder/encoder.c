@@ -24,6 +24,8 @@ volatile int16_t state_enc_left_passive = 0;
 volatile int16_t state_enc_right_maxon = 0;
 volatile int16_t state_enc_left_maxon = 0;
 
+volatile int16_t wheel_position = 0;
+
 uint8_t const ENC1_A = 4;	//tim3
 uint8_t const ENC1_B = 5;
 uint8_t const ENC2_A = 6;	//tim4
@@ -45,6 +47,12 @@ encoder_init ()
   tim2_init ();			//enkoder 3 - desni maxon
   tim5_init ();			//enkoder 4 - levi maxon
   io_init ();
+}
+
+void
+left_wheel_position ()
+{
+  wheel_position += speed_of_encoder_left_maxon();
 }
 
 int16_t
