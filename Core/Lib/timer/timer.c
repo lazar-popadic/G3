@@ -28,6 +28,7 @@ extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
 
 volatile int16_t ref_test = 0;
+volatile int16_t speed_test = 0;
 
 void
 timer_init ()
@@ -107,16 +108,16 @@ TIM1_UP_TIM10_IRQHandler ()
 	{
 	  odometry_robot ();
 //	  regulation_position();
+	  ref_speed_right = ref_test;
+	  ref_speed_left = ref_test;
 //	  ref_speed_left = int_ramp_simple(ref_speed_left, ref_test, 1);
-//	  ref_speed_left = int_saturation (ref_speed_left, 200, -200);
 //	  ref_speed_right = int_ramp_simple (ref_speed_left, ref_test, 1);
-//	  ref_speed_right = int_saturation (ref_speed_left, 200, -200);
 	}
-      //ref_speed_left = int_saturation(speed_of_encoder_left_passive(), 2500, -2500);
-      //ref_speed_left = int_ramp_advanced (ref_speed_left, 2400, 1, 10);
+//      speed_right = speed_test;
+//      speed_left = speed_test;
       speed_right = speed_of_encoder_right_maxon ();
       speed_left = speed_of_encoder_left_maxon ();
-//      regulation_speed (speed_right, speed_left);
+      regulation_speed (speed_right, speed_left);
 
 //      switch (sensors_case_timer)
 //	{

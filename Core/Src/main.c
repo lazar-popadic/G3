@@ -119,8 +119,8 @@ main (void)
 	      state_main = 0;
 	      io_led (false);
 	      pwm_start ();
-	      left_wheel_backwards ();
-	      //set_starting_position (80, 1000, 0);
+//	      left_wheel_backwards ();
+	      set_starting_position (80, 1000, 0);
 	    }
 	  break;
 	case 0:
@@ -129,7 +129,7 @@ main (void)
 
 	  move_full (desired_x_mm, desired_y_mm,
 		     desired_theta_degrees / 180 * M_PI);
-	  pwm_duty_cycle_left (duty_cycle_test);
+//	  pwm_duty_cycle_left (duty_cycle_test);
 
 	  break;
 	case END:

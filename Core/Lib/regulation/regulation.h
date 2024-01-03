@@ -9,13 +9,11 @@
 #define LIB_MODULES_REGULATION_REGULATION_H_
 
 #include <stdint.h>
+#include "position/position.h"
+#include "speed/speed.h"
 
 void
 regulation_init ();
-void
-regulation_position ();
-void
-regulation_speed (int16_t speed_right, int16_t speed_left);
 float
 float_saturation (float signal, float MAX, float MIN);
 int32_t
