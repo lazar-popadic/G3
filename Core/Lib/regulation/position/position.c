@@ -9,13 +9,14 @@
 #include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "../../movement/movement.h"
 #include "../regulation.h"
 
-#define FIRST_ROTATION				0
-#define TRANSLATION_WITH_ROTATION		1
-#define TRANSLATION_WITHOUT_ROTATION		2
-#define FINAL_ROTATION_AND_WAITING		3
+#define ROT_TO_ANGLE		0
+#define ROT_TO_POS		1
+#define TRAN_WITH_ROT		2
+#define TRAN_WITHOUT_ROT	3
 
 #define THETA_I_LIMIT		2500*10
 #define DISTANCE_I_LIMIT	2500*10
@@ -25,20 +26,10 @@
 #define MAXON_LIMIT_R		360	//TODO: izmeri ovo
 #define MAXON_LIMIT_L		360
 
-#define EPSILON_THETA		2	*35	// oko 35 inc za 1 stepen
+#define EPSILON_THETA_SMALL	2	*35	// oko 35 inc za 1 stepen
+#define EPSILON_THETA_BIG	15	*35
 #define EPSILON_DISTANCE	10	*10
 #define EPSILON_DISTANCE_ROT	100	*10
-
-static void
-regulation_rotation (int32_t theta_er, float faktor);
-static void
-regulation_translation (int32_t distance_er);
-static void
-regulation_rotation_finished ();
-static void
-regulation_translation_finished ();
-static void
-regulation_phase_calculator ();
 
 static const float KP_ROT = 0.1;
 static const float KI_ROT = 0;
@@ -54,20 +45,23 @@ volatile static int32_t theta_error = 0;
 volatile static int32_t distance_error = 0;
 volatile static float rot_faktor = 1;
 
-volatile int32_t theta_1 = 0;
-volatile int32_t theta_2 = 0;
+extern volatile int32_t theta_to_pos;
+extern volatile int32_t theta_to_angle;
+extern volatile float theta_to_pos_float;
+extern volatile float theta_to_angle_float;
 volatile static int32_t theta_er_previous;
 volatile static int32_t theta_er_i;
 volatile static int32_t theta_er_d;
-volatile static int32_t u_rot;
+volatile int32_t u_rot;
 
-volatile int32_t distance = 0;
+extern volatile int32_t distance;
 volatile static int32_t distance_er_previous;
 volatile static int32_t distance_er_i;
 volatile static int32_t distance_er_d;
-volatile static int32_t u_tran;
+volatile int32_t u_tran;
 
 volatile static uint8_t regulation_phase = 0;
+volatile bool regulation_phase_init = false;
 
 extern volatile float x;
 extern volatile float y;
@@ -93,7 +87,7 @@ regulation_single_wheel (int16_t referent_position, int16_t measured_position)
   error_d = error - error_previous;
 
   u = KP * error + KI * error_i + KD * error_d;
-  ref_speed_left = int_saturation(u, MAXON_LIMIT_L, -MAXON_LIMIT_L);
+  ref_speed_left = int_saturation (u, MAXON_LIMIT_L, -MAXON_LIMIT_L);
 
   error_previous = error;
 }
@@ -103,68 +97,134 @@ regulation_position ()
 {
   calculate_movement ();
 
-  regulation_phase_calculator ();
-
-  //TODO: uradi racunanje da li sme da predje u drugu fazu
-
   switch (regulation_phase)
-    {
-    case FIRST_ROTATION:
-      theta_error = theta_1;
-      rot_faktor = 1;
-      distance_error = 0;
-      break;
 
-    case TRANSLATION_WITH_ROTATION:
-      theta_error = theta_1;
-      rot_faktor = 0.5;
+    {
+    case ROT_TO_ANGLE:
+      if (!regulation_phase_init)
+	{
+	  regulation_phase_init = true;
+	  regulation_rotation_finished ();
+	  regulation_translation_finished ();
+	}
+      regulation_rotation (theta_to_angle, 1);
+      u_tran = 0;
       /*
-       * TODO: ovde ono racunanje znaka za distance_error u zavisnosti od orijentacije robota ili greske orijentacije, proveri, razmisli
-       * TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
-       * TODO: ako menjas nesto i u donjoj funkciji moras da izmenis
+       * POJAVI SE GRESKA U POZICIJI i NE KRECE SE
+       * onda
+       * OKRECI SE KA CILJU
        */
-      if (abs (theta_1) > (M_PI * 1000)) // lazar je ovde uradio drugacije, kad je ugao veci od par stepeni
-	distance_error = -distance;
+      if (distance > EPSILON_DISTANCE && no_movement ())
+	{
+	  regulation_phase_init = false;
+	  regulation_rotation_finished ();
+	  regulation_phase = ROT_TO_POS;
+	}
+      break;
+
+    case ROT_TO_POS:
+      if (!regulation_phase_init)
+	{
+	  regulation_phase_init = true;
+	  regulation_rotation_finished ();
+	  regulation_translation_finished ();
+	}
+      regulation_rotation (theta_to_pos, 1);
+      u_tran = 0;
+      /*
+       * OKRENUO SE KA CILJU i NE KRECE SE VISE
+       * onda
+       * TRANSLIRAJ KA CILJU (sa rotacijom)
+       */
+      if (abs (theta_to_pos) < EPSILON_THETA_SMALL && no_movement ())
+	{
+	  regulation_phase_init = false;
+	  regulation_rotation_finished ();
+	  regulation_phase = TRAN_WITH_ROT;
+	}
+      break;
+
+    case TRAN_WITH_ROT:
+      if (!regulation_phase_init)
+	{
+	  regulation_phase_init = true;
+	  regulation_rotation_finished ();
+	  regulation_translation_finished ();
+	}
+      regulation_translation (distance);
+      regulation_rotation (theta_to_pos, 0.5);
+      /*
+       * PRIBLIZIO SE CILJU
+       * onda
+       * NASTAVI KA CILJU BEZ ROTACIJE
+       */
+      if (distance < EPSILON_DISTANCE_ROT)
+	{
+	  regulation_phase_init = false;
+	  regulation_translation_finished ();
+	  regulation_phase = TRAN_WITHOUT_ROT;
+	}
+      /*
+       * POJAVILA SE VECA GRESKA U UGLU
+       * onda
+       * OKRENI SE KA CILJU
+       */
+      if (abs (theta_to_pos) > EPSILON_THETA_BIG)
+	{
+	  regulation_phase_init = false;
+	  regulation_translation_finished ();
+	  regulation_phase = ROT_TO_POS;
+	}
+      break;
+
+    case TRAN_WITHOUT_ROT:
+      if (!regulation_phase_init)
+	{
+	  regulation_phase_init = true;
+	  regulation_rotation_finished ();
+	  regulation_translation_finished ();
+	}
+//TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
+      if (fabs (theta_to_pos_float) > (M_PI / 2))
+	regulation_translation (-distance);
       else
-	distance_error = distance;
-      break;
-
-    case TRANSLATION_WITHOUT_ROTATION:
-      theta_error = 0;
-      if (abs (theta_1) > (M_PI * 1000))
-	distance_error = -distance;
-      else
-	distance_error = distance;
-      break;
-
-    case FINAL_ROTATION_AND_WAITING:
-      theta_error = theta_2;
-      rot_faktor = 1;
-      distance_error = 0;
+	regulation_translation (distance);
+      u_rot = 0;
+      /*
+       * NEMA GRESKE U POZICIJI
+       * onda
+       * DRZI ZADATI UGAO
+       */
+      if (distance < EPSILON_DISTANCE)
+	{
+	  regulation_phase_init = false;
+	  regulation_translation_finished ();
+	  regulation_phase = ROT_TO_ANGLE;
+	}
+      /*
+       * POJAVI SE VECA GRESKA U POZICIJI
+       * onda
+       * VRATI SE U OKRETANJE KA CILJU
+       */
+      if (distance > EPSILON_DISTANCE_ROT)
+	{
+	  regulation_phase_init = false;
+	  regulation_translation_finished ();
+	  regulation_phase = ROT_TO_POS;
+	}
       break;
     }
-
-  if (theta_error)
-    {
-      regulation_rotation (theta_error, rot_faktor);
-    }
-  else
-    u_rot = 0;
-  if (distance_error)
-    {
-      regulation_translation (distance_error);
-    }
-  else
-    u_tran = 0;
 
   ref_speed_right = int_ramp_simple (ref_speed_right, u_tran + u_rot, 1);
-//  ref_speed_right = u_tran + u_rot;	// bez rampe
+  //    ref_speed_right = u_tran + u_rot;	// bez rampe
   ref_speed_right = int_saturation (ref_speed_right, MAXON_LIMIT_R,
 				    -MAXON_LIMIT_R);
+
   ref_speed_left = int_ramp_simple (ref_speed_left, u_tran - u_rot, 1);
-//  ref_speed_left = u_tran - u_rot;	// bez rampe
+  //    ref_speed_left = u_tran - u_rot;	// bez rampe
   ref_speed_left = int_saturation (ref_speed_left, MAXON_LIMIT_L,
 				   -MAXON_LIMIT_L);
+
 }
 
 /*
@@ -174,61 +234,8 @@ regulation_position ()
  * ako stavis da je distance veci od epsilon_distance_rot onda nece moci da se vrati iz faze 3 u fazu 1 ako ga nesto sjebe
  * mozda u trecoj fazi stavi uslov za vracanje u prvu,
  */
-static void
-regulation_phase_calculator ()
-{
-  /*
-   * NEMA GRESKE U POZICIJI
-   * onda
-   * DRZI ZADATI UGAO
-   */
-  if (abs (distance) < EPSILON_DISTANCE)
-    {
-      regulation_translation_finished ();
-      regulation_phase = FINAL_ROTATION_AND_WAITING;
-      return;
-    }
-  /*
-   * IMA GRESKU U POZICIJI
-   * i
-   * NIJE ORIJENTISAN KA CILJU
-   * onda
-   * OKRECE SE KA CILJU
-   */
-  if (abs (theta_1) > EPSILON_THETA)
-    {
-      regulation_translation_finished ();
-      regulation_phase = FIRST_ROTATION;
-      return;
-    }
-  /*
-   * IMA GRESKU U POZICIJI, koja je VECA od EPSILON_DISTANCE_ROT
-   * i
-   * JESTE ORIJENTISAN KA CILJU
-   * onda
-   * IDE KA CILJU SA regulacijom ugla
-   */
-  if (fabs (distance) > EPSILON_DISTANCE_ROT)
-    {
-      regulation_rotation_finished ();
-      regulation_phase = TRANSLATION_WITH_ROTATION;
-      return;
-    }
-  /*
-   * IMA GRESKU U POZICIJI, koja je MANJA od EPSILON_DISTANCE_ROT
-   * i
-   * JESTE ORIJENTISAN KA CILJU
-   * onda
-   * IDE KA CILJU BEZ regulacijom ugla
-   */
-    {
-      regulation_rotation_finished ();
-      regulation_phase = TRANSLATION_WITHOUT_ROTATION;
-      return;
-    }
-}
 
-static void
+void
 regulation_rotation (int32_t theta_er, float faktor)
 {
   theta_er_i += theta_er;
@@ -242,7 +249,7 @@ regulation_rotation (int32_t theta_er, float faktor)
   theta_er_previous = theta_er;
 }
 
-static void
+void
 regulation_translation (int32_t distance_er)
 {
   distance_er_i += distance_er;
@@ -257,7 +264,7 @@ regulation_translation (int32_t distance_er)
   distance_er_previous = distance_er;
 }
 
-static void
+void
 regulation_rotation_finished ()
 {
   theta_er_i = 0;
@@ -265,7 +272,7 @@ regulation_rotation_finished ()
   theta_er_previous = 0;
 }
 
-static void
+void
 regulation_translation_finished ()
 {
   distance_er_i = 0;
