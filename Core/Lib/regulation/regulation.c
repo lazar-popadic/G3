@@ -22,6 +22,7 @@
 
 #define EI_LIMIT 		0 // narednih 10 do 100 iteracija  vrednosti, ei ne sme preko toga ?
 #define SPEED_LIMIT		2500 // inkrementi, direktno za pwm duty cycle
+
 #define THETA_I_LIMIT		2500*10
 #define DISTANCE_I_LIMIT	2500*10
 #define U_ROT_LIMIT		2500*10
@@ -29,7 +30,7 @@
 #define MAXON_LIMIT_R		360	//TODO: izmeri ovo
 #define MAXON_LIMIT_L		360
 
-#define FIRST_ROTATION		0
+#define FIRST_ROTATION				0
 #define TRANSLATION_WITH_ROTATION		1
 #define TRANSLATION_WITHOUT_ROTATION		2
 #define FINAL_ROTATION_AND_WAITING		3
@@ -45,7 +46,7 @@ regulation_translation_finished ();
 static void
 regulation_phase_calculator ();
 
-static const float KP_SPEED = 10;
+static const float KP_SPEED = 100;
 static const float KI_SPEED = 0;
 static const float KD_SPEED = 0;
 static const float KP_ROT = 0.1;
@@ -106,6 +107,8 @@ regulation_position ()
 
   regulation_phase_calculator ();
 
+  //TODO: uradi racunanje da li sme da predje u drugu fazu
+
   switch (regulation_phase)
     {
     case FIRST_ROTATION:
@@ -156,14 +159,14 @@ regulation_position ()
   else
     u_tran = 0;
 
-  ref_speed_right = int_ramp_simple (ref_speed_right, u_tran + u_rot, 1);
+//  ref_speed_right = int_ramp_simple (ref_speed_right, u_tran + u_rot, 1);
 //  ref_speed_right = u_tran + u_rot;
-  ref_speed_right = int_saturation (ref_speed_right, MAXON_LIMIT_R,
-				    -MAXON_LIMIT_R);
-  ref_speed_left = int_ramp_simple (ref_speed_left, u_tran - u_rot, 1);
+//  ref_speed_right = int_saturation (ref_speed_right, MAXON_LIMIT_R,
+//				    -MAXON_LIMIT_R);
+//  ref_speed_left = int_ramp_simple (ref_speed_left, u_tran - u_rot, 1);
 //  ref_speed_left = u_tran - u_rot;
-  ref_speed_left = int_saturation (ref_speed_left, MAXON_LIMIT_L,
-				   -MAXON_LIMIT_L);
+//  ref_speed_left = int_saturation (ref_speed_left, MAXON_LIMIT_L,
+//				   -MAXON_LIMIT_L);
 }
 
 /*

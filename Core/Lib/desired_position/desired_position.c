@@ -21,7 +21,7 @@ set_desired_position (float x, float y, float theta)
 {
   desired_x = x;			// od	0 	do	3000
   desired_y = y;			// od	0 	do	2000
-  theta_0 = limit_angle(theta);		// od	-1.57	do	1.57
+  theta_0 = limit_angle(theta);		// od	-3.14	do	3.14
 }
 
 void
