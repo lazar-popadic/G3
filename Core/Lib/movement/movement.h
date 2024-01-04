@@ -28,5 +28,7 @@ void
 move_to_angle (float theta);
 void
 move_on_direction (float distance);
+void
+move_relative_angle (float angle_degrees);
 
 #endif /* LIB_MOVEMENT_MOVEMENT_H_ */

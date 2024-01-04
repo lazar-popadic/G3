@@ -113,6 +113,7 @@ main (void)
 	{
 	default:
 	  break;
+
 	case START:
 	  if (io_cinc ())
 	    {
@@ -121,9 +122,10 @@ main (void)
 	      io_led (false);
 	      pwm_start ();
 //	      left_wheel_backwards ();
-	      set_starting_position (80, 1000, 0);
+	      set_starting_position (80, 1000, 45);
 	    }
 	  break;
+
 	case 0:
 //	  if (ramp_test  ())
 //	     state_main++;
@@ -131,12 +133,20 @@ main (void)
 //	  move_full (desired_x_mm, desired_y_mm,
 //		     desired_theta_degrees / 180 * M_PI);
 //	  pwm_duty_cycle_left (duty_cycle_test);
-	  move_to_xy(280, 1100);
 //	  move_finished = movement_finished ();
-	  if (timer_delay_nonblocking(10) && movement_finished())
-	    state_main++;
+	  move_to_angle(0);
 
+	  if (timer_delay_nonblocking (10) && movement_finished ())
+	    state_main++;
 	  break;
+
+	case 1:
+	  move_relative_angle (-90);
+
+	  if (timer_delay_nonblocking (10) && movement_finished ())
+	    state_main++;
+	  break;
+
 	case END:
 	  io_led (true);
 	  break;

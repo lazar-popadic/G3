@@ -44,6 +44,7 @@ extern volatile float w;
 volatile bool movement_init = false;
 volatile static float x_init = 0;
 volatile static float y_init = 0;
+volatile static float theta_init = 0;
 
 void
 calculate_movement ()
@@ -103,7 +104,14 @@ move_to_xy (float x, float y)
 void
 move_to_angle (float theta_degrees)
 {
-  move_full (x, y, theta_degrees * M_PI / 180);
+  if (!movement_init)
+    {
+      movement_init = true;
+      x_init = x;
+      y_init = y;
+      theta_init = theta_degrees * M_PI / 180;
+    }
+  move_full (x_init, y_init, theta_init);
 }
 
 void
@@ -116,4 +124,17 @@ move_on_direction (float distance)
       y_init = y + distance * sin (theta);
     }
   move_full (x_init, y_init, theta);
+}
+
+void
+move_relative_angle (float angle_degrees)
+{
+  if (!movement_init)
+    {
+      movement_init = true;
+      x_init = x;
+      y_init = y;
+      theta_init = theta + angle_degrees * M_PI / 180;
+    }
+  move_full (x_init, y_init, theta_init);
 }
