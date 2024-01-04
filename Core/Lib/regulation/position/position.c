@@ -18,23 +18,23 @@
 #define TRAN_WITH_ROT		2
 #define TRAN_WITHOUT_ROT	3
 
-#define THETA_I_LIMIT		2500*10
-#define DISTANCE_I_LIMIT	2500*10
-#define U_ROT_LIMIT		2500*10
-#define U_TRAN_LIMIT		2500*10
+#define THETA_I_LIMIT		2500
+#define DISTANCE_I_LIMIT	2500
+#define U_ROT_LIMIT		2500
+#define U_TRAN_LIMIT		2500
 
 #define MAXON_LIMIT_R		360	//TODO: izmeri ovo
 #define MAXON_LIMIT_L		360
 
-#define EPSILON_THETA_SMALL	2	*35	// oko 35 inc za 1 stepen
-#define EPSILON_THETA_BIG	15	*35
-#define EPSILON_DISTANCE	10	*10
-#define EPSILON_DISTANCE_ROT	100	*10
+#define EPSILON_THETA_SMALL	2	*0.0175		// 2 stepena
+#define EPSILON_THETA_BIG	15	*0.0175		// 15 stepeni
+#define EPSILON_DISTANCE	10			// 10 mm
+#define EPSILON_DISTANCE_ROT	100			// 100 mm
 
-static const float KP_ROT = 0.1;
+static const float KP_ROT = 200;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 0.1;
+static const float KP_TRAN = 1;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
@@ -45,19 +45,17 @@ volatile static int32_t theta_error = 0;
 volatile static int32_t distance_error = 0;
 volatile static float rot_faktor = 1;
 
-extern volatile int32_t theta_to_pos;
-extern volatile int32_t theta_to_angle;
-extern volatile float theta_to_pos_float;
-extern volatile float theta_to_angle_float;
-volatile static int32_t theta_er_previous;
-volatile static int32_t theta_er_i;
-volatile static int32_t theta_er_d;
+extern volatile float theta_to_pos;
+extern volatile float theta_to_angle;
+volatile static float theta_er_previous;
+volatile static float theta_er_i;
+volatile static float theta_er_d;
 volatile int32_t u_rot;
 
-extern volatile int32_t distance;
-volatile static int32_t distance_er_previous;
-volatile static int32_t distance_er_i;
-volatile static int32_t distance_er_d;
+extern volatile float distance;
+volatile static float distance_er_previous;
+volatile static float distance_er_i;
+volatile static float distance_er_d;
 volatile int32_t u_tran;
 
 volatile static uint8_t regulation_phase = 0;
@@ -136,7 +134,7 @@ regulation_position ()
        * onda
        * TRANSLIRAJ KA CILJU (sa rotacijom)
        */
-      if (abs (theta_to_pos) < EPSILON_THETA_SMALL && no_movement ())
+      if (fabs (theta_to_pos) < EPSILON_THETA_SMALL && no_movement ())
 	{
 	  regulation_phase_init = false;
 	  regulation_rotation_finished ();
@@ -169,7 +167,7 @@ regulation_position ()
        * onda
        * OKRENI SE KA CILJU
        */
-      if (abs (theta_to_pos) > EPSILON_THETA_BIG)
+      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
 	{
 	  regulation_phase_init = false;
 	  regulation_translation_finished ();
@@ -185,7 +183,7 @@ regulation_position ()
 	  regulation_translation_finished ();
 	}
 //TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
-      if (fabs (theta_to_pos_float) > (M_PI / 2))
+      if (fabs (theta_to_pos) > (M_PI / 2))
 	regulation_translation (-distance);
       else
 	regulation_translation (distance);
@@ -236,13 +234,14 @@ regulation_position ()
  */
 
 void
-regulation_rotation (int32_t theta_er, float faktor)
+regulation_rotation (float theta_er, float faktor)
 {
   theta_er_i += theta_er;
-  theta_er_i = int_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
+  theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
   theta_er_d = theta_er - theta_er_previous;
 
-  u_rot = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
+  u_rot = (int32_t) (KP_ROT * theta_er + KI_ROT * theta_er_i
+      + KD_ROT * theta_er_d);
   u_rot = int_saturation (u_rot, U_ROT_LIMIT, -U_ROT_LIMIT);
   u_rot *= faktor;
 
@@ -250,15 +249,15 @@ regulation_rotation (int32_t theta_er, float faktor)
 }
 
 void
-regulation_translation (int32_t distance_er)
+regulation_translation (float distance_er)
 {
   distance_er_i += distance_er;
-  distance_er_i = int_saturation (distance_er_i, DISTANCE_I_LIMIT,
+  distance_er_i = float_saturation (distance_er_i, DISTANCE_I_LIMIT,
 				  -DISTANCE_I_LIMIT);
   distance_er_d = distance_er - distance_er_previous;
 
-  u_tran = KP_TRAN * distance_er + KI_TRAN * distance_er_i
-      + KD_TRAN * distance_er_d;
+  u_tran = (int32_t) (KP_TRAN * distance_er + KI_TRAN * distance_er_i
+      + KD_TRAN * distance_er_d);
   u_tran = int_saturation (u_tran, U_TRAN_LIMIT, -U_TRAN_LIMIT);
 
   distance_er_previous = distance_er;

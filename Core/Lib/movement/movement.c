@@ -28,11 +28,9 @@ volatile float desired_theta = 0;
 volatile float x_e = 0;
 volatile float y_e = 0;
 volatile float theta_e = 0;
-volatile float theta_to_pos_float = 0;
-volatile float theta_to_angle_float = 0;
-volatile int32_t theta_to_pos;
-volatile int32_t distance;
-volatile int32_t theta_to_angle;
+volatile float theta_to_pos = 0;
+volatile float distance;
+volatile float theta_to_angle = 0;
 
 volatile static int32_t theta_error = 0;
 volatile static int32_t distance_error = 0;
@@ -50,17 +48,13 @@ volatile uint8_t movement_phase = 0;
 void
 calculate_movement ()
 {
-  x_e = desired_x - x;						// [mm]
-  y_e = desired_y - y;						// [mm]
-  theta_e = desired_theta - theta;				// [rad]
+  x_e = desired_x - x;				// [mm]
+  y_e = desired_y - y;				// [mm]
+  theta_e = desired_theta - theta;		// [rad]
 
-  theta_to_pos_float = atan2 (y_e, x_e) - theta;		// [rad]
-  theta_to_pos = (int32_t) (2000 * theta_to_pos_float);		// [0.000 5 rad] = [0.03 degrees]
-
-  distance = (int32_t) (10 * sqrt (x_e * x_e + y_e * y_e));	// [0.1mm]
-
-  theta_to_angle_float = theta_e;				// [rad]
-  theta_to_angle = (int32_t) (2000 * theta_to_angle_float);	// [0.000 5 rad] = [0.03 degrees]
+  theta_to_pos = atan2 (y_e, x_e) - theta;	// [rad]
+  distance = sqrt (x_e * x_e + y_e * y_e);	// [mm]
+  theta_to_angle = theta_e;			// [rad]
 }
 
 void
