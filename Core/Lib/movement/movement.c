@@ -41,9 +41,9 @@ extern volatile int32_t u_tran;
 extern volatile float V;
 extern volatile float w;
 
-volatile bool phase_init = false;
-volatile bool phase_finished = false;
-volatile uint8_t movement_phase = 0;
+volatile bool movement_init = false;
+volatile static float x_init = 0;
+volatile static float y_init = 0;
 
 void
 calculate_movement ()
@@ -58,33 +58,12 @@ calculate_movement ()
 }
 
 void
-movement_fsm ()
-{
-  switch (movement_phase)
-    {
-    case 0:
-      if (!phase_init)
-	{
-	  phase_init = true;
-
-	}
-
-      if (phase_finished)
-	{
-	  phase_init = false;
-
-	}
-      break;
-
-    }
-}
-
-void
-set_starting_position (float starting_x, float starting_y, float starting_theta)
+set_starting_position (float starting_x, float starting_y,
+		       float starting_theta_degrees)
 {
   x = starting_x;
   y = starting_y;
-  theta = starting_theta;
+  theta = starting_theta_degrees * M_PI / 180;
 }
 
 bool
@@ -95,10 +74,46 @@ no_movement ()
   return false;
 }
 
+bool
+movement_finished ()
+{
+  if (fabs (distance) < EPSILON_DISTANCE
+      && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
+    {
+      movement_init = false;
+      return true;
+    }
+  return false;
+}
+
 void
 move_full (float x, float y, float theta)
 {
   desired_x = x;			// od	0 	do	3000
   desired_y = y;			// od	0 	do	2000
   desired_theta = limit_angle (theta);	// od	-3.14	do	3.14
+}
+
+void
+move_to_xy (float x, float y)
+{
+  move_full (x, y, theta);// TODO: ne moze ovako, ovo bi vazilo kada bi stalno prolazio kroz ovo
+}
+
+void
+move_to_angle (float theta_degrees)
+{
+  move_full (x, y, theta_degrees * M_PI / 180);
+}
+
+void
+move_on_direction (float distance)
+{
+  if (!movement_init)
+    {
+      movement_init = true;
+      x_init = x + distance * cos (theta);
+      y_init = y + distance * sin (theta);
+    }
+  move_full (x_init, y_init, theta);
 }

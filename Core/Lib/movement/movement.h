@@ -9,15 +9,24 @@
 #define LIB_MOVEMENT_MOVEMENT_H_
 
 #include <stdbool.h>
+#include "../regulation/position/position.h"
 
 void
 calculate_movement ();
 bool
 no_movement ();
+bool
+movement_finished ();
 void
 set_starting_position (float starting_x, float starting_y, float starting_theta);
 
 void
-move_full (float desired_x, float desired_y, float desired_theta);
+move_full (float x, float y, float theta);
+void
+move_to_xy (float x, float y);
+void
+move_to_angle (float theta);
+void
+move_on_direction (float distance);
 
 #endif /* LIB_MOVEMENT_MOVEMENT_H_ */

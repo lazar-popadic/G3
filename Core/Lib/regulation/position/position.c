@@ -26,11 +26,6 @@
 #define MAXON_LIMIT_R		360	//TODO: izmeri ovo
 #define MAXON_LIMIT_L		360
 
-#define EPSILON_THETA_SMALL	2	*0.0175		// 2 stepena
-#define EPSILON_THETA_BIG	15	*0.0175		// 15 stepeni
-#define EPSILON_DISTANCE	10			// 10 mm
-#define EPSILON_DISTANCE_ROT	100			// 100 mm
-
 static const float KP_ROT = 200;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
@@ -58,7 +53,7 @@ volatile static float distance_er_i;
 volatile static float distance_er_d;
 volatile int32_t u_tran;
 
-volatile static uint8_t regulation_phase = 0;
+volatile uint8_t regulation_phase = 0;
 volatile bool regulation_phase_init = false;
 
 extern volatile float x;
@@ -139,6 +134,15 @@ regulation_position ()
 	  regulation_phase_init = false;
 	  regulation_rotation_finished ();
 	  regulation_phase = TRAN_WITH_ROT;
+	}
+      /* (ako se zada mala kretnja)
+       *
+       */
+      if (fabs (distance) < EPSILON_DISTANCE && no_movement())
+	{
+	  regulation_phase_init = false;
+	  regulation_rotation_finished ();
+	  regulation_phase = ROT_TO_ANGLE;
 	}
       break;
 

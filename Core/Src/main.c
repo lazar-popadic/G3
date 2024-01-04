@@ -41,6 +41,7 @@ extern volatile uint32_t sys_time_half_ms;
 
 float desired_x_mm = 0, desired_y_mm = 0, desired_theta_degrees = 0;
 uint16_t duty_cycle_test = 1000;
+bool move_finished;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,8 +106,8 @@ main (void)
       sys_time_s = sys_time_half_ms * 0.0005;
       io_led (button_pressed ());
 
-      //if (timer_end ())
-      //state_main = END;
+//      if (timer_end ())
+//      state_main = END;
 
       switch (state_main)
 	{
@@ -127,9 +128,13 @@ main (void)
 //	  if (ramp_test  ())
 //	     state_main++;
 
-	  move_full (desired_x_mm, desired_y_mm,
-		     desired_theta_degrees / 180 * M_PI);
+//	  move_full (desired_x_mm, desired_y_mm,
+//		     desired_theta_degrees / 180 * M_PI);
 //	  pwm_duty_cycle_left (duty_cycle_test);
+	  move_to_xy(280, 1100);
+//	  move_finished = movement_finished ();
+	  if (timer_delay_nonblocking(10) && movement_finished())
+	    state_main++;
 
 	  break;
 	case END:
