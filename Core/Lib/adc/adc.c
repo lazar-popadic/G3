@@ -32,12 +32,15 @@ adc_init ()
   // kontinualan rezim: za sad iskljucen jer hocu automatski da ga palim u pwm prekidu
   ADC1->CR2 &= ~(0b1 << 1);
 
+  // ukljucen scan mode, da radi vise konverzija
+  ADC1->CR1 |= (0b1 << 8);
+
   // 2 konverzije
   ADC1->SQR1 &= ~(0b1111 << 20);
   ADC1->SQR1 |= (0b0001 << 20);
 
-  // enable flag za kraj konverzije
-  ADC1->CR2 |= (1 << 10);
+  // enable flag za kraj konverzije, tek kad obe zavrsi
+  ADC1->CR2 &= ~(1 << 10);
 
   // redosled konverzije: prvo 4, posle 7
   ADC1->SQR3 |= (prvi << 0);
@@ -57,6 +60,7 @@ void
 adc_on ()
 {
   ADC1->CR2 |= (0b1 << 0);
+  //mzd treba delay ovde neki, tamo su stavili 10ms
 }
 
 void
@@ -76,9 +80,9 @@ adc_start ()
       // ADC1->CR2 |= (1 << 0);
       //mzd treba delay ovde neki, tamo su stavili 10ms
       // iskljucena zastavica za kraj konverzije
-      ADC1->SR &= (0b1 << 1);
+      ADC1->SR &= ~(0b1 << 1);
       // iskljucena zastavica za pocetak konverzije
-      ADC1->SR &= (0b1 << 4);
+      ADC1->SR &= ~(0b1 << 4);
       // Započinjanje konverzije
       ADC1->CR2 |= (1 << 30);
     }

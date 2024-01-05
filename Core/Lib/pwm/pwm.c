@@ -19,7 +19,10 @@ interrupt_init ();
 
 static uint8_t const PWM_KANAL1 = 2;
 static uint8_t const PWM_KANAL2 = 3;
-volatile uint32_t irq_counter = 0;
+
+extern ADC_HandleTypeDef hadc1;
+extern DMA_HandleTypeDef hdma_adc1;
+uint8_t value_adc_test[2]= {5,5};
 
 void
 pwm_init ()
@@ -103,13 +106,6 @@ pwm_duty_cycle_left (uint16_t duty_cycle)
 static void
 interrupt_init ()
 {
-//  SYSCFG->EXTICR[2] &= ~(0b1111 << 12);
-//  SYSCFG->EXTICR[2] |= (0b0010 << 12);
-//  EXTI->IMR |= (0b1 << 11);		// dozvoli interrupt request
-//  EXTI->EMR |= (0b1 << 11);		// dozvoli interrupt event
-//  uint8_t EXTI15_10 = 40;
-//  NVIC->ISER[EXTI15_10 / 32] |= (0b1 << (EXTI15_10 % 32));
-
   TIM9->DIER |= (0b1 << 0);	//dozvola prekida
   uint8_t const TIM9_INTERRUPT = 24;
   NVIC->ISER[0] |= (0b1 << TIM9_INTERRUPT);
@@ -123,26 +119,7 @@ TIM1_BRK_TIM9_IRQHandler ()
       TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
       //EXTI->SWIER |= (0b1 << 11);
       // ovde zovi adc start
-
-
-    }
-}
-
-void
-EXTI15_10_IRQHandler ()
-{
-  if (EXTI->PR & (0b1 << 11))
-    {
-      EXTI->PR &= ~(0b1 << 11);
-      // ovde pisi interrupt za pocetak adc
-      // testiranje za diodu
-      irq_counter++;
-      if (irq_counter >= 84000)	//valjda svake 4 sekunde: 84000
-	{
-	  irq_counter = 0;
-	  GPIOA->ODR |= (0b1 << 5); // io_led(true);
-	}
-
+      HAL_ADC_Start_DMA(&hadc1,(uint32_t*)&value_adc_test,2);
     }
 }
 
