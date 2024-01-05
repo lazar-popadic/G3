@@ -22,7 +22,7 @@ static uint8_t const PWM_KANAL2 = 3;
 
 extern ADC_HandleTypeDef hadc1;
 extern DMA_HandleTypeDef hdma_adc1;
-uint8_t value_adc_test[2]= {5,5};
+uint8_t adc_value[2]= {5,5};
 
 void
 pwm_init ()
@@ -119,7 +119,7 @@ TIM1_BRK_TIM9_IRQHandler ()
       TIM9->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
       //EXTI->SWIER |= (0b1 << 11);
       // ovde zovi adc start
-      HAL_ADC_Start_DMA(&hadc1,(uint32_t*)&value_adc_test,2);
+      HAL_ADC_Start_DMA(&hadc1,(uint32_t*)&adc_value,2);
     }
 }
 
