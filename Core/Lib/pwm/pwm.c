@@ -22,7 +22,7 @@ static uint8_t const PWM_KANAL2 = 3;
 
 extern ADC_HandleTypeDef hadc1;
 extern DMA_HandleTypeDef hdma_adc1;
-uint8_t adc_value[2]= {5,5};
+extern uint8_t adc_value[2];
 
 void
 pwm_init ()

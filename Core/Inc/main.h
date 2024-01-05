@@ -39,14 +39,14 @@ extern "C" {
 #include "../Lib/timer/timer.h"
 #include "../Lib/odometry/odometry.h"
 #include "../Lib/uart/uart.h"
-#include "../Lib/ax12a/ax12a.h"
+#include "../Lib/dynamixel/dynamixel.h"
 #include "../Lib/tactics/tactics.h"
 #include "../Lib/regulation/regulation.h"
 #include "../Lib/pwm/pwm.h"
 #include "../Lib/encoder/encoder.h"
 #include "../Lib/sensors/sensors.h"
 #include "../Lib/h-bridge/h-bridge.h"
-#include "../Lib/adc/adc.h"
+#include "../Lib/adc_dma_ioc/adc_dma.h"
 #include "../Lib/movement/movement.h"
 /* USER CODE END Includes */
 
