@@ -9,7 +9,6 @@
 #define LIB_MOVEMENT_MOVEMENT_H_
 
 #include <stdbool.h>
-#include "../regulation/position/position.h"
 
 void
 calculate_movement ();

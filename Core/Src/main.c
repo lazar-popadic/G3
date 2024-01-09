@@ -40,7 +40,6 @@ uint8_t state_main = START;
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 
-float desired_x_mm = 0, desired_y_mm = 0, desired_theta_degrees = 0;
 uint16_t duty_cycle_test = 1000;
 bool move_finished;
 /* USER CODE END PV */
@@ -92,7 +91,7 @@ main (void)
   sensors_init ();
   h_bridge_init ();
   regulation_init ();
-  adc_dma_init();
+  adc_dma_init ();
 
   io_led (true);
 
@@ -133,8 +132,6 @@ main (void)
 //	  if (ramp_test  ())
 //	     state_main++;
 
-//	  move_full (desired_x_mm, desired_y_mm,
-//		     desired_theta_degrees / 180 * M_PI);
 //	  pwm_duty_cycle_left (duty_cycle_test);
 //	  move_finished = movement_finished ();
 	  move_to_angle (0);

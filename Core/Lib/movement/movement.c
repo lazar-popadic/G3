@@ -17,54 +17,42 @@
 #define V_LIMIT		10
 
 // meri
-extern volatile float theta;
-extern volatile float x;
-extern volatile float y;
+extern volatile position robot_position;
+extern volatile float V;
+extern volatile float w;
 // zadajem
-volatile float desired_x = 0;
-volatile float desired_y = 0;
-volatile float desired_theta = 0;
+volatile position target_position =
+  { 0, 0, 0 };
 //izracuna
-volatile float x_e = 0;
-volatile float y_e = 0;
-volatile float theta_e = 0;
+volatile position error =
+  { 0, 0, 0 };
 volatile float theta_to_pos = 0;
 volatile float distance;
 volatile float theta_to_angle = 0;
 
-volatile static int32_t theta_error = 0;
-volatile static int32_t distance_error = 0;
-
-extern volatile int32_t u_rot;
-extern volatile int32_t u_tran;
-
-extern volatile float V;
-extern volatile float w;
-
 volatile bool movement_init = false;
-volatile static float x_init = 0;
-volatile static float y_init = 0;
-volatile static float theta_init = 0;
+volatile static position pos_init =
+  { 0, 0, 0 };
 
 void
 calculate_movement ()
 {
-  x_e = desired_x - x;				// [mm]
-  y_e = desired_y - y;				// [mm]
-  theta_e = desired_theta - theta;		// [rad]
+  error.x_mm = target_position.x_mm - robot_position.x_mm;			// [mm]
+  error.y_mm = target_position.y_mm - robot_position.y_mm;			// [mm]
+  error.theta_rad = target_position.theta_rad - robot_position.theta_rad;	// [rad]
 
-  theta_to_pos = atan2 (y_e, x_e) - theta;	// [rad]
-  distance = sqrt (x_e * x_e + y_e * y_e);	// [mm]
-  theta_to_angle = theta_e;			// [rad]
+  theta_to_pos = atan2 (error.y_mm, error.x_mm) - robot_position.theta_rad;	// [rad]
+  distance = sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);		// [mm]
+  theta_to_angle = error.theta_rad;						// [rad]
 }
 
 void
 set_starting_position (float starting_x, float starting_y,
 		       float starting_theta_degrees)
 {
-  x = starting_x;
-  y = starting_y;
-  theta = starting_theta_degrees * M_PI / 180;
+  robot_position.x_mm = starting_x;
+  robot_position.y_mm = starting_y;
+  robot_position.theta_rad = starting_theta_degrees * M_PI / 180;
 }
 
 bool
@@ -90,15 +78,16 @@ movement_finished ()
 void
 move_full (float x, float y, float theta)
 {
-  desired_x = x;			// od	0 	do	3000
-  desired_y = y;			// od	0 	do	2000
-  desired_theta = limit_angle (theta);	// od	-3.14	do	3.14
+  target_position.x_mm = x;			// od	0 	do	3000
+  target_position.y_mm = y;			// od	0 	do	2000
+  target_position.theta_rad = limit_angle (theta);// od	-3.14	do	3.14
 }
 
 void
 move_to_xy (float x, float y)
 {
-  move_full (x, y, theta);// TODO: ne moze ovako, ovo bi vazilo kada bi stalno prolazio kroz ovo
+  move_full (robot_position.x_mm, robot_position.y_mm,
+	     robot_position.theta_rad);	// TODO: ne moze ovako, ovo bi vazilo kada bi stalno prolazio kroz ovo
 }
 
 void
@@ -107,11 +96,11 @@ move_to_angle (float theta_degrees)
   if (!movement_init)
     {
       movement_init = true;
-      x_init = x;
-      y_init = y;
-      theta_init = theta_degrees * M_PI / 180;
+      pos_init.x_mm = robot_position.x_mm;
+      pos_init.y_mm = robot_position.y_mm;
+      pos_init.theta_rad = theta_degrees * M_PI / 180;
     }
-  move_full (x_init, y_init, theta_init);
+  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad);
 }
 
 void
@@ -120,10 +109,12 @@ move_on_direction (float distance)
   if (!movement_init)
     {
       movement_init = true;
-      x_init = x + distance * cos (theta);
-      y_init = y + distance * sin (theta);
+      pos_init.x_mm = robot_position.x_mm
+	  + distance * cos (robot_position.theta_rad);
+      pos_init.y_mm = robot_position.y_mm
+	  + distance * sin (robot_position.theta_rad);
     }
-  move_full (x_init, y_init, theta);
+  move_full (pos_init.x_mm, pos_init.y_mm, robot_position.theta_rad);
 }
 
 void
@@ -132,9 +123,10 @@ move_relative_angle (float angle_degrees)
   if (!movement_init)
     {
       movement_init = true;
-      x_init = x;
-      y_init = y;
-      theta_init = theta + angle_degrees * M_PI / 180;
+      pos_init.x_mm = robot_position.x_mm;
+      pos_init.y_mm = robot_position.y_mm;
+      pos_init.theta_rad = robot_position.theta_rad
+	  + angle_degrees * M_PI / 180;
     }
-  move_full (x_init, y_init, theta_init);
+  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad);
 }

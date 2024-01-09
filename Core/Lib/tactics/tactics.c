@@ -9,51 +9,52 @@
 
 #define AX_MAX_SPEED 528
 
-uint8_t state = 0;
-bool state_init = false;
+uint8_t tactic_state = 0;
+uint8_t previous_tactic_state = 0;
+bool tactic_state_init = false;
 bool tactic_finished;
 
-enum direction
-{
-  FORWARDS = 1, STOP = 0, BACKWARDS = -1
-};
-
 int16_t dc = 0;
-enum direction wheel_direction = STOP;
 extern volatile uint8_t sensors_case_timer;
 extern volatile bool sensors_state;
+extern volatile position target_position;
+extern volatile position robot_position;
+volatile position previous_target =
+  { 0, 0, 0 };
+
+uint8_t alternate_move = 0;
 
 bool
 ax_test2 ()
 {
-  switch (state)
+  switch (tactic_state)
     {
     case 0:
-      if (!state_init)
+      if (!tactic_state_init)
 	{
-	  state_init = true;
+	  tactic_state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
 	}
       ax_move (5, 0, AX_MAX_SPEED);
 
-      state++;
-      state_init = false;
+      tactic_state++;
+      tactic_state_init = false;
       break;
     case 1:
       if (timer_delay_nonblocking (2000))
-	state++;
+	tactic_state++;
       break;
     case 2:
       //inicijalizacija
       //telo stanja
       ax_move (5, 1023, AX_MAX_SPEED);
       //uslov prelaska
-      state++;
+      tactic_state++;
       break;
     case 3:
       if (timer_delay_nonblocking (2000))
-	state = 0;
+	tactic_state = 0;
       break;
     case 4:
       tactic_finished = true;
@@ -65,34 +66,34 @@ ax_test2 ()
 bool
 grabulja_test ()
 {
-  switch (state)
+  switch (tactic_state)
     {
     case 0:
-      if (!state_init)
+      if (!tactic_state_init)
 	{
-	  state_init = true;
+	  tactic_state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
 	}
       ax_move (7, 364, 100);
 
-      state++;
-      state_init = false;
+      tactic_state++;
+      tactic_state_init = false;
       break;
     case 1:
       if (timer_delay_nonblocking (1500))
-	state++;
+	tactic_state++;
       break;
     case 2:
       //inicijalizacija
       //telo stanja
       ax_move (7, 1023, 100);
       //uslov prelaska
-      state++;
+      tactic_state++;
       break;
     case 3:
       if (timer_delay_nonblocking (1500))
-	state = 0;
+	tactic_state = 0;
       break;
     case 4:
       tactic_finished = true;
@@ -104,18 +105,18 @@ grabulja_test ()
 bool
 sensors_timer_test ()
 {
-  switch (state)
+  switch (tactic_state)
     {
     case 0:
-      if (!state_init)
+      if (!tactic_state_init)
 	{
-	  state_init = true;
+	  tactic_state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
 	  pwm_start ();
 	}
-      state++;
-      state_init = false;
+      tactic_state++;
+      tactic_state_init = false;
       break;
     case SENSORS_HIGH:
       sensors_case_timer = SENSORS_HIGH;
@@ -130,3 +131,22 @@ sensors_timer_test ()
   io_led (sensors_state);
   return tactic_finished;
 }
+
+//case BRAKE:
+//if (!tactic_state_init)
+//  {
+//    tactic_state_init = true;
+//    previous_target = target_position;
+//  }
+//target_position = robot_position;
+//if (timer_delay_nonblocking(4000))
+//  {
+//    tactic_state_init = false;
+//    tactic_state = alternate_move;
+//  }
+//if (timer_delay_nonblocking(1000) && !sensors_state)
+//  {
+//    tactic_state_init = false;
+//    tactic_state = previous_tactic_state;
+//  }
+//break;

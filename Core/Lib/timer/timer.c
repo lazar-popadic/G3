@@ -12,6 +12,7 @@
 #include "../regulation/regulation.h"
 #include "../encoder/encoder.h"
 #include "../sensors/sensors.h"
+#include "../tactics/tactics.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
@@ -23,6 +24,8 @@ bool flag_delay = true;
 int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
 volatile bool sensors_state = false;
+extern uint8_t previous_tactic_state;
+extern uint8_t tactic_state;
 
 extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
@@ -132,9 +135,18 @@ TIM1_UP_TIM10_IRQHandler ()
 //	case SENSORS_BACK:
 //	  sensors_state = sensors_back ();
 //	  break;
+//	case SENSORS_OFF:
+//	  sensors_state = false;
+//	  break;
 //	default:
 //	  sensors_state = false;
 //	  break;
+//	}
+//
+//      if (sensors_state)
+//	{
+//	  previous_tactic_state = tactic_state;
+//	  tactic_state = BRAKE;
 //	}
     }
 }

@@ -16,12 +16,11 @@
 
 volatile float V = 0;
 volatile float w = 0;
-static float inc2rad = 0;	//broj inkremenata pasivnog tocka za 1 krug robota
+static float inc2rad = 0;//broj inkremenata pasivnog tocka za 1 krug robota
 static float inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
 
-volatile float theta;
-volatile float x;
-volatile float y;
+volatile position robot_position =
+  { 0, 0, 0 };
 
 static float theta_degrees;
 
@@ -41,12 +40,12 @@ odometry_robot ()
   V = (Vd_inc + Vl_inc) * 0.5 * inc2mm;
   w = (Vd_inc - Vl_inc) * inc2rad;
 
-  theta += w;
-  theta = limit_angle (theta);
-  x += V * cos (theta);
-  y += V * sin (theta);
+  robot_position.theta_rad += w;
+  robot_position.theta_rad = limit_angle (robot_position.theta_rad);
+  robot_position.x_mm += V * cos (robot_position.theta_rad);
+  robot_position.y_mm += V * sin (robot_position.theta_rad);
 
-  theta_degrees = theta * 180 / M_PI;
+  theta_degrees = robot_position.theta_rad * 180 / M_PI;
 }
 
 float

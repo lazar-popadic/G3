@@ -8,6 +8,13 @@
 #ifndef LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_
 #define LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_
 
+typedef struct
+{
+  float x_mm;
+  float y_mm;
+  float theta_rad;
+} position;
+
 void
 odometry_robot ();
 void

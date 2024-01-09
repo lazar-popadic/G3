@@ -8,6 +8,8 @@
 #ifndef LIB_MODULES_TACTICS_TACTICS_H_
 #define LIB_MODULES_TACTICS_TACTICS_H_
 
+#define BRAKE 200
+
 bool
 ax_test2 ();
 bool
