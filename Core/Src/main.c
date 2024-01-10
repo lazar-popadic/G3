@@ -123,7 +123,7 @@ main (void)
 	      state_main = 0;
 	      io_led (false);
 	      pwm_start ();
-//	      left_wheel_backwards ();
+//	      left_wheel_forwards ();
 	      set_starting_position (80, 1000, 45);
 	    }
 	  break;
@@ -132,12 +132,12 @@ main (void)
 //	  if (ramp_test  ())
 //	     state_main++;
 
-//	  pwm_duty_cycle_left (duty_cycle_test);
+	  pwm_duty_cycle_left (duty_cycle_test);
 //	  move_finished = movement_finished ();
-	  move_to_angle (0);
+//	  move_to_angle (0);
 
-	  if (timer_delay_nonblocking (10) && movement_finished ())
-	    state_main++;
+//	  if (timer_delay_nonblocking (10) && movement_finished ())
+//	    state_main++;
 	  break;
 
 	case 1:

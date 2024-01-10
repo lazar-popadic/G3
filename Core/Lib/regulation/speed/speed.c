@@ -11,10 +11,12 @@
 #include "../../pwm/pwm.h"
 #include "../../h-bridge/h-bridge.h"
 
-#define EI_LIMIT 	0 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define SPEED_LIMIT	2800 // inkrementi, direktno za pwm duty cycle
+#define EI_LIMIT 	40 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
+#define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
+#define LEFT_MAXON_FORW_OFFSET	490
+#define LEFT_MAXON_BACK_OFFSET	-540
 
-static const float KP_SPEED = 8;
+static const float KP_SPEED = 6.0;
 static const float KI_SPEED = 0;
 static const float KD_SPEED = 0;
 
@@ -32,6 +34,7 @@ volatile static int16_t e_previous_left = 0;
 
 volatile static int16_t u_right = 0;
 volatile static int16_t u_left = 0;
+volatile static int16_t left_offset = 0;
 
 void
 regulation_speed (int16_t speed_right, int16_t speed_left)
@@ -60,6 +63,14 @@ regulation_speed (int16_t speed_right, int16_t speed_left)
     left_wheel_forwards ();
   else
     left_wheel_backwards ();
+  // calculate offset
+  if (u_left > 20)
+    left_offset = LEFT_MAXON_FORW_OFFSET;
+  else if (u_left < -20)
+    left_offset = LEFT_MAXON_BACK_OFFSET;
+  else
+    left_offset = 0;
+  u_left += left_offset;
 
   // Tj. ovde postavlja referencu za struju
   pwm_duty_cycle_right (abs (u_right));

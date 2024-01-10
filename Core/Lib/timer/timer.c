@@ -33,6 +33,12 @@ extern volatile int16_t ref_speed_right;
 volatile int16_t ref_test = 0;
 extern volatile int16_t wheel_position;
 
+volatile uint8_t graph_counter = 0;
+volatile int32_t sum = 0;
+volatile int16_t average_speed = 0;
+
+extern float KI;
+
 void
 timer_init ()
 {
@@ -111,18 +117,27 @@ TIM1_UP_TIM10_IRQHandler ()
 	{
 	  odometry_robot ();
 //TODO:	  prvo regulaciju brzine namesti
-	  ref_speed_left = ref_test;
+//	  ref_speed_left = ref_test;
 
 //TODO:	  pa onda regulaciju pozicije jednog maxona / tocka
-//	  left_wheel_position();
-//	  regulation_single_wheel(ref_test, wheel_position);
+//	  left_wheel_position ();
+//	  regulation_single_wheel (ref_test, wheel_position);
 
 //TODO:	  pa tek onda celu regulaciju pozicije
 //	  regulation_position();
 	}
       speed_right = speed_of_encoder_right_maxon ();
       speed_left = speed_of_encoder_left_maxon ();
-      regulation_speed (speed_right, speed_left);
+//      regulation_speed (speed_right, speed_left);
+
+//      graph_counter++;
+//      sum += speed_left;
+//      if (graph_counter == 10)
+//	{
+//	  average_speed = sum / graph_counter;
+//	  graph_counter = 0;
+//	  sum = 0;
+//	}
 
 //      switch (sensors_case_timer)
 //	{

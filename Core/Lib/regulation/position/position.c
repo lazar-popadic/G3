@@ -60,9 +60,9 @@ extern volatile float x;
 extern volatile float y;
 extern volatile float theta;
 
-static float const INTERGAL_LIMIT = 100;
-static float const KP = 1;
-static float const KI = 0;
+static float const INTERGAL_LIMIT = 80;
+static float const KP = 0.4;
+static float const KI = 0.05;
 static float const KD = 0;
 
 volatile static int16_t error = 0;
