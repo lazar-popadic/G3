@@ -117,7 +117,7 @@ TIM1_UP_TIM10_IRQHandler ()
 	{
 	  odometry_robot ();
 //TODO:	  prvo regulaciju brzine namesti
-//	  ref_speed_left = ref_test;
+	  ref_speed_left = ref_test;
 
 //TODO:	  pa onda regulaciju pozicije jednog maxona / tocka
 //	  left_wheel_position ();
@@ -128,7 +128,7 @@ TIM1_UP_TIM10_IRQHandler ()
 	}
       speed_right = speed_of_encoder_right_maxon ();
       speed_left = speed_of_encoder_left_maxon ();
-//      regulation_speed (speed_right, speed_left);
+      regulation_speed (speed_right, speed_left);
 
 //      graph_counter++;
 //      sum += speed_left;

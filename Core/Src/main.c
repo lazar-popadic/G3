@@ -132,7 +132,7 @@ main (void)
 //	  if (ramp_test  ())
 //	     state_main++;
 
-	  pwm_duty_cycle_left (duty_cycle_test);
+//	  pwm_duty_cycle_left (duty_cycle_test);
 //	  move_finished = movement_finished ();
 //	  move_to_angle (0);
 
