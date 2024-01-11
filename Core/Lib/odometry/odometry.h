@@ -21,5 +21,7 @@ void
 odometry_init ();
 float
 limit_angle (float angle);
+float
+float_normalize (float signal, float max);
 
 #endif /* LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_ */

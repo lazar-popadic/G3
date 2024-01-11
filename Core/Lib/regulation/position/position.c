@@ -12,6 +12,8 @@
 #include <stdbool.h>
 #include "../../movement/movement.h"
 #include "../regulation.h"
+#include "../../h-bridge/h-bridge.h"
+#include "../../pwm/pwm.h"
 
 #define ROT_TO_ANGLE		0
 #define ROT_TO_POS		1
@@ -25,6 +27,11 @@
 
 #define MAXON_LIMIT_R		360	//TODO: izmeri ovo
 #define MAXON_LIMIT_L		360
+
+#define LEFT_MAXON_FORW_OFFSET	490
+#define LEFT_MAXON_BACK_OFFSET	-540
+
+#define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
 
 static const float KP_ROT = 200;
 static const float KI_ROT = 0;
@@ -61,18 +68,20 @@ extern volatile float y;
 extern volatile float theta;
 
 static float const INTERGAL_LIMIT = 80;
-static float const KP = 0.4;
-static float const KI = 0.05;
+static float const KP = 10;
+static float const KI = 0.0;
 static float const KD = 0;
 
-volatile static int16_t error = 0;
-volatile static int16_t error_i = 0;
-volatile static int16_t error_d = 0;
-volatile static int16_t error_previous = 0;
+volatile static float error = 0;
+volatile static float error_i = 0;
+volatile static float error_d = 0;
+volatile static float error_previous = 0;
 volatile static int16_t u = 0;
 
+volatile static int16_t left_offset = 0;
+
 void
-regulation_single_wheel (int16_t referent_position, int16_t measured_position)
+regulation_single_wheel (float referent_position, float measured_position)
 {
   error = referent_position - measured_position;
   error_i += error;
@@ -80,7 +89,27 @@ regulation_single_wheel (int16_t referent_position, int16_t measured_position)
   error_d = error - error_previous;
 
   u = KP * error + KI * error_i + KD * error_d;
-  ref_speed_left = int_saturation (u, MAXON_LIMIT_L, -MAXON_LIMIT_L);
+  u = int_saturation (u, SPEED_LIMIT, -SPEED_LIMIT);
+  //ref_speed_left = int_saturation (u, MAXON_LIMIT_L, -MAXON_LIMIT_L);
+  if (u > 20)
+    {
+      left_wheel_forwards ();
+      left_offset = LEFT_MAXON_FORW_OFFSET;
+    }
+  else if (u < -20)
+    {
+      left_offset = LEFT_MAXON_BACK_OFFSET;
+      left_wheel_backwards ();
+    }
+  else
+    {
+    left_offset = 0;
+    stop_left_wheel();
+    }
+  u += left_offset;
+
+  // Tj. ovde postavlja referencu za struju
+  pwm_duty_cycle_left (abs (u));
 
   error_previous = error;
 }
@@ -138,7 +167,7 @@ regulation_position ()
       /* (ako se zada mala kretnja)
        *
        */
-      if (fabs (distance) < EPSILON_DISTANCE && no_movement())
+      if (fabs (distance) < EPSILON_DISTANCE && no_movement ())
 	{
 	  regulation_phase_init = false;
 	  regulation_rotation_finished ();
@@ -257,7 +286,7 @@ regulation_translation (float distance_er)
 {
   distance_er_i += distance_er;
   distance_er_i = float_saturation (distance_er_i, DISTANCE_I_LIMIT,
-				  -DISTANCE_I_LIMIT);
+				    -DISTANCE_I_LIMIT);
   distance_er_d = distance_er - distance_er_previous;
 
   u_tran = (int32_t) (KP_TRAN * distance_er + KI_TRAN * distance_er_i

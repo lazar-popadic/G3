@@ -124,7 +124,7 @@ main (void)
 	      io_led (false);
 	      pwm_start ();
 //	      left_wheel_forwards ();
-	      set_starting_position (80, 1000, 45);
+//	      set_starting_position (80, 1000, 45);
 	    }
 	  break;
 

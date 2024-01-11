@@ -27,7 +27,7 @@ port C:
 	7 - uart6 rx
 	10 - levi h-most dir1
 	11 - levi h-most dir2
-	13 - button
+ 	13 - button
 
 	
 dodaj:

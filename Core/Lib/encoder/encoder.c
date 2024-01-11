@@ -7,6 +7,7 @@
 
 #include "encoder.h"
 #include "stm32f4xx.h"
+#include "../odometry/odometry.h"
 
 static void
 tim3_init ();
@@ -24,7 +25,7 @@ volatile int16_t state_enc_left_passive = 0;
 volatile int16_t state_enc_right_maxon = 0;
 volatile int16_t state_enc_left_maxon = 0;
 
-volatile int16_t wheel_position = 0;
+volatile int16_t wheel_position_inc = 0;
 
 uint8_t const ENC1_A = 4;	//tim3
 uint8_t const ENC1_B = 5;
@@ -52,7 +53,8 @@ encoder_init ()
 void
 left_wheel_position ()
 {
-  wheel_position += speed_of_encoder_left_maxon();
+  wheel_position_inc += speed_of_encoder_left_maxon();
+  float_normalize(wheel_position_inc, 4096);
 }
 
 int16_t

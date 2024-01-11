@@ -16,7 +16,7 @@
 #define LEFT_MAXON_FORW_OFFSET	490
 #define LEFT_MAXON_BACK_OFFSET	-540
 
-static const float KP_SPEED = 6.0;
+static const float KP_SPEED = 24.0;
 static const float KI_SPEED = 0;
 static const float KD_SPEED = 0;
 
