@@ -10,17 +10,10 @@
 
 #include <stdint.h>
 
-void
-left_wheel_position ();
-
 int16_t
 speed_of_encoder_right_passive ();
 int16_t
 speed_of_encoder_left_passive ();
-int16_t
-speed_of_encoder_right_maxon ();
-int16_t
-speed_of_encoder_left_maxon ();
 void
 encoder_init ();
 

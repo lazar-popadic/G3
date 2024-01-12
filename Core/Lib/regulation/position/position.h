@@ -17,8 +17,6 @@
 
 void
 regulation_position ();
-void
-regulation_single_wheel (float referent_position, float measured_position);
 
 void
 regulation_rotation (float theta_er, float faktor);

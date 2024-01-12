@@ -30,7 +30,7 @@ void
 odometry_init ()
 {
   inc2mm = d_odometrijskog * M_PI / (4.0 * 2048.0);
-  inc2rad = inc2mm / d / 0.828;
+  inc2rad = inc2mm / d;
 }
 
 void

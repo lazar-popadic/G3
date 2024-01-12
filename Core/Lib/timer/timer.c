@@ -31,8 +31,6 @@ extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
 
 volatile int16_t ref_test = 0;
-extern volatile int16_t wheel_position_inc;
-volatile float wheel_position_degrees = 0;
 
 volatile int16_t left_buffer[10] =
   { };
@@ -118,53 +116,13 @@ TIM1_UP_TIM10_IRQHandler ()
 
       sys_time_half_ms++;
 
+      odometry_robot ();
+
       if (!(sys_time_half_ms % (10))) //svakih 5ms
 	{
-	  odometry_robot ();
-//TODO:	  prvo regulaciju brzine namesti
-//	  ref_speed_left = ref_test;
-
-//TODO:	  pa onda regulaciju pozicije jednog maxona / tocka
-//	  left_wheel_position ();
-//	  wheel_position_degrees = wheel_position_inc * 360 / 4096;
-//	  regulation_single_wheel (ref_test, wheel_position_degrees);
-
-//TODO:	  pa tek onda celu regulaciju pozicije
 //	  regulation_position();
 	}
-//      speed_right = speed_of_encoder_right_maxon ();
-//      speed_left = speed_of_encoder_left_maxon ();
 
-//      left_buffer[9] = left_buffer[8];
-//      left_buffer[8] = left_buffer[7];
-//      left_buffer[7] = left_buffer[6];
-//      left_buffer[6] = left_buffer[5];
-//      left_buffer[5] = left_buffer[4];
-//      left_buffer[4] = left_buffer[3];
-//      left_buffer[3] = left_buffer[2];
-//      left_buffer[2] = left_buffer[1];
-//      left_buffer[1] = left_buffer[0];
-//      left_buffer[0] = speed_left;
-//      left_average_speed = (left_buffer[0] + left_buffer[1] + left_buffer[2]
-//	  + left_buffer[3] + left_buffer[4] + left_buffer[5] + left_buffer[6]
-//	  + left_buffer[7] + left_buffer[8] + left_buffer[9]) * 0.1;
-//
-//      right_buffer[9] = right_buffer[8];
-//      right_buffer[8] = right_buffer[7];
-//      right_buffer[7] = right_buffer[6];
-//      right_buffer[6] = right_buffer[5];
-//      right_buffer[5] = right_buffer[4];
-//      right_buffer[4] = right_buffer[3];
-//      right_buffer[3] = right_buffer[2];
-//      right_buffer[2] = right_buffer[1];
-//      right_buffer[1] = right_buffer[0];
-//      right_buffer[0] = speed_right;
-//      right_average_speed = (right_buffer[0] + right_buffer[1] + right_buffer[2]
-//	  + right_buffer[3] + right_buffer[4] + right_buffer[5]
-//	  + right_buffer[6] + right_buffer[7] + right_buffer[8]
-//	  + right_buffer[9]) * 0.1;
-
-//      regulation_speed (right_average_speed, left_average_speed);
 //      switch (sensors_case_timer)
 //	{
 //	case SENSORS_HIGH:

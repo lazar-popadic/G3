@@ -14,47 +14,26 @@ tim3_init ();
 static void
 tim4_init ();
 static void
-tim2_init ();
-static void
-tim5_init ();
-static void
 io_init ();
 
 volatile int16_t state_enc_right_passive = 0;
 volatile int16_t state_enc_left_passive = 0;
-volatile int16_t state_enc_right_maxon = 0;
-volatile int16_t state_enc_left_maxon = 0;
-
-volatile int16_t wheel_position_inc = 0;
 
 uint8_t const ENC1_A = 4;	//tim3
 uint8_t const ENC1_B = 5;
 uint8_t const ENC2_A = 6;	//tim4
 uint8_t const ENC2_B = 7;
-uint8_t const ENC3_A = 15;	//tim2
-uint8_t const ENC3_B = 3;
-uint8_t const ENC4_A = 0;	//tim5
-uint8_t const ENC4_B = 1;
-uint8_t const AF_TIM2 = 1;
+
 uint8_t const AF_TIM3 = 2;
 uint8_t const AF_TIM4 = 2;
-uint8_t const AF_TIM5 = 2;
+
 
 void
 encoder_init ()
 {
   tim3_init ();			//enkoder 1 - desni pasivni tocak
   tim4_init ();			//enkoder 2 - levi pasivni tocak
-  tim2_init ();			//enkoder 3 - desni maxon
-  tim5_init ();			//enkoder 4 - levi maxon
   io_init ();
-}
-
-void
-left_wheel_position ()
-{
-  wheel_position_inc += speed_of_encoder_left_maxon();
-  float_normalize(wheel_position_inc, 4096);
 }
 
 int16_t
@@ -70,22 +49,6 @@ speed_of_encoder_left_passive ()
 {
   int16_t speed = (int16_t) TIM4->CNT - state_enc_left_passive;
   state_enc_left_passive = (int16_t) TIM4->CNT;
-  return speed;
-}
-
-int16_t
-speed_of_encoder_right_maxon ()
-{
-  int16_t speed = (int16_t) TIM2->CNT - state_enc_right_maxon;
-  state_enc_right_maxon = (int16_t) TIM2->CNT;
-  return speed;		//inkrementi, tj. impulsi
-}
-
-int16_t
-speed_of_encoder_left_maxon ()
-{
-  int16_t speed = (int16_t) TIM5->CNT - state_enc_left_maxon;
-  state_enc_left_maxon = (int16_t) TIM5->CNT;
   return speed;
 }
 
@@ -136,76 +99,9 @@ tim4_init ()					//ENKODER
 }
 
 static void
-tim2_init ()					//ENKODER
-{
-  RCC->APB1ENR |= (0b1 << 0);
-
-  TIM2->PSC = 0;
-  TIM2->ARR = 0xFFFF;
-
-  TIM2->SMCR &= ~(0b111 << 0);
-  TIM2->SMCR |= (0b011 << 0);
-
-  TIM2->CCMR1 &= ~(0b11 << 0);//povezujemo kanale enkodera timera sa kanalom samog timera
-  TIM2->CCMR1 |= (0b01 << 0);
-  TIM2->CCMR1 &= ~(0b11 << 8);
-  TIM2->CCMR1 |= (0b01 << 8);
-
-  TIM2->CCER &= ~(0b101 << 1);		//neinvertovan kanal A
-  TIM2->CCER &= ~(0b101 << 5);		//neinvertovan kanal B
-
-  TIM2->CR1 |= (0b1 << 0);			//ukljucivanje timera
-}
-
-static void
-tim5_init ()					//ENKODER
-{
-  RCC->APB1ENR |= (0b1 << 3);
-
-  TIM5->PSC = 0;
-  TIM5->ARR = 0xFFFF;
-
-  TIM5->SMCR &= ~(0b111 << 0);
-  TIM5->SMCR |= (0b011 << 0);
-
-  TIM5->CCMR1 &= ~(0b11 << 0);//povezujemo kanale enkodera timera sa kanalom samog timera
-  TIM5->CCMR1 |= (0b01 << 0);
-  TIM5->CCMR1 &= ~(0b11 << 8);
-  TIM5->CCMR1 |= (0b01 << 8);
-
-  TIM5->CCER &= ~(0b100 << 1);		//invertovan kanal A	0b xxxx 0x1x
-  TIM5->CCER |= (0b001 << 1);
-  TIM5->CCER &= ~(0b101 << 5);		//neinvertovan kanal B	0b xxxx 0x0x
-
-  TIM5->CR1 |= (0b1 << 0);			//ukljucivanje timera
-}
-
-static void
 io_init ()
 {
   RCC->AHB1ENR |= (0b1 << 0);
-
-  GPIOA->MODER &= ~(0b11 << 2 * ENC3_A);
-  GPIOA->MODER |= (0b10 << 2 * ENC3_A);
-  GPIOA->AFR[ENC3_A / 8] &= ~(0b1111 << 4 * (ENC3_A % 8));
-  GPIOA->AFR[ENC3_A / 8] |= (AF_TIM2 << 4 * (ENC3_A % 8));
-
-  GPIOA->MODER &= ~(0b11 << 2 * ENC4_A);
-  GPIOA->MODER |= (0b10 << 2 * ENC4_A);
-  GPIOA->AFR[ENC4_A / 8] &= ~(0b1111 << 4 * (ENC4_A % 8));
-  GPIOA->AFR[ENC4_A / 8] |= (AF_TIM5 << 4 * (ENC4_A % 8));
-
-  GPIOA->MODER &= ~(0b11 << 2 * ENC4_B);
-  GPIOA->MODER |= (0b10 << 2 * ENC4_B);
-  GPIOA->AFR[ENC4_B / 8] &= ~(0b1111 << 4 * (ENC4_B % 8));
-  GPIOA->AFR[ENC4_B / 8] |= (AF_TIM5 << 4 * (ENC4_B % 8));
-
-  RCC->AHB1ENR |= (0b1 << 1);
-
-  GPIOB->MODER &= ~(0b11 << 2 * ENC3_B);
-  GPIOB->MODER |= (0b10 << 2 * ENC3_B);
-  GPIOB->AFR[ENC3_B / 8] &= ~(0b1111 << 4 * (ENC3_B % 8));
-  GPIOB->AFR[ENC3_B / 8] |= (AF_TIM2 << 4 * (ENC3_B % 8));
 
   GPIOB->MODER &= ~(0b11 << 2 * ENC1_A);//podesavanje pinova da rade kao alternativna funkcija
   GPIOB->MODER &= ~(0b11 << 2 * ENC1_B);

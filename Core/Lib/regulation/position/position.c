@@ -20,13 +20,10 @@
 #define TRAN_WITH_ROT		2
 #define TRAN_WITHOUT_ROT	3
 
-#define THETA_I_LIMIT		2500
-#define DISTANCE_I_LIMIT	2500
-#define U_ROT_LIMIT		2500
-#define U_TRAN_LIMIT		2500
-
-#define MAXON_LIMIT_R		360	//TODO: izmeri ovo
-#define MAXON_LIMIT_L		360
+#define THETA_I_LIMIT		1	// mm / 0.5ms
+#define DISTANCE_I_LIMIT	1	// mm / 0.5ms
+#define U_ROT_LIMIT		1	// rad / 0.5ms
+#define U_TRAN_LIMIT		1	// rad / 0.5ms
 
 #define LEFT_MAXON_FORW_OFFSET	490
 #define LEFT_MAXON_BACK_OFFSET	-540
@@ -40,9 +37,6 @@ static const float KP_TRAN = 1;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-volatile int16_t ref_speed_right = 0;
-volatile int16_t ref_speed_left = 0;
-
 volatile static int32_t theta_error = 0;
 volatile static int32_t distance_error = 0;
 volatile static float rot_faktor = 1;
@@ -52,67 +46,16 @@ extern volatile float theta_to_angle;
 volatile static float theta_er_previous;
 volatile static float theta_er_i;
 volatile static float theta_er_d;
-volatile int32_t u_rot;
 
 extern volatile float distance;
 volatile static float distance_er_previous;
 volatile static float distance_er_i;
 volatile static float distance_er_d;
-volatile int32_t u_tran;
+
+volatile float V_ref = 0, w_ref = 0;
 
 volatile uint8_t regulation_phase = 0;
 volatile bool regulation_phase_init = false;
-
-extern volatile float x;
-extern volatile float y;
-extern volatile float theta;
-
-static float const INTERGAL_LIMIT = 80;
-static float const KP = 10;
-static float const KI = 0.0;
-static float const KD = 0;
-
-volatile static float error = 0;
-volatile static float error_i = 0;
-volatile static float error_d = 0;
-volatile static float error_previous = 0;
-volatile static int16_t u = 0;
-
-volatile static int16_t left_offset = 0;
-
-void
-regulation_single_wheel (float referent_position, float measured_position)
-{
-  error = referent_position - measured_position;
-  error_i += error;
-  error_i = int_saturation (error_i, INTERGAL_LIMIT, -INTERGAL_LIMIT);
-  error_d = error - error_previous;
-
-  u = KP * error + KI * error_i + KD * error_d;
-  u = int_saturation (u, SPEED_LIMIT, -SPEED_LIMIT);
-  //ref_speed_left = int_saturation (u, MAXON_LIMIT_L, -MAXON_LIMIT_L);
-  if (u > 20)
-    {
-      left_wheel_forwards ();
-      left_offset = LEFT_MAXON_FORW_OFFSET;
-    }
-  else if (u < -20)
-    {
-      left_offset = LEFT_MAXON_BACK_OFFSET;
-      left_wheel_backwards ();
-    }
-  else
-    {
-    left_offset = 0;
-    stop_left_wheel();
-    }
-  u += left_offset;
-
-  // Tj. ovde postavlja referencu za struju
-  pwm_duty_cycle_left (abs (u));
-
-  error_previous = error;
-}
 
 void
 regulation_position ()
@@ -130,7 +73,7 @@ regulation_position ()
 	  regulation_translation_finished ();
 	}
       regulation_rotation (theta_to_angle, 1);
-      u_tran = 0;
+      V_ref = 0;
       /*
        * POJAVI SE GRESKA U POZICIJI i NE KRECE SE
        * onda
@@ -152,7 +95,7 @@ regulation_position ()
 	  regulation_translation_finished ();
 	}
       regulation_rotation (theta_to_pos, 1);
-      u_tran = 0;
+      V_ref = 0;
       /*
        * OKRENUO SE KA CILJU i NE KRECE SE VISE
        * onda
@@ -220,7 +163,7 @@ regulation_position ()
 	regulation_translation (-distance);
       else
 	regulation_translation (distance);
-      u_rot = 0;
+      w_ref = 0;
       /*
        * NEMA GRESKE U POZICIJI
        * onda
@@ -246,16 +189,6 @@ regulation_position ()
       break;
     }
 
-  ref_speed_right = int_ramp_simple (ref_speed_right, u_tran + u_rot, 1);
-  //    ref_speed_right = u_tran + u_rot;	// bez rampe
-  ref_speed_right = int_saturation (ref_speed_right, MAXON_LIMIT_R,
-				    -MAXON_LIMIT_R);
-
-  ref_speed_left = int_ramp_simple (ref_speed_left, u_tran - u_rot, 1);
-  //    ref_speed_left = u_tran - u_rot;	// bez rampe
-  ref_speed_left = int_saturation (ref_speed_left, MAXON_LIMIT_L,
-				   -MAXON_LIMIT_L);
-
 }
 
 /*
@@ -273,10 +206,9 @@ regulation_rotation (float theta_er, float faktor)
   theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
   theta_er_d = theta_er - theta_er_previous;
 
-  u_rot = (int32_t) (KP_ROT * theta_er + KI_ROT * theta_er_i
-      + KD_ROT * theta_er_d);
-  u_rot = int_saturation (u_rot, U_ROT_LIMIT, -U_ROT_LIMIT);
-  u_rot *= faktor;
+  w_ref = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
+  w_ref = float_saturation (w_ref, U_ROT_LIMIT, -U_ROT_LIMIT);
+  w_ref *= faktor;
 
   theta_er_previous = theta_er;
 }
@@ -289,9 +221,9 @@ regulation_translation (float distance_er)
 				    -DISTANCE_I_LIMIT);
   distance_er_d = distance_er - distance_er_previous;
 
-  u_tran = (int32_t) (KP_TRAN * distance_er + KI_TRAN * distance_er_i
-      + KD_TRAN * distance_er_d);
-  u_tran = int_saturation (u_tran, U_TRAN_LIMIT, -U_TRAN_LIMIT);
+  V_ref = KP_TRAN * distance_er + KI_TRAN * distance_er_i
+      + KD_TRAN * distance_er_d;
+  V_ref = int_saturation (V_ref, U_TRAN_LIMIT, -U_TRAN_LIMIT);
 
   distance_er_previous = distance_er;
 }
