@@ -11,6 +11,6 @@
 #include <stdint.h>
 
 void
-regulation_speed (int16_t speed_right, int16_t speed_left);
+regulation_speed ();
 
 #endif /* LIB_REGULATION_SPEED_SPEED_H_ */

@@ -120,9 +120,10 @@ TIM1_UP_TIM10_IRQHandler ()
 
       if (!(sys_time_half_ms % (10))) //svakih 5ms
 	{
-//	  regulation_position();
+	  regulation_position();
 	}
 
+      regulation_speed();
 //      switch (sensors_case_timer)
 //	{
 //	case SENSORS_HIGH:

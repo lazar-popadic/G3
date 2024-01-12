@@ -30,7 +30,7 @@
 
 #define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
 
-static const float KP_ROT = 200;
+static const float KP_ROT = 1;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
 static const float KP_TRAN = 1;

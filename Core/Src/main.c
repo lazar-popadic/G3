@@ -42,6 +42,8 @@ extern volatile uint32_t sys_time_half_ms;
 
 uint16_t duty_cycle_test = 1000;
 bool move_finished;
+
+position pos_test = {0,0,0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -134,6 +136,7 @@ main (void)
 
 //	  pwm_duty_cycle_left (duty_cycle_test);
 //	  move_finished = movement_finished ();
+	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
 //	  move_to_angle (0);
 
 //	  if (timer_delay_nonblocking (10) && movement_finished ())
