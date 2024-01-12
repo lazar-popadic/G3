@@ -22,24 +22,20 @@
 
 #define THETA_I_LIMIT		1	// mm / 0.5ms
 #define DISTANCE_I_LIMIT	1	// mm / 0.5ms
-#define U_ROT_LIMIT		1	// rad / 0.5ms
-#define U_TRAN_LIMIT		1	// rad / 0.5ms
+#define V_REF_LIMIT		1	// m/s
+#define W_REF_LIMIT		12.6	// rad/s
 
 #define LEFT_MAXON_FORW_OFFSET	490
 #define LEFT_MAXON_BACK_OFFSET	-540
 
 #define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
 
-static const float KP_ROT = 1;
+static const float KP_ROT = 8;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 1;
+static const float KP_TRAN = 0.003;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
-
-volatile static int32_t theta_error = 0;
-volatile static int32_t distance_error = 0;
-volatile static float rot_faktor = 1;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -207,7 +203,7 @@ regulation_rotation (float theta_er, float faktor)
   theta_er_d = theta_er - theta_er_previous;
 
   w_ref = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
-  w_ref = float_saturation (w_ref, U_ROT_LIMIT, -U_ROT_LIMIT);
+  w_ref = float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT);
   w_ref *= faktor;
 
   theta_er_previous = theta_er;
@@ -223,7 +219,7 @@ regulation_translation (float distance_er)
 
   V_ref = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
-  V_ref = int_saturation (V_ref, U_TRAN_LIMIT, -U_TRAN_LIMIT);
+  V_ref = int_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT);
 
   distance_er_previous = distance_er;
 }
