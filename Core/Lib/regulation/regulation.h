@@ -16,6 +16,8 @@ void
 regulation_init ();
 float
 float_saturation (float signal, float MAX, float MIN);
+float
+float_ramp (float signal, float desired_value, float slope);
 int32_t
 int_saturation (int32_t signal, int32_t MAX, int32_t MIN);
 int32_t

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "../pwm/pwm.h"
 #include "../h-bridge/h-bridge.h"
+#include <math.h>
 
 //static float inc2rad_deltaT = 0;
 volatile static uint8_t ramp_counter = 0;
@@ -37,6 +38,16 @@ int_saturation (int32_t signal, int32_t MAX, int32_t MIN)
   if (signal < MIN)
     return MIN;
   return signal;
+}
+
+float
+float_ramp (float signal, float desired_value, float slope)
+{
+  if (fabs (desired_value - signal) > slope)
+    {
+      return signal + sign (desired_value - signal) * slope;
+    }
+  return desired_value;
 }
 
 int32_t

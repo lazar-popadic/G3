@@ -37,13 +37,13 @@ volatile static position pos_init =
 void
 calculate_movement ()
 {
-  error.x_mm = target_position.x_mm - robot_position.x_mm;			// [mm]
-  error.y_mm = target_position.y_mm - robot_position.y_mm;			// [mm]
-  error.theta_rad = target_position.theta_rad - robot_position.theta_rad;	// [rad]
+  error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
+  error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
+  error.theta_rad = target_position.theta_rad - robot_position.theta_rad;// [rad]
 
-  theta_to_pos = atan2 (error.y_mm, error.x_mm) - robot_position.theta_rad;	// [rad]
-  distance = sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);		// [mm]
-  theta_to_angle = error.theta_rad;						// [rad]
+  theta_to_pos = atan2 (error.y_mm, error.x_mm) - robot_position.theta_rad;// [rad]
+  distance = sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
+  theta_to_angle = error.theta_rad;					// [rad]
 }
 
 void
@@ -80,7 +80,7 @@ move_full (float x, float y, float theta)
 {
   target_position.x_mm = x;			// od	0 	do	3000
   target_position.y_mm = y;			// od	0 	do	2000
-  target_position.theta_rad = limit_angle (theta);// od	-3.14	do	3.14
+  target_position.theta_rad = float_normalize (theta, -M_PI, M_PI);// od	-3.14	do	3.14
 }
 
 void

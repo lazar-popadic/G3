@@ -75,24 +75,24 @@ grabulja_test ()
 	  tactic_finished = false;
 	  io_led (false);
 	}
-      ax_move (7, 364, 100);
+      ax_move (7, 512 - 200, 200);
 
       tactic_state++;
       tactic_state_init = false;
       break;
     case 1:
-      if (timer_delay_nonblocking (1500))
+      if (timer_delay_nonblocking (2500))
 	tactic_state++;
       break;
     case 2:
       //inicijalizacija
       //telo stanja
-      ax_move (7, 1023, 100);
+      ax_move (7, 512 + 200, 200);
       //uslov prelaska
       tactic_state++;
       break;
     case 3:
-      if (timer_delay_nonblocking (1500))
+      if (timer_delay_nonblocking (2500))
 	tactic_state = 0;
       break;
     case 4:

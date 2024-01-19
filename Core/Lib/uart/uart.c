@@ -7,11 +7,11 @@
 
 #include "uart.h"
 
-#define MAX_BUFFER_SIZE 32
+#define MAX_BUFFER_SIZE 64
 
 volatile static uint8_t input = 0;
-volatile static uint8_t buffer[MAX_BUFFER_SIZE];
-volatile static uint8_t buffer_size = 0;
+volatile uint8_t uart_buffer[MAX_BUFFER_SIZE];
+volatile static uint8_t uart_buffer_size = 0;
 volatile static uint8_t index_write = 0;
 volatile static uint8_t index_read = 0;
 
@@ -94,15 +94,15 @@ uart_send_byte (uint8_t data)
 void
 uart_write (uint8_t data)
 {
-  if (buffer_size != MAX_BUFFER_SIZE)
+  if (uart_buffer_size != MAX_BUFFER_SIZE)
     {
-      buffer[index_write] = data;
+      uart_buffer[index_write] = data;
       index_write = (index_write + 1) % MAX_BUFFER_SIZE;
-      buffer_size++;
+      uart_buffer_size++;
     }
   else
     {
-      buffer[index_write] = data;
+      uart_buffer[index_write] = data;
       index_write = (index_write + 1) % MAX_BUFFER_SIZE;
       index_read = (index_read + 1) % MAX_BUFFER_SIZE;
     }
@@ -114,11 +114,11 @@ uart_read ()
 {
   uint8_t temp_data;
 
-  if (buffer_size != 0)
+  if (uart_buffer_size != 0)
     {
-      temp_data = buffer[index_read];
+      temp_data = uart_buffer[index_read];
       index_read = (index_read + 1) % MAX_BUFFER_SIZE;
-      buffer_size--;
+      uart_buffer_size--;
     }
   return temp_data;
 }
@@ -126,7 +126,7 @@ uart_read ()
 bool
 uart_is_empty ()
 {
-  if (buffer_size == 0)
+  if (uart_buffer_size == 0)
     return true;
   else
     return false;

@@ -131,23 +131,16 @@ main (void)
 	  break;
 
 	case 0:
-//	  if (ramp_test  ())
+//	  if (grabulja_test  ())
 //	     state_main++;
 
 //	  pwm_duty_cycle_left (duty_cycle_test);
 //	  move_finished = movement_finished ();
-	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
+//	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
 //	  move_to_angle (0);
 
 //	  if (timer_delay_nonblocking (10) && movement_finished ())
 //	    state_main++;
-	  break;
-
-	case 1:
-	  move_relative_angle (-90);
-
-	  if (timer_delay_nonblocking (10) && movement_finished ())
-	    state_main++;
 	  break;
 
 	case END:

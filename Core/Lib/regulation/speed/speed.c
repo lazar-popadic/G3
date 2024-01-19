@@ -97,7 +97,8 @@ regulation_speed ()
     }
   u_left += left_offset;
 
-//  // Tj. ovde postavlja referencu za struju
+  // Tj. ovde postavlja referencu za struju
+  // mozda float rampa ovde
   pwm_duty_cycle_right ((uint16_t) fabs (u_right));
   pwm_duty_cycle_left ((uint16_t) fabs (u_left));
 
