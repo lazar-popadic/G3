@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include "../encoder/encoder.h"
 #include <math.h>
+#include "../timer/timer.h"
 
 #define d 321.9
 #define d_odometrijskog 62
@@ -25,6 +26,7 @@ volatile position robot_position =
   { 0, 0, 0 };
 
 static float theta_degrees;
+extern volatile uint8_t state_angle;
 
 void
 odometry_init ()
@@ -43,17 +45,44 @@ odometry_robot ()
   w = (Vd_inc - Vl_inc) * inc2rad;
 
   robot_position.theta_rad += w;
-//  normalize_robot_angle ();
   robot_position.x_mm += V * cos (robot_position.theta_rad);
   robot_position.y_mm += V * sin (robot_position.theta_rad);
+
+  switch (state_angle)
+    {
+    case PLUS_MINUS_PI:
+      normalize_robot_angle_plus_minus_pi ();
+      break;
+    case PLUS_2PI:
+      normalize_robot_angle_plus_2pi ();
+      break;
+    case MINUS_2PI:
+      normalize_robot_angle_minus_2pi ();
+      break;
+    }
 
   theta_degrees = robot_position.theta_rad * 180 / M_PI;
 }
 
 void
-normalize_robot_angle ()
+normalize_robot_angle_plus_minus_pi ()
 {
-  robot_position.theta_rad = limit_angle (robot_position.theta_rad);
+  robot_position.theta_rad = float_normalize (robot_position.theta_rad, -M_PI,
+					      +M_PI);
+}
+
+void
+normalize_robot_angle_plus_2pi ()
+{
+  robot_position.theta_rad = float_normalize (robot_position.theta_rad, 0,
+					      +2 * M_PI);
+}
+
+void
+normalize_robot_angle_minus_2pi ()
+{
+  robot_position.theta_rad = float_normalize (robot_position.theta_rad,
+					      -2 * M_PI, 0);
 }
 
 float

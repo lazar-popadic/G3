@@ -22,7 +22,8 @@ extern volatile position robot_position;
 volatile position previous_target =
   { 0, 0, 0 };
 
-uint8_t alternate_move = 0;
+volatile uint8_t alternate_move = 0;
+extern volatile uint8_t state_angle;
 
 bool
 ax_test2 ()

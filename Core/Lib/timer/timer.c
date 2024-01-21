@@ -42,6 +42,8 @@ volatile float right_average_speed = 0;
 
 extern int16_t Vd_inc;
 
+volatile uint8_t state_angle = PLUS_MINUS_PI;
+
 void
 timer_init ()
 {
@@ -122,8 +124,9 @@ TIM1_UP_TIM10_IRQHandler ()
 	{
 //	  regulation_position();
 	}
-
 //      regulation_speed();
+
+
 //      switch (sensors_case_timer)
 //	{
 //	case SENSORS_HIGH:

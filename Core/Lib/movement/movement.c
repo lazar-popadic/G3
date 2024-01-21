@@ -12,9 +12,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include "../timer/timer.h"
 
-#define W_LIMIT		10
-#define V_LIMIT		10
+#define W_LIMIT		0.1
+#define V_LIMIT		0.1
 
 // meri
 extern volatile position robot_position;
@@ -70,24 +71,25 @@ movement_finished ()
       && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
     {
       movement_init = false;
+      //state_angle = PLUS_MINUS_PI;	//vidi da li ovde nece sjebati
       return true;
     }
   return false;
 }
 
 void
-move_full (float x, float y, float theta)
+move_full (float x, float y, float theta)//TODO: ovde stavi init_rot_dir, final_rot_dir, tran_dir
 {
-  target_position.x_mm = x;			// od	0 	do	3000
-  target_position.y_mm = y;			// od	0 	do	2000
-  target_position.theta_rad = float_normalize (theta, -M_PI, M_PI);// od	-3.14	do	3.14
+  target_position.x_mm = x;
+  target_position.y_mm = y;
+  target_position.theta_rad = float_normalize (theta, -M_PI, M_PI);
 }
 
 void
 move_to_xy (float x, float y)
 {
   move_full (robot_position.x_mm, robot_position.y_mm,
-	     robot_position.theta_rad);	// TODO: ne moze ovako, ovo bi vazilo kada bi stalno prolazio kroz ovo
+	     robot_position.theta_rad);
 }
 
 void
