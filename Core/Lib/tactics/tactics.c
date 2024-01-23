@@ -74,9 +74,8 @@ grabulja_test ()
 	{
 	  tactic_state_init = true;
 	  tactic_finished = false;
-	  io_led (false);
 	}
-      ax_move (7, 512 - 200, 200);
+      ax_move (7, 512 + 200, 200);
 
       tactic_state++;
       tactic_state_init = false;
@@ -86,17 +85,30 @@ grabulja_test ()
 	tactic_state++;
       break;
     case 2:
-      //inicijalizacija
-      //telo stanja
-      ax_move (7, 512 + 200, 200);
-      //uslov prelaska
+      ax_move (4, 850, 250);
       tactic_state++;
       break;
     case 3:
       if (timer_delay_nonblocking (2500))
-	tactic_state = 0;
+	tactic_state++;
       break;
     case 4:
+      ax_move (7, 512 - 200, 200);
+      tactic_state++;
+      break;
+    case 5:
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
+      break;
+    case 6:
+      ax_move (4, 1023, 250);
+      tactic_state++;
+      break;
+    case 7:
+      if (timer_delay_nonblocking (2500))
+	tactic_state = 0;
+      break;
+    case 20:
       tactic_finished = true;
       return tactic_finished;
     }

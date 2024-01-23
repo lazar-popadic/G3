@@ -88,7 +88,7 @@ main (void)
   timer_init ();
   encoder_init ();
   odometry_init ();
-//  uart_init ();
+  uart_init ();
   pwm_init ();
   sensors_init ();
   h_bridge_init ();
@@ -127,11 +127,9 @@ main (void)
 	  break;
 
 	case 0:
-//	  if (grabulja_test  ())
-//	     state_main++;
+	  if (grabulja_test  ())
+	     state_main++;
 
-	  pwm_duty_cycle_left (duty_cycle_test);
-	  pwm_duty_cycle_right(duty_cycle_test);
 //	  move_finished = movement_finished ();
 //	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
 //	  move_to_angle (0);

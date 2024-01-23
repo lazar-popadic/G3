@@ -43,7 +43,7 @@ uart6_init ()
   GPIOA->PUPDR &= ~(0b11 << TX_PIN*2);
   GPIOA->PUPDR |= (0b01 << TX_PIN*2);
 
-  uint8_t const Alt_function = 7;
+  uint8_t const Alt_function = 8;
 
   GPIOA->AFR[TX_PIN / 8] &= ~(0b1111 << (TX_PIN % 8) * 4);
   GPIOA->AFR[TX_PIN / 8] |= (Alt_function << (TX_PIN % 8) * 4);
