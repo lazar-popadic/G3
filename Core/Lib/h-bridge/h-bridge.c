@@ -17,7 +17,7 @@ h_bridge_init ()
   io_init ();
 }
 
-uint8_t const M2DIR = 9, M2SLP = 8;
+uint8_t const M2DIR = 9, M2SLP = 5;
 uint8_t const M1DIR = 8, M1SLP = 10;
 
 void
@@ -48,13 +48,13 @@ io_init ()
 void
 stop_right_wheel ()
 {
-  GPIOC->ODR &= ~(0b1 << M1SLP);
+  GPIOA->ODR &= ~(0b1 << M1SLP);
 }
 
 void
 stop_left_wheel ()
 {
-  GPIOC->ODR &= ~(0b1 << M2SLP);
+  GPIOB->ODR &= ~(0b1 << M2SLP);
 }
 
 void
@@ -74,12 +74,12 @@ right_wheel_backwards ()
 void
 left_wheel_forwards ()
 {
-  GPIOC->ODR |= (0b1 << M2DIR);
-  GPIOC->ODR |= (0b1 << M2SLP);
+  GPIOA->ODR |= (0b1 << M2DIR);
+  GPIOB->ODR |= (0b1 << M2SLP);
 }
 void
 left_wheel_backwards ()
 {
-  GPIOC->ODR &= ~(0b1 << M2DIR);
-  GPIOC->ODR |= (0b1 << M2SLP);
+  GPIOA->ODR &= ~(0b1 << M2DIR);
+  GPIOB->ODR |= (0b1 << M2SLP);
 }

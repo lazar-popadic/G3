@@ -36,6 +36,8 @@
 
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
+bool state_main_init = false;
+uint8_t state_debug = 0;
 
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
@@ -43,7 +45,8 @@ extern volatile uint32_t sys_time_half_ms;
 uint16_t duty_cycle_test = 1000;
 bool move_finished;
 
-position pos_test = {0,0,0};
+position pos_test =
+  { 0, 0, 0 };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -127,8 +130,18 @@ main (void)
 	  break;
 
 	case 0:
-	  if (grabulja_test  ())
-	     state_main++;
+//	  if (grabulja_test  ())
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+	  left_wheel_forwards ();
+	  if (state_debug)
+	    {
+	      state_main_init = false;
+	      state_main++;
+	    }
 
 //	  move_finished = movement_finished ();
 //	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
@@ -136,6 +149,77 @@ main (void)
 
 //	  if (timer_delay_nonblocking (10) && movement_finished ())
 //	    state_main++;
+	  break;
+
+	case 1:
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+	  left_wheel_backwards ();
+	  if (state_debug)
+	    {
+	      state_main_init = false;
+	      state_main++;
+	    }
+	  break;
+
+	case 2:
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+	  stop_left_wheel ();
+	  if (state_debug)
+	    {
+	      state_main_init = false;
+	      state_main++;
+	    }
+	  break;
+
+	case 3:
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+	  right_wheel_forwards ();
+	  if (state_debug)
+	    {
+	      state_main_init = false;
+	      state_main++;
+	    }
+
+	  break;
+
+	case 4:
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+	  right_wheel_backwards ();
+	  if (state_debug)
+	    {
+	      state_main_init = false;
+	      state_main++;
+	    }
+	  break;
+
+	case 5:
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+	  stop_right_wheel ();
+	  if (state_debug)
+	    {
+	      state_main_init = false;
+	      state_main++;
+	    }
 	  break;
 
 	case END:

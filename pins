@@ -15,8 +15,8 @@ port A:
 
 port B:
 	3 - enc1 B
+	5 (8 pise na jednom mestu, ali je 5) - M2SLP
 	6 - M2PWM
-	8 - M2SLP
 
 port C:
 	0 - infra senzor0 - visoki
