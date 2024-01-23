@@ -88,14 +88,12 @@ main (void)
   timer_init ();
   encoder_init ();
   odometry_init ();
+//  uart_init ();
   pwm_init ();
-  uart_init ();
   sensors_init ();
   h_bridge_init ();
   regulation_init ();
   adc_dma_init ();
-
-  io_led (true);
 
   __enable_irq ();
   /* USER CODE END 2 */
@@ -108,7 +106,6 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms * 0.0005;
-      io_led (button_pressed ());
 
 //      if (timer_end ())
 //      state_main = END;
@@ -123,7 +120,6 @@ main (void)
 	    {
 	      timer_start_sys_time ();
 	      state_main = 0;
-	      io_led (false);
 	      pwm_start ();
 //	      left_wheel_forwards ();
 //	      set_starting_position (80, 1000, 45);
@@ -144,7 +140,6 @@ main (void)
 	  break;
 
 	case END:
-	  io_led (true);
 	  break;
 	}
     }

@@ -1,20 +1,22 @@
 port A:
-	0 - enc4 A - levi maxon - tim5
-	1 - enc4 B	
+	0 - enc2 A - tim5
+	1 - enc2 B	
 	2 - PWM 1
 	3 - PWM 2
-	5 - led
+	4 - adc4
+	5 - enc1 A	- tim2
 	6 - cinc
-	11 - desni h-most dir1
-	12 - desni h-most dir2
-	15 - enc3 A	- desni maxon - tim2
+	7 - adc7
+	8 - M1DIR
+	9 - M2DIR
+	10 - M1SLP
+	11 - uart6 tx - ax12a idu ovde
+	12 - uart6 rx
 
 port B:
-	3 - enc3 B
-	4 - enc1 A	- desni pasivni tocak - tim3
-	5 - enc1 B	
-	6 - enc2 A	- levi pasivni tocak - tim4
-	7 - enc2 B
+	3 - enc1 B
+	6 - M2PWM
+	8 - M2SLP
 
 port C:
 	0 - infra senzor0 - visoki
@@ -23,12 +25,7 @@ port C:
 	3 - infra senzor3
 	4 - infra senzor4 - niski
 	5 - infra senzor5
-	6 - uart6 tx - ax12a idu ovde
-	7 - uart6 rx
-	10 - levi h-most dir1
-	11 - levi h-most dir2
+	7 - M1PWM
  	13 - button
-
 	
-dodaj:
-	pa4 i pa7 za adc (strana 40 u datasheet)
+TODO: prebaci uart na neki drugi

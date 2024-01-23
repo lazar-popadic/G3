@@ -29,13 +29,13 @@ io_init ()
 static void
 porta_init ()
 {
-  RCC->AHB1ENR |= (0b1 << 0);
-
-  GPIOA->MODER &= ~(0b11 << 2 * INT_LED);
-  GPIOA->MODER |= (0b01 << 2 * INT_LED);
-  GPIOA->OTYPER &= ~(0b1 << INT_LED);
-  GPIOA->OSPEEDR |= (0b11 << 2 * INT_LED);
-  GPIOA->PUPDR &= ~(0b11 << 2 * INT_LED);
+//  RCC->AHB1ENR |= (0b1 << 0);
+//
+//  GPIOA->MODER &= ~(0b11 << 2 * INT_LED);
+//  GPIOA->MODER |= (0b01 << 2 * INT_LED);
+//  GPIOA->OTYPER &= ~(0b1 << INT_LED);
+//  GPIOA->OSPEEDR |= (0b11 << 2 * INT_LED);
+//  GPIOA->PUPDR &= ~(0b11 << 2 * INT_LED);
 
   GPIOA->MODER &= ~(0b11 << 2 * CINC);
   GPIOA->OSPEEDR &= ~(0b11 << 2 * CINC);	//low speed
@@ -55,16 +55,16 @@ portc_init ()
   RCC->AHB1ENR |= (0b1 << 2);
 }
 
-void
-io_led (bool status)
-{
-  if (true == status)
-    {
-      GPIOA->ODR |= (0b1 << 5);
-    }
-  else
-    GPIOA->ODR &= ~(0b1 << 5);
-}
+//void
+//io_led (bool status)
+//{
+//  if (true == status)
+//    {
+//      GPIOA->ODR |= (0b1 << 5);
+//    }
+//  else
+//    GPIOA->ODR &= ~(0b1 << 5);
+//}
 
 void
 io_protocinc ()
