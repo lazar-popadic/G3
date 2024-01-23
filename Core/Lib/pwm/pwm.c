@@ -38,7 +38,7 @@ pwm_init ()
 static void
 tim3_init ()
 {
-  RCC->APB2ENR |= (0b1 << 16);
+  RCC->APB1ENR |= (0b1 << 1);
 
   // Željena frekvencija za DC motor: 21kHz
   TIM3->PSC = 0;
@@ -59,7 +59,7 @@ tim3_init ()
   TIM3->CR1 &= ~(0b1 << 1); 	// Dozvola događaja
   TIM3->CR1 &= ~(0b1 << 2); 	// Šta generiše događaj
   TIM3->EGR |= (0b1 << 0); 	// Reinicijalizacija tajmera
-  while (!(TIM3->SR & (0b1 << 0)))
+  while (	!(TIM3->SR & (0b1 << 0)))
     ;
   TIM3->SR &= ~(0b1 << 0);
   TIM3->CR1 |= (0b1 << 2);
@@ -68,7 +68,7 @@ tim3_init ()
 static void
 tim4_init ()
 {
-  RCC->APB2ENR |= (0b1 << 16);
+  RCC->APB1ENR |= (0b1 << 2);
 
   // Željena frekvencija za DC motor: 21kHz
   TIM4->PSC = 0;
@@ -83,7 +83,7 @@ tim4_init ()
   TIM4->CR1 |= (0b1 << 7);
 
   // Uključujemo kanal PWM-a
-  TIM4->CCER |= (0b1 << 4);
+  TIM4->CCER |= (0b1 << 0);
 
   TIM4->CR1 &= ~(0b1 << 1); 	// Dozvola događaja
   TIM4->CR1 &= ~(0b1 << 2); 	// Šta generiše događaj
@@ -113,7 +113,7 @@ io_init ()
   GPIOC->MODER |= (0b10 << TIM3_CH2 * 2);
   GPIOB->MODER |= (0b10 << TIM4_CH1 * 2);
 
-  uint8_t const AF = 3;
+  uint8_t const AF = 2;
 
   GPIOC->AFR[TIM3_CH2 / 8] &= ~(0xF << (TIM3_CH2 % 8) * 4);
   GPIOB->AFR[TIM4_CH1 / 8] &= ~(0xF << (TIM4_CH1 % 8) * 4);

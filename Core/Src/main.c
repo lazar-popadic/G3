@@ -130,7 +130,8 @@ main (void)
 //	  if (grabulja_test  ())
 //	     state_main++;
 
-//	  pwm_duty_cycle_left (duty_cycle_test);
+	  pwm_duty_cycle_left (duty_cycle_test);
+	  pwm_duty_cycle_right(duty_cycle_test);
 //	  move_finished = movement_finished ();
 //	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
 //	  move_to_angle (0);
