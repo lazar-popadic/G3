@@ -17,8 +17,8 @@
 #define SENSORS_OFF 0
 
 #define PLUS_MINUS_PI	0
-#define PLUS_2PI	1
-#define MINUS_2PI	2
+#define MAX_PLUS_2PI	1
+#define MIN_MINUS_2PI	2
 
 void
 timer_init ();

@@ -51,13 +51,13 @@ odometry_robot ()
   switch (state_angle)
     {
     case PLUS_MINUS_PI:
-      normalize_robot_angle_plus_minus_pi ();
+      normalize_robot_angle ();
       break;
-    case PLUS_2PI:
-      normalize_robot_angle_plus_2pi ();
+    case MAX_PLUS_2PI:
+      normalize_robot_angle_max ();
       break;
-    case MINUS_2PI:
-      normalize_robot_angle_minus_2pi ();
+    case MIN_MINUS_2PI:
+      normalize_robot_angle_min ();
       break;
     }
 
@@ -65,24 +65,24 @@ odometry_robot ()
 }
 
 void
-normalize_robot_angle_plus_minus_pi ()
+normalize_robot_angle ()
 {
   robot_position.theta_rad = float_normalize (robot_position.theta_rad, -M_PI,
 					      +M_PI);
 }
 
 void
-normalize_robot_angle_plus_2pi ()
+normalize_robot_angle_max ()
 {
-  robot_position.theta_rad = float_normalize (robot_position.theta_rad, 0,
-					      +2 * M_PI);
+  if (robot_position.theta_rad > M_PI)
+    robot_position.theta_rad -= 2 * M_PI;
 }
 
 void
-normalize_robot_angle_minus_2pi ()
+normalize_robot_angle_min ()
 {
-  robot_position.theta_rad = float_normalize (robot_position.theta_rad,
-					      -2 * M_PI, 0);
+  if (robot_position.theta_rad < M_PI)
+    robot_position.theta_rad += 2 * M_PI;
 }
 
 float

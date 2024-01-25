@@ -15,11 +15,6 @@
 #include "../../h-bridge/h-bridge.h"
 #include "../../pwm/pwm.h"
 
-#define ROT_TO_ANGLE		0
-#define ROT_TO_POS		1
-#define TRAN_WITH_ROT		2
-#define TRAN_WITHOUT_ROT	3
-
 #define THETA_I_LIMIT		1	// mm / 0.5ms
 #define DISTANCE_I_LIMIT	1	// mm / 0.5ms
 #define V_REF_LIMIT		1	// m/s

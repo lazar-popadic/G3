@@ -27,5 +27,3 @@ port C:
 	5 - infra senzor5
 	7 - M1PWM
  	13 - button
-	
-TODO: prebaci uart na neki drugi

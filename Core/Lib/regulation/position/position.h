@@ -15,6 +15,11 @@
 #define EPSILON_DISTANCE	10			// 10 mm
 #define EPSILON_DISTANCE_ROT	100			// 100 mm
 
+#define ROT_TO_ANGLE		0
+#define ROT_TO_POS		1
+#define TRAN_WITH_ROT		2
+#define TRAN_WITHOUT_ROT	3
+
 void
 regulation_position ();
 

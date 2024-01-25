@@ -20,11 +20,11 @@ odometry_robot ();
 void
 odometry_init ();
 void
-normalize_robot_angle_plus_minus_pi ();
+normalize_robot_angle ();
 void
-normalize_robot_angle_plus_2pi ();
+normalize_robot_angle_max ();
 void
-normalize_robot_angle_minus_2pi ();
+normalize_robot_angle_min ();
 float
 limit_angle (float angle);
 float
