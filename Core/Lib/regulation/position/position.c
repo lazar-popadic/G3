@@ -25,10 +25,10 @@
 
 #define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
 
-static const float KP_ROT = 8;
+static const float KP_ROT = 0.8;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 0.003;
+static const float KP_TRAN = 0.0003;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
@@ -198,7 +198,8 @@ regulation_rotation (float theta_er, float faktor)
   theta_er_d = theta_er - theta_er_previous;
 
   w_ref = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
-  w_ref = float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT);
+//  w_ref = float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT);
+  w_ref = float_ramp(w_ref, float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT), 0.1);
   w_ref *= faktor;
 
   theta_er_previous = theta_er;
@@ -214,7 +215,7 @@ regulation_translation (float distance_er)
 
   V_ref = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
-  V_ref = int_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT);
+  V_ref = float_ramp(V_ref, float_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT), 0.01);
 
   distance_er_previous = distance_er;
 }

@@ -12,8 +12,8 @@
 #include <math.h>
 #include "../timer/timer.h"
 
-#define d 321.9
-#define d_odometrijskog 62
+#define d 340.0
+#define d_odometrijskog 64.2
 
 volatile float V = 0;
 volatile float w = 0;

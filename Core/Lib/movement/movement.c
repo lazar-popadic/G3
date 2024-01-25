@@ -139,7 +139,7 @@ void
 move_to_xy (float x, float y, int8_t translation_direction,
 	    int8_t rotation_direction)
 {
-  move_full (robot_position.x_mm, robot_position.y_mm, robot_position.theta_rad,
+  move_full (x, y, robot_position.theta_rad,
 	     translation_direction, rotation_direction, DEFAULT);
 }
 

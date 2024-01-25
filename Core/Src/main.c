@@ -136,7 +136,12 @@ main (void)
 	      state_main_init = true;
 	      state_debug = 0;
 	    }
-	  left_wheel_forwards ();
+	  move_full(700, -700, 1.57, 1, DEFAULT, DEFAULT);
+//	  move_to_xy(700, -700, 1, DEFAULT);
+//	  left_wheel_backwards ();
+//	  right_wheel_backwards ();
+//	  pwm_duty_cycle_left (duty_cycle_test);
+//	  pwm_duty_cycle_right (duty_cycle_test);
 	  if (state_debug)
 	    {
 	      state_main_init = false;
@@ -149,77 +154,6 @@ main (void)
 
 //	  if (timer_delay_nonblocking (10) && movement_finished ())
 //	    state_main++;
-	  break;
-
-	case 1:
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-	  left_wheel_backwards ();
-	  if (state_debug)
-	    {
-	      state_main_init = false;
-	      state_main++;
-	    }
-	  break;
-
-	case 2:
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-	  stop_left_wheel ();
-	  if (state_debug)
-	    {
-	      state_main_init = false;
-	      state_main++;
-	    }
-	  break;
-
-	case 3:
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-	  right_wheel_forwards ();
-	  if (state_debug)
-	    {
-	      state_main_init = false;
-	      state_main++;
-	    }
-
-	  break;
-
-	case 4:
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-	  right_wheel_backwards ();
-	  if (state_debug)
-	    {
-	      state_main_init = false;
-	      state_main++;
-	    }
-	  break;
-
-	case 5:
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-	  stop_right_wheel ();
-	  if (state_debug)
-	    {
-	      state_main_init = false;
-	      state_main++;
-	    }
 	  break;
 
 	case END:
