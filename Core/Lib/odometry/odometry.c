@@ -74,14 +74,14 @@ normalize_robot_angle ()
 void
 normalize_robot_angle_max ()
 {
-  if (robot_position.theta_rad > M_PI)
+  if (robot_position.theta_rad > 2 * M_PI)
     robot_position.theta_rad -= 2 * M_PI;
 }
 
 void
 normalize_robot_angle_min ()
 {
-  if (robot_position.theta_rad < M_PI)
+  if (robot_position.theta_rad < 2 * M_PI)
     robot_position.theta_rad += 2 * M_PI;
 }
 
