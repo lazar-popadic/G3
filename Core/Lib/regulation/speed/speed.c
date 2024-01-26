@@ -17,16 +17,16 @@
 #define W_LIMIT		2500
 #define U_LIMIT		2500
 
-#define LEFT_MAXON_FORW_OFFSET	0	//bilo 490
-#define LEFT_MAXON_BACK_OFFSET	0	//bilo -540
-#define RIGHT_MAXON_FORW_OFFSET	0
-#define RIGHT_MAXON_BACK_OFFSET	0
+#define LEFT_MAXON_FORW_OFFSET	450	//bilo 490
+#define LEFT_MAXON_BACK_OFFSET	-450	//bilo -540
+#define RIGHT_MAXON_FORW_OFFSET	450
+#define RIGHT_MAXON_BACK_OFFSET	-450
 
 static const float KP_TRAN = 300.0;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-static const float KP_ROT = 0.1;
+static const float KP_ROT = 50.0;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
 
@@ -70,9 +70,9 @@ regulation_speed ()
   u_w = float_saturation (u_w, W_LIMIT, -W_LIMIT);
 
   u_right = u_v + u_w;
-  u_right = float_saturation (u_right, U_LIMIT, U_LIMIT);
+  u_right = float_saturation (u_right, U_LIMIT, -U_LIMIT);
   u_left = u_v - u_w;
-  u_left = float_saturation (u_left, U_LIMIT, U_LIMIT);
+  u_left = float_saturation (u_left, U_LIMIT, -U_LIMIT);
 
   if (u_right > 50)
     {

@@ -43,10 +43,13 @@ uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 
 uint16_t duty_cycle_test = 1000;
+float v_max_test = V_REF_LIMIT_DEFAULT, w_max_test = W_REF_LIMIT_DEFAULT;
 bool move_finished;
 
 position pos_test =
   { 0, 0, 0 };
+
+extern volatile position target_position, robot_position;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -136,16 +139,20 @@ main (void)
 	      state_main_init = true;
 	      state_debug = 0;
 	    }
-	  move_full(700, -700, 1.57, 1, DEFAULT, DEFAULT);
+	  set_rotation_speed_limit (w_max_test);
+	  set_translation_speed_limit (v_max_test);
+	  move_to_angle (20, DEFAULT);
+//	  target_position.theta_rad = 1.57;
+//	  move_full(700, -700, 1.57, 1, DEFAULT, DEFAULT);
 //	  move_to_xy(700, -700, 1, DEFAULT);
 //	  left_wheel_backwards ();
 //	  right_wheel_backwards ();
 //	  pwm_duty_cycle_left (duty_cycle_test);
 //	  pwm_duty_cycle_right (duty_cycle_test);
-	  if (state_debug)
+	  if (movement_finished() && timer_delay_nonblocking(20))
 	    {
-	      state_main_init = false;
 	      state_main++;
+//	      state_main = END;
 	    }
 
 //	  move_finished = movement_finished ();
@@ -154,9 +161,12 @@ main (void)
 
 //	  if (timer_delay_nonblocking (10) && movement_finished ())
 //	    state_main++;
-	  break;
+//
+
+	break;
 
 	case END:
+	  target_position = robot_position;
 	  break;
 	}
     }

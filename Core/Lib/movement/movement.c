@@ -7,6 +7,7 @@
 
 #include "movement.h"
 #include "../regulation/position/position.h"
+#include "../regulation/regulation.h"
 #include "../odometry/odometry.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -39,6 +40,7 @@ extern volatile uint8_t state_angle;
 
 int8_t init_rot_dir = 0, final_rot_dir = 0, tran_dir = 1;
 extern volatile uint8_t regulation_phase;
+extern volatile float V_limit, w_limit;
 
 void
 calculate_movement ()
@@ -139,8 +141,8 @@ void
 move_to_xy (float x, float y, int8_t translation_direction,
 	    int8_t rotation_direction)
 {
-  move_full (x, y, robot_position.theta_rad,
-	     translation_direction, rotation_direction, DEFAULT);
+  move_full (x, y, robot_position.theta_rad, translation_direction,
+	     rotation_direction, DEFAULT);
 }
 
 void
@@ -169,7 +171,8 @@ move_on_direction (float distance, int8_t direction)
 	  + direction * distance * sin (robot_position.theta_rad);
     }
   move_full (pos_init.x_mm, pos_init.y_mm, robot_position.theta_rad, direction,
-	     DEFAULT, DEFAULT);
+  DEFAULT,
+	     DEFAULT);
 }
 
 void
@@ -184,7 +187,7 @@ move_relative_angle (float angle_degrees)
 	  + angle_degrees * M_PI / 180;
     }
   move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, DEFAULT, DEFAULT,
-	     DEFAULT);
+  DEFAULT);
 }
 
 void
@@ -194,4 +197,16 @@ set_starting_position (float starting_x, float starting_y,
   robot_position.x_mm = starting_x;
   robot_position.y_mm = starting_y;
   robot_position.theta_rad = starting_theta_degrees * M_PI / 180;
+}
+
+void
+set_translation_speed_limit (float V_max)
+{
+  V_limit = V_max;
+}
+
+void
+set_rotation_speed_limit (float w_max)
+{
+  w_limit = w_max;
 }

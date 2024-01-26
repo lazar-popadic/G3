@@ -17,15 +17,13 @@
 
 #define THETA_I_LIMIT		1
 #define DISTANCE_I_LIMIT	1
-#define V_REF_LIMIT		1	// m/s
-#define W_REF_LIMIT		12.6	// rad/s
 
 #define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
 
-static const float KP_ROT = 0.8;
+static const float KP_ROT = 8;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 0.0003;
+static const float KP_TRAN = 0.003;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
@@ -41,6 +39,7 @@ volatile static float distance_er_i;
 volatile static float distance_er_d;
 
 volatile float V_ref = 0, w_ref = 0;
+extern volatile float V_limit, w_limit;
 
 volatile uint8_t regulation_phase = 0;
 volatile bool regulation_phase_init = false;
@@ -194,9 +193,14 @@ regulation_rotation (float theta_er, float faktor)
   theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
   theta_er_d = theta_er - theta_er_previous;
 
-  w_ref = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
-//  w_ref = float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT);
-  w_ref = float_ramp(w_ref, float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT), 0.01);
+//  w_ref = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
+//  w_ref = float_saturation (w_ref, w_limit, -w_limit);
+  w_ref = float_ramp (
+      w_ref,
+      float_saturation (
+	  KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d,
+	  w_limit, -w_limit),
+      0.1);
   w_ref *= faktor;
 
   theta_er_previous = theta_er;
@@ -210,10 +214,16 @@ regulation_translation (float distance_er)
 				    -DISTANCE_I_LIMIT);
   distance_er_d = distance_er - distance_er_previous;
 
-  V_ref = KP_TRAN * distance_er + KI_TRAN * distance_er_i
-      + KD_TRAN * distance_er_d;
-//  V_ref = float_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT)
-  V_ref = float_ramp(V_ref, float_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT), 0.001);
+//  V_ref = KP_TRAN * distance_er + KI_TRAN * distance_er_i
+//      + KD_TRAN * distance_er_d;
+//  V_ref = float_saturation (V_ref, V_limit, -V_limit)
+  V_ref = float_ramp (
+      V_ref,
+      float_saturation (
+	  KP_TRAN * distance_er + KI_TRAN * distance_er_i
+	      + KD_TRAN * distance_er_d,
+	  V_limit, -V_limit),
+      0.01);
 
   distance_er_previous = distance_er;
 }

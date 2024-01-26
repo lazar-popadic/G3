@@ -125,7 +125,7 @@ TIM1_UP_TIM10_IRQHandler ()
 	  regulation_position();
 
 	}
-      regulation_speed();
+//      regulation_speed();
 
 
 //      switch (sensors_case_timer)

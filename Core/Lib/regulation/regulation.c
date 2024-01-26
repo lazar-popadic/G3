@@ -11,13 +11,15 @@
 #include "../h-bridge/h-bridge.h"
 #include <math.h>
 
-//static float inc2rad_deltaT = 0;
+
 volatile static uint8_t ramp_counter = 0;
+volatile float V_limit, w_limit;
 
 void
 regulation_init ()
 {
-  //inc2rad_deltaT = M_PI / 4096;	// 2*Pi / 4*2048
+  V_limit = V_REF_LIMIT_DEFAULT;
+  w_limit = W_REF_LIMIT_DEFAULT;
 }
 
 float

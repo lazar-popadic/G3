@@ -27,6 +27,11 @@ void
 set_starting_position (float starting_x, float starting_y, float starting_theta);
 
 void
+set_translation_speed_limit (float V_max);
+void
+set_rotation_speed_limit (float w_max);
+
+void
 move_full (float x, float y, float theta, int8_t translation_direction,
 	   int8_t initial_rotation_direction, int8_t final_rotation_direction);
 void
