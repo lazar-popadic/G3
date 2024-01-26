@@ -19,8 +19,8 @@
 
 // meri
 extern volatile position robot_position;
-extern volatile float V;
-extern volatile float w;
+extern volatile float V_m_s;
+extern volatile float w_rad_s;
 // zadajem
 volatile position target_position =
   { 0, 0, 0 };
@@ -37,11 +37,11 @@ volatile static position pos_init =
   { 0, 0, 0 };
 extern volatile uint8_t state_angle;
 
-int8_t init_rot_dir = 0, final_rot_dir = 0, tran_dir = 0;
+int8_t init_rot_dir = 0, final_rot_dir = 0, tran_dir = 1;
 extern volatile uint8_t regulation_phase;
 
 void
-calculate_movement ()	//TODO: ovde stavi init_rot_dir, final_rot_dir, tran_dir
+calculate_movement ()
 {
   error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
   error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
@@ -102,7 +102,7 @@ calculate_movement ()	//TODO: ovde stavi init_rot_dir, final_rot_dir, tran_dir
 bool
 no_movement ()
 {
-  if (w < W_LIMIT || V < V_LIMIT)
+  if (w_rad_s < W_LIMIT || V_m_s < V_LIMIT)
     return true;
   return false;
 }
@@ -116,7 +116,7 @@ movement_finished ()
       movement_init = false;
       init_rot_dir = 0;
       final_rot_dir = 0;
-      tran_dir = 0;
+      tran_dir = 1;
       state_angle = PLUS_MINUS_PI;	//TODO: vidi da li ovde nece sjebati
       return true;
     }

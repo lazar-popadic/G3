@@ -15,13 +15,10 @@
 #include "../../h-bridge/h-bridge.h"
 #include "../../pwm/pwm.h"
 
-#define THETA_I_LIMIT		1	// mm / 0.5ms
-#define DISTANCE_I_LIMIT	1	// mm / 0.5ms
+#define THETA_I_LIMIT		1
+#define DISTANCE_I_LIMIT	1
 #define V_REF_LIMIT		1	// m/s
 #define W_REF_LIMIT		12.6	// rad/s
-
-#define LEFT_MAXON_FORW_OFFSET	490
-#define LEFT_MAXON_BACK_OFFSET	-540
 
 #define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
 
@@ -199,7 +196,7 @@ regulation_rotation (float theta_er, float faktor)
 
   w_ref = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
 //  w_ref = float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT);
-  w_ref = float_ramp(w_ref, float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT), 0.1);
+  w_ref = float_ramp(w_ref, float_saturation (w_ref, W_REF_LIMIT, -W_REF_LIMIT), 0.01);
   w_ref *= faktor;
 
   theta_er_previous = theta_er;
@@ -215,7 +212,8 @@ regulation_translation (float distance_er)
 
   V_ref = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
-  V_ref = float_ramp(V_ref, float_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT), 0.01);
+//  V_ref = float_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT)
+  V_ref = float_ramp(V_ref, float_saturation (V_ref, V_REF_LIMIT, -V_REF_LIMIT), 0.001);
 
   distance_er_previous = distance_er;
 }

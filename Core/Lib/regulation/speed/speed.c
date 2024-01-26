@@ -13,17 +13,25 @@
 #include <math.h>
 
 #define EI_LIMIT 	40 	// narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define V_LIMIT	2500 		// inkrementi, direktno za pwm duty cycle
-#define W_LIMIT	2500
-#define LEFT_MAXON_FORW_OFFSET	0
-#define LEFT_MAXON_BACK_OFFSET	0
+#define V_LIMIT		2500
+#define W_LIMIT		2500
+#define U_LIMIT		2500
 
-static const float KP_SPEED = 700.0;
-static const float KI_SPEED = 0;
-static const float KD_SPEED = 0;
+#define LEFT_MAXON_FORW_OFFSET	0	//bilo 490
+#define LEFT_MAXON_BACK_OFFSET	0	//bilo -540
+#define RIGHT_MAXON_FORW_OFFSET	0
+#define RIGHT_MAXON_BACK_OFFSET	0
 
-extern volatile float V;
-extern volatile float w;
+static const float KP_TRAN = 300.0;
+static const float KI_TRAN = 0;
+static const float KD_TRAN = 0;
+
+static const float KP_ROT = 0.1;
+static const float KI_ROT = 0;
+static const float KD_ROT = 0;
+
+extern volatile double V_m_s;
+extern volatile double w_rad_s;
 extern volatile float V_ref;
 extern volatile float w_ref;
 
@@ -46,32 +54,34 @@ volatile static float right_offset = 0;
 void
 regulation_speed ()
 {
-  e_v = V_ref - V;
+  e_v = V_ref - V_m_s;
   e_i_v += e_v;
   e_i_v = float_saturation (e_i_v, EI_LIMIT, - EI_LIMIT);
   e_d_v = e_v - e_previous_v;
 
-  e_w = w_ref - w;
+  e_w = w_ref - w_rad_s;
   e_i_w += e_w;
   e_i_w = float_saturation (e_i_w, EI_LIMIT, - EI_LIMIT);
   e_d_w = e_w - e_previous_w;
 
-  u_v = KP_SPEED * e_v + KI_SPEED * e_i_v + KD_SPEED * e_d_v;
+  u_v = KP_TRAN * e_v + KI_TRAN * e_i_v + KD_TRAN * e_d_v;
   u_v = float_saturation (u_v, V_LIMIT, -V_LIMIT);
-  u_w = KP_SPEED * e_w + KI_SPEED * e_i_w + KD_SPEED * e_d_w;
+  u_w = KP_ROT * e_w + KI_ROT * e_i_w + KD_ROT * e_d_w;
   u_w = float_saturation (u_w, W_LIMIT, -W_LIMIT);
 
-  u_right = u_v - u_w;
-  u_left = u_v + u_w;
+  u_right = u_v + u_w;
+  u_right = float_saturation (u_right, U_LIMIT, U_LIMIT);
+  u_left = u_v - u_w;
+  u_left = float_saturation (u_left, U_LIMIT, U_LIMIT);
 
-  if (u_right > 2)
+  if (u_right > 50)
     {
-//      right_offset = LEFT_MAXON_FORW_OFFSET;
+      right_offset = RIGHT_MAXON_FORW_OFFSET;
       right_wheel_forwards ();
     }
-  else if (u_right < -2)
+  else if (u_right < -50)
     {
-//      right_offset = LEFT_MAXON_BACK_OFFSET;
+      right_offset = RIGHT_MAXON_BACK_OFFSET;
       right_wheel_backwards ();
     }
   else
@@ -80,14 +90,14 @@ regulation_speed ()
       stop_right_wheel ();
     }
   u_right += right_offset;
-  if (u_left > 2)
+  if (u_left > 50)
     {
-//      left_offset = LEFT_MAXON_FORW_OFFSET;
+      left_offset = LEFT_MAXON_FORW_OFFSET;
       left_wheel_forwards ();
     }
-  else if (u_left < -2)
+  else if (u_left < -50)
     {
-//      left_offset = LEFT_MAXON_BACK_OFFSET;
+      left_offset = LEFT_MAXON_BACK_OFFSET;
       left_wheel_backwards ();
     }
   else
