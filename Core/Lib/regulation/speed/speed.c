@@ -26,7 +26,7 @@ static const float KP_TRAN = 300.0;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-static const float KP_ROT = 50.0;
+static const float KP_ROT = 20.0;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
 
@@ -46,8 +46,8 @@ volatile static float e_previous_w = 0;
 
 volatile static float u_v = 0;
 volatile static float u_w = 0;
-volatile static float u_right = 0;
-volatile static float u_left = 0;
+volatile float u_right = 0;
+volatile float u_left = 0;
 volatile static float left_offset = 0;
 volatile static float right_offset = 0;
 

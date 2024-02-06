@@ -13,6 +13,7 @@
 #include "../encoder/encoder.h"
 #include "../sensors/sensors.h"
 #include "../tactics/tactics.h"
+#include "../pwm/pwm.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
@@ -43,6 +44,7 @@ volatile float right_average_speed = 0;
 extern int16_t Vd_inc;
 
 volatile uint8_t state_angle = PLUS_MINUS_PI;
+volatile bool regulation_on = true;
 
 void
 timer_init ()
@@ -120,13 +122,21 @@ TIM1_UP_TIM10_IRQHandler ()
 
       odometry_robot ();
 
-      if (!(sys_time_half_ms % (10))) //svakih 5ms
+      if (regulation_on)
 	{
-	  regulation_position();
 
+	  if (!(sys_time_half_ms % (10))) //svakih 5ms
+	    {
+	      regulation_position ();
+
+	    }
+	  regulation_speed ();
 	}
-//      regulation_speed();
-
+      if (!regulation_on)
+	{
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
+	}
 
 //      switch (sensors_case_timer)
 //	{

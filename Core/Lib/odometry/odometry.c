@@ -48,7 +48,7 @@ odometry_robot ()
   w_rad_s = (Vd_inc - Vl_inc) * inc2rad * 2000.0;	// [rad / s]
   w_deltaT = w_rad_s * 0.0005;					// [rad / 0.5ms]
 
-  robot_position.theta_rad -= w_deltaT;		// TODO: ovde treba da je plus
+  robot_position.theta_rad += w_deltaT;		// TODO: ovde treba da je plus
   robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad);
   robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad);
 
