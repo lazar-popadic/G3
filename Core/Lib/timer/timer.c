@@ -33,24 +33,17 @@ extern volatile int16_t ref_speed_right;
 
 volatile int16_t ref_test = 0;
 
-volatile int16_t left_buffer[10] =
-  { };
-volatile int16_t right_buffer[10] =
-  { };
-volatile uint8_t graph_counter = 0;
-volatile float left_average_speed = 0;
-volatile float right_average_speed = 0;
-
-extern int16_t Vd_inc;
-
 volatile uint8_t state_angle = PLUS_MINUS_PI;
 volatile bool regulation_on = true;
+const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
+static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
 
 void
 timer_init ()
 {
   tim10_init ();			// vreme
-  //odometry_init ();		// zasto sam ovo uradio? Mozda jer se odometry zove u prekidu tajmera
+  position_loop_cnt = position_loop_freq * 2;
+  speed_loop_cnt = speed_loop_freq * 2;
 }
 
 static void
@@ -125,12 +118,10 @@ TIM1_UP_TIM10_IRQHandler ()
       if (regulation_on)
 	{
 
-	  if (!(sys_time_half_ms % (10))) //svakih 5ms
-	    {
-	      regulation_position ();
-
-	    }
-	  regulation_speed ();
+	  if (!(sys_time_half_ms % position_loop_cnt))
+	    regulation_position ();
+	  if (!(sys_time_half_ms % speed_loop_cnt))
+	    regulation_speed ();
 	}
       if (!regulation_on)
 	{
