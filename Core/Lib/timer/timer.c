@@ -118,10 +118,10 @@ TIM1_UP_TIM10_IRQHandler ()
       if (regulation_on)
 	{
 
-	  if (!(sys_time_half_ms % position_loop_cnt))
-	    regulation_position ();
-	  if (!(sys_time_half_ms % speed_loop_cnt))
-	    regulation_speed ();
+//	  if (!(sys_time_half_ms % position_loop_cnt))
+//	    regulation_position ();
+//	  if (!(sys_time_half_ms % speed_loop_cnt ))
+//	    regulation_speed ();
 	}
       if (!regulation_on)
 	{

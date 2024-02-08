@@ -129,7 +129,7 @@ main (void)
 	      state_main = 0;
 	      pwm_start ();
 //	      left_wheel_forwards ();
-	      set_starting_position (80, 1000, 0);
+	      set_starting_position (80, 1000, -90);
 	    }
 	  break;
 
@@ -140,11 +140,11 @@ main (void)
 	      state_main_init = true;
 	      state_debug = 0;
 	    }
-	  set_rotation_speed_limit (w_max_test/2);
-	  set_translation_speed_limit (v_max_test/2);
-	  move_to_xy(580, 1000, 1, 0);
+	  set_rotation_speed_limit (w_max_test/4);
+	  set_translation_speed_limit (v_max_test/4);
+//	  move_to_xy(580, 1000, 1, 0);
 //	  move_on_direction(500, 1);
-//	  move_to_angle (135, DEFAULT);
+	  move_to_angle (90, DEFAULT);
 //	  move_full(680, 1000, -90, 1, DEFAULT, DEFAULT);
 //	  target_position.theta_rad = 1.57;
 //	  move_full(700, -700, 1.57, 1, DEFAULT, DEFAULT);
