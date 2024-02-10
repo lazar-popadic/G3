@@ -33,7 +33,7 @@ extern volatile int16_t ref_speed_right;
 
 volatile int16_t ref_test = 0;
 
-volatile uint8_t state_angle = PLUS_MINUS_PI;
+volatile uint8_t state_angle = 200;
 volatile bool regulation_on = true;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;

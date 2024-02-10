@@ -17,6 +17,7 @@
 #define W_LIMIT		2500
 #define U_LIMIT		2500
 
+//TODO: izmeri offsete
 #define LEFT_MAXON_FORW_OFFSET	450	//bilo 490
 #define LEFT_MAXON_BACK_OFFSET	-450	//bilo -540
 #define RIGHT_MAXON_FORW_OFFSET	450

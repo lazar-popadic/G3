@@ -18,12 +18,10 @@
 #define THETA_I_LIMIT		1
 #define DISTANCE_I_LIMIT	1
 
-#define SPEED_LIMIT	1500 // inkrementi, direktno za pwm duty cycle
-
-static const float KP_ROT = 5;
+static const float KP_ROT = 8;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 0.00075;
+static const float KP_TRAN = 0.002;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 

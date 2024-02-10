@@ -32,7 +32,7 @@ pwm_init ()
   tim3_init();
   tim4_init ();
   io_init ();
-  interrupt_init ();
+//  interrupt_init ();
 }
 
 static void
