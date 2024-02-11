@@ -28,7 +28,7 @@ volatile position target_position =
 //izracuna
 volatile position error =
   { 0, 0, 0 };
-volatile float theta_to_pos_error = 0;
+volatile float theta_to_pos_target = 0;
 volatile float theta_to_pos = 0;
 volatile float distance;
 volatile float theta_to_angle = 0;
@@ -36,7 +36,6 @@ volatile float theta_to_angle = 0;
 volatile bool movement_init = false;
 volatile static position pos_init =
   { 0, 0, 0 };
-extern volatile uint8_t state_angle;
 
 int8_t init_rot_dir = 0, final_rot_dir = 0, tran_dir = 1;
 extern volatile uint8_t regulation_phase;
@@ -47,55 +46,52 @@ calculate_movement ()
 {
   error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
   error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
-  theta_to_pos_error = atan2 (error.y_mm, error.x_mm);
+  theta_to_pos_target = atan2 (error.y_mm, error.x_mm);
 
   switch (tran_dir)
     {
     default:
       break;
     case BACKWARD:
-      theta_to_pos_error += M_PI;
+      theta_to_pos_target += M_PI;//TODO: vidi da li je ovde + ili -, mozda sjebe ccw i cw
       break;
     }
 
-//  switch (init_rot_dir)
-//    {
-//    default:
-//      if (regulation_phase == ROT_TO_POS)
-//	state_angle = PLUS_MINUS_PI;
-//      break;
-//    case CCW:	// pozitivan smer
-//      theta_to_pos_error = float_normalize (theta_to_pos_error, 0, 2 * M_PI);
-//      if (regulation_phase == ROT_TO_POS)
-//	state_angle = MAX_PLUS_2PI;
-//      break;
-//    case CW:	// negativan smer
-//      theta_to_pos_error = float_normalize (theta_to_pos_error, -2 * M_PI, 0);
-//      if (regulation_phase == ROT_TO_POS)
-//	state_angle = MIN_MINUS_2PI;
-//      break;
-//    }
-//
-//  switch (final_rot_dir)
-//    {
-//    default:
-//      if (regulation_phase == ROT_TO_ANGLE)
-//	state_angle = PLUS_MINUS_PI;
-//      break;
-//    case CCW:	// pozitivan smer
-//      float_normalize (target_position.theta_rad, 0, 2 * M_PI);
-//      if (regulation_phase == ROT_TO_ANGLE)
-//	state_angle = MAX_PLUS_2PI;
-//      break;
-//    case CW:	// negativan smer
-//      float_normalize (target_position.theta_rad, -2 * M_PI, 0);
-//      if (regulation_phase == ROT_TO_ANGLE)
-//	state_angle = MIN_MINUS_2PI;
-//      break;
-//    }
+  switch (init_rot_dir)
+    {
+    default:
+      break;
+    case CCW:	// pozitivan smer
+      theta_to_pos_target = float_normalize (
+	  theta_to_pos_target, robot_position.theta_rad,
+	  robot_position.theta_rad + 2 * M_PI);
+      break;
+    case CW:	// negativan smer
+      theta_to_pos_target = float_normalize (
+	  theta_to_pos_target, robot_position.theta_rad - 2 * M_PI,
+	  robot_position.theta_rad);
+      break;
+    }
+
+  switch (final_rot_dir)
+    {
+    default:
+      break;
+    case CCW:	// pozitivan smer
+      target_position.theta_rad = float_normalize (
+	  target_position.theta_rad, robot_position.theta_rad,
+	  robot_position.theta_rad + 2 * M_PI);
+      break;
+    case CW:	// negativan smer
+      target_position.theta_rad = float_normalize (
+	  target_position.theta_rad, robot_position.theta_rad - 2 * M_PI,
+	  robot_position.theta_rad);
+      break;
+    }
+
   error.theta_rad = target_position.theta_rad - robot_position.theta_rad;// [rad]
 
-  theta_to_pos = theta_to_pos_error - robot_position.theta_rad;		// [rad]
+  theta_to_pos = theta_to_pos_target - robot_position.theta_rad;	// [rad]
   distance = tran_dir
       * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
   theta_to_angle = error.theta_rad;					// [rad]

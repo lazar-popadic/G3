@@ -21,12 +21,6 @@ void
 odometry_init ();
 void
 normalize_robot_angle ();
-void
-normalize_robot_angle_max ();
-void
-normalize_robot_angle_min ();
-float
-limit_angle (float angle);
 float
 float_normalize (float signal, float min, float max);
 

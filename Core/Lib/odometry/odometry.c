@@ -28,8 +28,8 @@ int16_t Vl_inc = 0;
 volatile position robot_position =
   { 0, 0, 0 };
 
+volatile double theta_robot_normalized = 0;
 static float theta_degrees;
-extern volatile uint8_t state_angle;
 
 void
 odometry_init ()
@@ -54,21 +54,6 @@ odometry_robot ()
   robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad);
   robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad);
 
-  switch (state_angle)
-    {
-    case PLUS_MINUS_PI:
-      normalize_robot_angle ();
-      break;
-    case MAX_PLUS_2PI:
-      normalize_robot_angle_max ();
-      break;
-    case MIN_MINUS_2PI:
-      normalize_robot_angle_min ();
-      break;
-    default:
-      break;
-    }
-
   theta_degrees = robot_position.theta_rad * 180 / M_PI;
 }
 
@@ -77,30 +62,6 @@ normalize_robot_angle ()
 {
   robot_position.theta_rad = float_normalize (robot_position.theta_rad, -M_PI,
 					      +M_PI);
-}
-
-void
-normalize_robot_angle_max ()
-{
-  if (robot_position.theta_rad > 2 * M_PI)
-    robot_position.theta_rad -= 2 * M_PI;
-}
-
-void
-normalize_robot_angle_min ()
-{
-  if (robot_position.theta_rad < 2 * M_PI)
-    robot_position.theta_rad += 2 * M_PI;
-}
-
-float
-limit_angle (float angle)
-{
-  if (angle > M_PI)
-    return angle - 2 * M_PI;
-  if (angle < -M_PI)
-    return angle + 2 * M_PI;
-  return angle;
 }
 
 float

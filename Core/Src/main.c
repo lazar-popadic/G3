@@ -48,6 +48,7 @@ bool move_finished;
 
 position pos_test =
   { 0, 0, 0 };
+uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
 
 extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
@@ -113,6 +114,7 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms * 0.0005;
+      move_finished = movement_finished ();
 
 //      if (timer_end ())
 //      state_main = END;
@@ -129,7 +131,7 @@ main (void)
 	      state_main = 0;
 	      pwm_start ();
 //	      left_wheel_forwards ();
-	      set_starting_position (80, 1000, -90);
+	      set_starting_position (0, 0, 0);
 	    }
 	  break;
 
@@ -140,33 +142,21 @@ main (void)
 	      state_main_init = true;
 	      state_debug = 0;
 	    }
-	  set_rotation_speed_limit (w_max_test/4);
-	  set_translation_speed_limit (v_max_test/4);
-//	  move_to_xy(580, 1000, 1, 0);
-//	  move_on_direction(500, 1);
+	  set_rotation_speed_limit (w_max_test / 4);
+	  set_translation_speed_limit (v_max_test / 4);
 	  move_to_angle (90, DEFAULT);
-//	  move_full(680, 1000, -90, 1, DEFAULT, DEFAULT);
-//	  target_position.theta_rad = 1.57;
-//	  move_full(700, -700, 1.57, 1, DEFAULT, DEFAULT);
-//	  move_to_xy(700, -700, 1, DEFAULT);
-//	  left_wheel_backwards ();
-//	  right_wheel_backwards ();
-//	  pwm_duty_cycle_left (duty_cycle_test);
-//	  pwm_duty_cycle_right (duty_cycle_test);
 	  if (movement_finished () && timer_delay_nonblocking (2000))
 	    {
 //	      state_main++;
 	      state_main = END;
 	    }
+	  break;
 
-//	  move_finished = movement_finished ();
-//	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad);
-//	  move_to_angle (0);
+	case 1:
+	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad, tran_test, init_rot_test, final_rot_test);
 
-//	  if (timer_delay_nonblocking (10) && movement_finished ())
-//	    state_main++;
-//
-
+//	  if (timer_delay_nonblocking (20) && movement_finished ())
+//	    state_main = END;
 	  break;
 
 	case END:
