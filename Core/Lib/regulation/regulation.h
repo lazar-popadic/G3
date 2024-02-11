@@ -28,5 +28,5 @@ int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope);
 int32_t
 int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope, uint8_t prescaler);
 int8_t
-sign (int32_t signal);
+sign (float signal);
 #endif /* LIB_MODULES_REGULATION_REGULATION_H_ */

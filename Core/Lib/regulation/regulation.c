@@ -80,7 +80,7 @@ int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope,
 }
 
 int8_t
-sign (int32_t signal)
+sign (float signal)
 {
   if (signal > 0)
     return 1;

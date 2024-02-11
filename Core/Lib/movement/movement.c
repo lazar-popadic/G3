@@ -103,7 +103,7 @@ calculate_movement ()
   error.theta_rad = target_position.theta_rad - robot_position.theta_rad;// [rad]
 
   theta_to_pos = theta_to_pos_target - robot_position.theta_rad;	// [rad]
-  distance = tran_dir
+  distance = sign(tran_dir)
       * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
   theta_to_angle = error.theta_rad;					// [rad]
 }
