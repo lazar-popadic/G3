@@ -45,7 +45,7 @@ odometry_robot ()
   Vd_inc = speed_of_encoder_right_passive ();
   Vl_inc = speed_of_encoder_left_passive ();
 
-  V_deltaT = (Vd_inc + Vl_inc) * 0.5 * inc2mm;		// [mm / 0.5ms] = [m / 2s]
+  V_deltaT = (Vd_inc + Vl_inc) * 0.5 * inc2mm;	// [mm / 0.5ms] = [m / 2s]
   V_m_s = V_deltaT * 0.5;				// [m / s]
   w_rad_s = (Vd_inc - Vl_inc) * inc2rad_s;		// [rad / s]
   w_deltaT = w_rad_s * 0.002;				// [rad / 0.5ms]
@@ -54,22 +54,25 @@ odometry_robot ()
   robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad);
   robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad);
 
-  theta_degrees = robot_position.theta_rad * 180 / M_PI;
+  theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
+  theta_degrees = theta_robot_normalized * 180 / M_PI;
 }
 
 void
 normalize_robot_angle ()
 {
-  robot_position.theta_rad = float_normalize (robot_position.theta_rad, -M_PI,
-					      +M_PI);
+  robot_position.theta_rad = float_normalize_angle (robot_position.theta_rad,
+						    0);
 }
 
 float
-float_normalize (float signal, float min, float max)
+float_normalize_angle (float signal, float middle)
 {
+  float max = middle + M_PI;
+  float min = middle - M_PI;
   if (signal > max)
-    return signal - (max - min);
+    return signal - (int8_t) ((signal - min) / (2 * M_PI)) * 2 * M_PI;
   if (signal < min)
-    return signal + (max - min);
+    return signal + (int8_t) ((max - signal) / (2 * M_PI)) * 2 * M_PI;
   return signal;
 }

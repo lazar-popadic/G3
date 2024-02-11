@@ -22,6 +22,6 @@ odometry_init ();
 void
 normalize_robot_angle ();
 float
-float_normalize (float signal, float min, float max);
+float_normalize_angle (float signal, float middle);
 
 #endif /* LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_ */

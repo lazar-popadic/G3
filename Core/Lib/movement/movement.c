@@ -16,7 +16,7 @@
 #include "../timer/timer.h"
 
 #define W_LIMIT		0.1
-#define V_LIMIT		0.1
+#define V_LIMIT		0.01
 
 // meri
 extern volatile position robot_position;
@@ -53,23 +53,32 @@ calculate_movement ()
     default:
       break;
     case BACKWARD:
-      theta_to_pos_target += M_PI;//TODO: vidi da li je ovde + ili -, mozda sjebe ccw i cw
+      theta_to_pos_target += M_PI;
       break;
     }
+
+  theta_to_pos_target = float_normalize_angle (theta_to_pos_target,
+					       robot_position.theta_rad);
+  target_position.theta_rad = float_normalize_angle (target_position.theta_rad,
+						     robot_position.theta_rad);
 
   switch (init_rot_dir)
     {
     default:
       break;
     case CCW:	// pozitivan smer
-      theta_to_pos_target = float_normalize (
-	  theta_to_pos_target, robot_position.theta_rad,
-	  robot_position.theta_rad + 2 * M_PI);
+      if (theta_to_pos_target
+	  < robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
+	{
+	  theta_to_pos_target += 2 * M_PI;
+	}
       break;
     case CW:	// negativan smer
-      theta_to_pos_target = float_normalize (
-	  theta_to_pos_target, robot_position.theta_rad - 2 * M_PI,
-	  robot_position.theta_rad);
+      if (theta_to_pos_target
+	  > robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
+	{
+	  theta_to_pos_target -= 2 * M_PI;
+	}
       break;
     }
 
@@ -78,14 +87,16 @@ calculate_movement ()
     default:
       break;
     case CCW:	// pozitivan smer
-      target_position.theta_rad = float_normalize (
-	  target_position.theta_rad, robot_position.theta_rad,
-	  robot_position.theta_rad + 2 * M_PI);
+      if (target_position.theta_rad < robot_position.theta_rad)
+	{
+	  target_position.theta_rad += 2 * M_PI;
+	}
       break;
     case CW:	// negativan smer
-      target_position.theta_rad = float_normalize (
-	  target_position.theta_rad, robot_position.theta_rad - 2 * M_PI,
-	  robot_position.theta_rad);
+      if (target_position.theta_rad > robot_position.theta_rad)
+	{
+	  target_position.theta_rad -= 2 * M_PI;
+	}
       break;
     }
 
@@ -115,7 +126,6 @@ movement_finished ()
       init_rot_dir = 0;
       final_rot_dir = 0;
       tran_dir = 1;
-//      state_angle = PLUS_MINUS_PI;	//TODO: vidi da li ovde nece sjebati
       return true;
     }
   return false;
@@ -130,7 +140,7 @@ move_full (float x, float y, float theta, int8_t translation_direction,
   final_rot_dir = final_rotation_direction;
   target_position.x_mm = x;
   target_position.y_mm = y;
-  target_position.theta_rad = float_normalize (theta, -M_PI, M_PI);
+  target_position.theta_rad = theta;
 }
 
 void
