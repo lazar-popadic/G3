@@ -112,14 +112,15 @@ TIM1_UP_TIM10_IRQHandler ()
 
       sys_time_half_ms++;
 
-      odometry_robot ();
+      if (!(sys_time_half_ms % speed_loop_cnt))
+	odometry_robot ();
 
       if (regulation_on)
 	{
 
 	  if (!(sys_time_half_ms % position_loop_cnt))
 	    regulation_position ();
-	  if (!(sys_time_half_ms % speed_loop_cnt ))
+	  if (!(sys_time_half_ms % speed_loop_cnt))
 	    regulation_speed ();
 	}
       if (!regulation_on)
