@@ -140,6 +140,9 @@ TIM1_UP_TIM10_IRQHandler ()
 //	case SENSORS_BACK:
 //	  sensors_state = sensors_back ();
 //	  break;
+//	case SENSORS_HIGH_AND_LOW:
+//	  sensors_state = sensors_high() | sensors_low();
+//	  break;
 //	case SENSORS_OFF:
 //	  sensors_state = false;
 //	  break;
