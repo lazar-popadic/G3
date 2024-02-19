@@ -12,5 +12,7 @@
 
 void
 ax_move (uint8_t id, uint16_t angle, uint16_t speed);
+void
+xl_move (uint8_t id, uint16_t angle, uint16_t speed);
 
 #endif /* LIB_MODULES_AX12A_AX12A_H_ */

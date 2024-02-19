@@ -11,13 +11,9 @@
 #include <stdint.h>
 
 int16_t
-timer_speed_of_encoder_right_passive ();
+speed_of_encoder_right_passive ();
 int16_t
-timer_speed_of_encoder_left_passive ();
-int16_t
-timer_speed_of_encoder_right_maxon ();
-int16_t
-timer_speed_of_encoder_left_maxon ();
+speed_of_encoder_left_passive ();
 void
 encoder_init ();
 

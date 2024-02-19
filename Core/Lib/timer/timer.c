@@ -9,31 +9,52 @@
 #include "stm32f4xx.h"
 
 #include "../odometry/odometry.h"
+#include "../regulation/regulation.h"
+#include "../encoder/encoder.h"
+#include "../sensors/sensors.h"
+#include "../tactics/tactics.h"
+#include "../pwm/pwm.h"
+#include "../h-bridge/h-bridge.h"
 
-#define END_TIME 100*1000
+#define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
 static void
 tim10_init ();
+extern volatile position robot_position;
+extern volatile float w_ref;
 
-volatile uint32_t sys_time_ms = 0; //volatile da kompajler ne vrsi optimizaciju
+volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
+int16_t speed_right = 0, speed_left = 0;
+volatile uint8_t sensors_case_timer = 0;
+volatile bool sensors_state = false;
+extern uint8_t previous_tactic_state;
+extern uint8_t tactic_state;
+
+extern volatile int16_t ref_speed_left;
+extern volatile int16_t ref_speed_right;
+
+volatile bool regulation_on = true;
+const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
+static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
 
 void
 timer_init ()
 {
   tim10_init ();			// vreme
-  odometrija_init ();		// zasto sam ovo uradio? Mozda jer se odometrija zove u prekidu tajmera
+  position_loop_cnt = position_loop_freq * 2;
+  speed_loop_cnt = speed_loop_freq * 2;
 }
 
 static void
 tim10_init ()
 {
   RCC->APB2ENR |= (0b1 << 17);
-  // 84MHz -> 1kHz
+  // 84MHz -> 2kHz
   // 1) 84MHz -> 1MHz
   TIM10->PSC = 84 - 1;		// -1 jer brojimo od 0
-  // 2) 1MHz -> 1kHz
-  TIM10->ARR = 1000 - 1;
+  // 2) 1MHz -> 2kHz
+  TIM10->ARR = 500 - 1;
 
   TIM10->CR1 &= ~((0b1 << 1) || (0b1 << 2)); //sta generise dogadjaj | dozvola dogadjaja ILI obrnuto
   TIM10->EGR |= (0b1 << 0);	// Reinicijalizacija timera
@@ -45,10 +66,8 @@ tim10_init ()
   TIM10->CR1 |= (0b1 << 2);
 
   //odabir prekidne rutine
-  uint8_t const TIM10_PREKID = 25;
-  NVIC->ISER[0] |= (0b1 << TIM10_PREKID);
-
-  //ne bi trebalo da je jos ukljucen
+  uint8_t const TIM10_INTERRUPT = 25;
+  NVIC->ISER[0] |= (0b1 << TIM10_INTERRUPT);
 }
 
 void
@@ -60,7 +79,7 @@ timer_start_sys_time ()
 bool
 timer_end ()
 {
-  if (sys_time_ms == END_TIME)
+  if (sys_time_half_ms == END_TIME)
     return true;
   return false;
 }
@@ -68,14 +87,16 @@ timer_end ()
 bool
 timer_delay_nonblocking (uint32_t delay_ms)
 {
-  static uint32_t start_sys_time_ms;
+  static uint32_t start_sys_time_half_ms;
+  static uint32_t delay_half_ms;
   if (flag_delay == true)				//da samo jednom udje
     {
-      start_sys_time_ms = sys_time_ms;
+      start_sys_time_half_ms = sys_time_half_ms;
+      delay_half_ms = delay_ms * 2;
       flag_delay = false;
     }
 
-  if (sys_time_ms <= start_sys_time_ms + delay_ms)
+  if (sys_time_half_ms <= start_sys_time_half_ms + delay_half_ms)
     return false;
   flag_delay = true;
   return true;
@@ -84,15 +105,62 @@ timer_delay_nonblocking (uint32_t delay_ms)
 void
 TIM1_UP_TIM10_IRQHandler ()
 {
-  // poziva se svake milisekunde
-  // proveri da li je stvarno TIM2 pozvao rutinu
+  // poziva se svakih 0.5ms
+  // proveri da li je stvarno TIM10 pozvao rutinu
   if ((TIM10->SR & (0b1 << 0)) == (0b1 << 0))
     {
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
-      //if(sys_time_ms % 10)//svakih 10ms
-      odometrija_robot ();
+      sys_time_half_ms++;
 
-      sys_time_ms++;
+      if (!(sys_time_half_ms % position_loop_cnt))
+	{
+	  odometry_robot ();
+	  regulation_position ();
+//	  float theta_desired = 3.14/2.0;
+//	  float Kp = 1.0;
+//	  w_ref = Kp * (theta_desired - robot_position.theta_rad);
+	}
+
+      if (regulation_on)
+	{
+	  if (!(sys_time_half_ms % speed_loop_cnt))
+	    regulation_speed ();
+	}
+      else
+	{
+	  stop_right_wheel();
+	  stop_left_wheel();
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
+	}
+
+//      switch (sensors_case_timer)
+//	{
+//	case SENSORS_HIGH:
+//	  sensors_state = sensors_high ();
+//	  break;
+//	case SENSORS_LOW:
+//	  sensors_state = sensors_low ();
+//	  break;
+//	case SENSORS_BACK:
+//	  sensors_state = sensors_back ();
+//	  break;
+//	case SENSORS_HIGH_AND_LOW:
+//	  sensors_state = sensors_high() | sensors_low();
+//	  break;
+//	case SENSORS_OFF:
+//	  sensors_state = false;
+//	  break;
+//	default:
+//	  sensors_state = false;
+//	  break;
+//	}
+//
+//      if (sensors_state)
+//	{
+//	  previous_tactic_state = tactic_state;
+//	  tactic_state = BRAKE;
+//	}
     }
 }

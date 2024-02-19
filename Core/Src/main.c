@@ -16,7 +16,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,17 +36,28 @@
 
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
-uint16_t timer_counter9 = 0;
-uint16_t timer_counter2 = 0;
-uint16_t timer_counter3 = 0;
-uint16_t timer_counter4 = 0;
-uint16_t timer_counter5 = 0;
-uint16_t dc_main = 0;
+bool state_main_init = false;
+uint8_t state_debug = 0;
+
+uint16_t sys_time_s = 0;
+extern volatile uint32_t sys_time_half_ms;
+
+uint16_t duty_cycle_test = 1000;
+float v_max_test = V_REF_LIMIT_DEFAULT, w_max_test = W_REF_LIMIT_DEFAULT;
+bool move_finished;
+
+position pos_test =
+  { 0, 0, 0 };
+uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
+
+extern volatile position target_position, robot_position;
+extern volatile bool regulation_on;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void
 SystemClock_Config (void);
+
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -80,57 +90,97 @@ main (void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+
   /* USER CODE BEGIN 2 */
   io_init ();
   timer_init ();
   encoder_init ();
-  odometrija_init ();
-  pwm_init ();
+  odometry_init ();
   uart_init ();
-  sensors_init();
+  pwm_init ();
+  sensors_init ();
+  h_bridge_init ();
+  regulation_init ();
+  adc_dma_init ();
 
-  io_led (true);
   __enable_irq ();
+
+//  timer_start_sys_time ();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
     {
+
       /* USER CODE END WHILE */
 
       /* USER CODE BEGIN 3 */
+      sys_time_s = sys_time_half_ms * 0.0005;
+      move_finished = movement_finished ();
 
-      if (timer_end ())
-	state_main = END;
+//      if (timer_end ())
+//      state_main = END;
 
-       switch (state_main)
+      switch (state_main)
 	{
 	default:
 	  break;
+
 	case START:
 	  if (io_cinc ())
 	    {
 	      timer_start_sys_time ();
 	      state_main = 0;
+	      pwm_start ();
+	      set_starting_position (0, 0, 0);
+	      regulation_on = true;
 	    }
 	  break;
+
 	case 0:
-	  //if (pwm_test2 ())
-	  //   state_main++;
-//	  pwm_duty_cycle_right (dc_main);
-//	  pwm_duty_cycle_left (dc_main/2);
-	  if (button_pressed())
-	    io_led(true);
-	  else
-	    io_led(false);
-	  ax_move(4, 1023, 200);
+//	  if (grabulja_test  ())
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+//	  set_rotation_speed_limit (w_max_test);
+//	  set_translation_speed_limit (v_max_test);
+	  move_to_angle (180, DEFAULT);
+//	  move_full(450, 450, 0, 1, 0, 0);
+	  if (movement_finished () && timer_delay_nonblocking (20))
+	    {
+//	      state_main++;
+	      state_main = END;
+	    }
 	  break;
+
+	case 1:
+//	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad, tran_test, init_rot_test, final_rot_test);
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+
+	  set_rotation_speed_limit (w_max_test);
+	  set_translation_speed_limit (v_max_test);
+	  move_to_angle (0, DEFAULT);
+	  if (movement_finished () && timer_delay_nonblocking (20))
+	    {
+	      state_main++;
+//	      state_main = END;
+	    }
+//	  if (timer_delay_nonblocking (20) && movement_finished ())
+//	    state_main = END;
+	  break;
+
 	case END:
-	  io_led (true);
+//	  regulation_on = false;
 	  break;
 	}
-    }
+    } // while
   /* USER CODE END 3 */
 }
 

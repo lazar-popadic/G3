@@ -8,13 +8,11 @@
 #ifndef LIB_MODULES_TACTICS_TACTICS_H_
 #define LIB_MODULES_TACTICS_TACTICS_H_
 
-bool
-ax_test2 ();
+#define BRAKE 200
+
 bool
 grabulja_test ();
 bool
-pwm_test ();
-bool
-pwm_test2 ();
+sensors_timer_test ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

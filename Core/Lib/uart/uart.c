@@ -7,11 +7,11 @@
 
 #include "uart.h"
 
-#define MAX_BUFFER_SIZE 32
+#define MAX_BUFFER_SIZE 64
 
 volatile static uint8_t input = 0;
-volatile static uint8_t buffer[MAX_BUFFER_SIZE];
-volatile static uint8_t buffer_size = 0;
+volatile uint8_t uart_buffer[MAX_BUFFER_SIZE];
+volatile static uint8_t uart_buffer_size = 0;
 volatile static uint8_t index_write = 0;
 volatile static uint8_t index_read = 0;
 
@@ -28,27 +28,27 @@ static void
 uart6_init ()
 {
   RCC->APB2ENR |= (0b1 << 5);		// takt na usart 6
-  RCC->AHB1ENR |= (0b1 << 2);		// takt na gpioc
+  RCC->AHB1ENR |= (0b1 << 0);		// takt na gpioa
 
-  uint8_t const TX_PIN = 6;
-  uint8_t const RX_PIN = 7;
+  uint8_t const TX_PIN = 11;
+  uint8_t const RX_PIN = 12;
 
-  GPIOC->MODER &= ~(0b11 << TX_PIN * 2);
-  GPIOC->MODER &= ~(0b11 << RX_PIN * 2);
-  GPIOC->MODER |= (0b10 << TX_PIN * 2);
-  GPIOC->MODER |= (0b10 << RX_PIN * 2);
+  GPIOA->MODER &= ~(0b11 << TX_PIN * 2);
+  GPIOA->MODER &= ~(0b11 << RX_PIN * 2);
+  GPIOA->MODER |= (0b10 << TX_PIN * 2);
+  GPIOA->MODER |= (0b10 << RX_PIN * 2);
 
   //za half-duplex za ax
-  GPIOC->OTYPER |= (0b1 << TX_PIN);
-  GPIOC->PUPDR &= ~(0b11 << TX_PIN*2);
-  GPIOC->PUPDR |= (0b01 << TX_PIN*2);
+  GPIOA->OTYPER |= (0b1 << TX_PIN);
+  GPIOA->PUPDR &= ~(0b11 << TX_PIN*2);
+  GPIOA->PUPDR |= (0b01 << TX_PIN*2);
 
   uint8_t const Alt_function = 8;
 
-  GPIOC->AFR[TX_PIN / 8] &= ~(0b1111 << (TX_PIN % 8) * 4);
-  GPIOC->AFR[TX_PIN / 8] |= (Alt_function << (TX_PIN % 8) * 4);
-  GPIOC->AFR[RX_PIN / 8] &= ~(0b1111 << (RX_PIN % 8) * 4);
-  GPIOC->AFR[RX_PIN / 8] |= (Alt_function << (RX_PIN % 8) * 4);
+  GPIOA->AFR[TX_PIN / 8] &= ~(0b1111 << (TX_PIN % 8) * 4);
+  GPIOA->AFR[TX_PIN / 8] |= (Alt_function << (TX_PIN % 8) * 4);
+  GPIOA->AFR[RX_PIN / 8] &= ~(0b1111 << (RX_PIN % 8) * 4);
+  GPIOA->AFR[RX_PIN / 8] |= (Alt_function << (RX_PIN % 8) * 4);
 
   USART6->CR1 &= ~(0b1 << 12);		// 8 bita rec
   USART6->CR2 &= ~(0b11 << 12);		// 1 stop bit
@@ -94,15 +94,15 @@ uart_send_byte (uint8_t data)
 void
 uart_write (uint8_t data)
 {
-  if (buffer_size != MAX_BUFFER_SIZE)
+  if (uart_buffer_size != MAX_BUFFER_SIZE)
     {
-      buffer[index_write] = data;
+      uart_buffer[index_write] = data;
       index_write = (index_write + 1) % MAX_BUFFER_SIZE;
-      buffer_size++;
+      uart_buffer_size++;
     }
   else
     {
-      buffer[index_write] = data;
+      uart_buffer[index_write] = data;
       index_write = (index_write + 1) % MAX_BUFFER_SIZE;
       index_read = (index_read + 1) % MAX_BUFFER_SIZE;
     }
@@ -114,11 +114,11 @@ uart_read ()
 {
   uint8_t temp_data;
 
-  if (buffer_size != 0)
+  if (uart_buffer_size != 0)
     {
-      temp_data = buffer[index_read];
+      temp_data = uart_buffer[index_read];
       index_read = (index_read + 1) % MAX_BUFFER_SIZE;
-      buffer_size--;
+      uart_buffer_size--;
     }
   return temp_data;
 }
@@ -126,7 +126,7 @@ uart_read ()
 bool
 uart_is_empty ()
 {
-  if (buffer_size == 0)
+  if (uart_buffer_size == 0)
     return true;
   else
     return false;

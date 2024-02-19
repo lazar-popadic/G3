@@ -1,5 +1,5 @@
 /*
- * odometrija.h
+ * odometry.h
  *
  *  Created on: Nov 2, 2023
  *      Author: lazar
@@ -8,15 +8,20 @@
 #ifndef LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_
 #define LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_
 
+typedef struct
+{
+  float x_mm;
+  float y_mm;
+  float theta_rad;
+} position;
+
 void
-odometrija_robot ();
+odometry_robot ();
 void
-odometrija_init ();
+odometry_init ();
+void
+normalize_robot_angle ();
 float
-get_theta ();
-float
-get_x ();
-float
-get_y ();
+float_normalize_angle (float signal, float middle);
 
 #endif /* LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_ */

@@ -13,6 +13,8 @@
 void
 pwm_init ();
 void
+pwm_start ();
+void
 pwm_duty_cycle_right (uint16_t duty_cycle);
 void
 pwm_duty_cycle_left (uint16_t duty_cycle);

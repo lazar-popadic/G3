@@ -1,5 +1,5 @@
 /*
- * odometrija.c
+ * odometry.c
  *
  *  Created on: Nov 2, 2023
  *      Author: lazar
@@ -10,72 +10,70 @@
 #include <stdint.h>
 #include "../encoder/encoder.h"
 #include <math.h>
+#include "../timer/timer.h"
 
-#define d 320
-#define d_odometrijskog 60
+#define d 333.0
+#define d_odometrijskog 65.75
 
-static float V = 0;
-static float w = 0;
-//static float d = 320;				//razmak izmedju odometrijskih tockova [mm]
-//static float d_odometrijskog = 60;		//precnik odometrijskog tocka [mm]
-static float inc2rad = 0;//broj inkremenata na pasivnom tocku za 1 krug robota
-static float inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
-static float theta;
-static float x;		// inicijalizuj na x_start i y_start u strategiji
-static float y;
+volatile double V_deltaT = 0;
+volatile double w_deltaT = 0;
+volatile double V_m_s = 0;
+volatile double w_rad_s = 0;
+static double inc2rad = 0; //broj inkremenata pasivnog tocka za 1 krug robota
+static double inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
+static double inc2rad_s = 0;
+int16_t Vd_inc = 0;
+int16_t Vl_inc = 0;
+
+volatile position robot_position =
+  { 0, 0, 0 };
+
+volatile double theta_robot_normalized = 0;
+static float theta_degrees;
 
 void
-odometrija_init ()
+odometry_init ()
 {
-  //inc2rad = d * 2048 * 4 / d_odometrijskog ;	//(d * M_PI) / (d_odometrijskog * M_PI) * 2048 * 4;
-  //inc2rad = (2 * M_PI) / inc2rad;		//ovo je bilo na vezbama, al msm da je cilag sjebao
   inc2mm = d_odometrijskog * M_PI / (4.0 * 2048.0);
-  inc2rad = 2.0 * inc2mm / d;
+  inc2rad = inc2mm / d;
+  inc2rad_s = inc2rad * 500.0;
 }
 
 void
-odometrija_robot ()		//racun pozicije i orijentacije
+odometry_robot ()
 {
-  int16_t Vd_inc = timer_speed_of_encoder_right_passive ();//inc = inkrementi
-  int16_t Vl_inc = timer_speed_of_encoder_left_passive ();
+  Vd_inc = speed_of_encoder_right_passive ();
+  Vl_inc = speed_of_encoder_left_passive ();
 
-  // translacija
-  // N = 1000mm / ObimOdometrijskogTocka	//koliko odometrijski predje za 1 metar
-  // n = N * 2048 * 4				//n = broj impulsa enkodera za 1 metar, 2048 = rezolucija enkodera, 4 = QEP
-  // 1000mm : n = x : 1 => x = 1000mm / n	//iz impulsa u milimetre
+  V_deltaT = (Vd_inc + Vl_inc) * 0.5 * inc2mm;	// [mm / 0.5ms] = [m / 2s]
+  V_m_s = V_deltaT * 0.5;				// [m / s]
+  w_rad_s = (Vd_inc - Vl_inc) * inc2rad_s;		// [rad / s]
+  w_deltaT = w_rad_s * 0.002;				// [rad ]
 
-  // rotacija
-  // ObimOdometrijskogTocka = 2rPi
-  // ObimRobotaOdometrijski = dPi
-  // N = ObimRobotaOdometrijski / ObimOdometrijskogTocka
-  // x = 2Pi / n				//iz impulsa u radijane
+  robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad + w_deltaT / 2.0);
+  robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad + w_deltaT / 2.0);
+  robot_position.theta_rad += w_deltaT;
 
-  // desni koordinatni sistem
-  //w = (Vd_inc - Vl_inc) * inc2rad / d;
-  //V = (Vd_inc + Vl_inc) * inc2rad * 0.5;
-  V = (Vd_inc + Vl_inc) * 0.5 * inc2mm;
-  w = (Vd_inc - Vl_inc) * inc2rad;
+  theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
+  theta_degrees = robot_position.theta_rad * 180 / M_PI;
+//  theta_degrees = theta_robot_normalized * 180 / M_PI;
+}
 
-  // TESTIRAJ
-  theta += w;
-  x += V * cos (theta);
-  y += V * sin (theta);
+void
+normalize_robot_angle ()
+{
+  robot_position.theta_rad = float_normalize_angle (robot_position.theta_rad,
+						    0);
 }
 
 float
-get_theta ()
+float_normalize_angle (float signal, float middle)
 {
-  return theta;
-}
-
-float
-get_x ()
-{
-  return x;
-}
-
-float
-get_y ()
-{
-  return y;
+  float max = middle + M_PI;
+  float min = middle - M_PI;
+  if (signal > max)
+    return signal - (int8_t) ((signal - min) / (2 * M_PI)) * 2 * M_PI;
+  if (signal < min)
+    return signal + (int8_t) ((max - signal) / (2 * M_PI)) * 2 * M_PI;
+  return signal;
 }

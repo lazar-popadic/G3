@@ -7,102 +7,69 @@
 
 #include "main.h"
 
-uint8_t state = 0;
-bool state_init = false;
+#define AX_MAX_SPEED 528
+
+uint8_t tactic_state = 0;
+uint8_t previous_tactic_state = 0;
+bool tactic_state_init = false;
 bool tactic_finished;
 
-enum direction
-{
-  FORWARDS = 1, STOP = 0, BACKWARDS = -1
-};
-
 int16_t dc = 0;
-enum direction wheel_direction = STOP;
+extern volatile uint8_t sensors_case_timer;
+extern volatile bool sensors_state;
+extern volatile position target_position;
+extern volatile position robot_position;
+volatile position previous_target =
+  { 0, 0, 0 };
 
-bool
-ax_test2 ()
-{
-  switch (state)
-    {
-    case 0:
-      if (!state_init)
-	{
-	  state_init = true;
-	  tactic_finished = false;
-	  io_led (false);
-	}
-      ax_move (4, 511, 0);
-      HAL_Delay (10);
-      ax_move (5, 511, 0);
-      HAL_Delay (10);
-      ax_move (6, 511, 0);
-      HAL_Delay (10);
-      ax_move (7, 511, 0);
-
-      state++;
-      state_init = false;
-      break;
-    case 1:
-      if (timer_delay_nonblocking (1500))
-	state++;
-      break;
-    case 2:
-      //inicijalizacija
-      //telo stanja
-      ax_move (4, 1023, 1023);
-      HAL_Delay (10);
-      ax_move (5, 1023, 1023);
-      HAL_Delay (10);
-      ax_move (6, 1023, 1023);
-      HAL_Delay (10);
-      ax_move (7, 1023, 1023);
-      //uslov prelaska
-      state++;
-      break;
-    case 3:
-      if (timer_delay_nonblocking (1500))
-	state++;
-      break;
-    case 4:
-      tactic_finished = true;
-      return tactic_finished;
-    }
-  return tactic_finished;
-}
+volatile uint8_t alternate_move = 0;
+extern volatile uint8_t state_angle;
 
 bool
 grabulja_test ()
 {
-  switch (state)
+  switch (tactic_state)
     {
     case 0:
-      if (!state_init)
+      if (!tactic_state_init)
 	{
-	  state_init = true;
+	  tactic_state_init = true;
 	  tactic_finished = false;
-	  io_led (false);
 	}
-      ax_move (7, 364, 100);
+      ax_move (7, 512 + 200, 200);
 
-      state++;
-      state_init = false;
+      tactic_state++;
+      tactic_state_init = false;
       break;
     case 1:
-      if (timer_delay_nonblocking (1500))
-	state++;
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
       break;
     case 2:
-      //inicijalizacija
-      //telo stanja
-      ax_move (7, 1023, 100);
-      //uslov prelaska
-      state++;
+      ax_move (4, 850, 250);
+      tactic_state++;
       break;
     case 3:
-      if (timer_delay_nonblocking (1500))
-	state = 0;
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
       break;
     case 4:
+      ax_move (7, 512 - 200, 200);
+      tactic_state++;
+      break;
+    case 5:
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
+      break;
+    case 6:
+      ax_move (4, 1023, 250);
+      tactic_state++;
+      break;
+    case 7:
+      if (timer_delay_nonblocking (2500))
+	tactic_state = 0;
+      break;
+    case 20:
       tactic_finished = true;
       return tactic_finished;
     }
@@ -110,70 +77,50 @@ grabulja_test ()
 }
 
 bool
-pwm_test ()
+sensors_timer_test ()
 {
-  switch (state)
+  switch (tactic_state)
     {
     case 0:
-      if (!state_init)
+      if (!tactic_state_init)
 	{
-	  state_init = true;
+	  tactic_state_init = true;
 	  tactic_finished = false;
 	  io_led (false);
-
+	  pwm_start ();
 	}
-      state++;
-      state_init = false;
+      tactic_state++;
+      tactic_state_init = false;
       break;
-    case 1:
-      if (wheel_direction == BACKWARDS)
-	wheel_2_backwards ();
-      else if (wheel_direction == FORWARDS)
-	wheel_2_forwards ();
-      else
-	stop_wheel_1 ();
-      pwm_duty_cycle_left (abs (dc));
+    case SENSORS_HIGH:
+      sensors_case_timer = SENSORS_HIGH;
+      break;
+    case SENSORS_LOW:
+      sensors_case_timer = SENSORS_LOW;
+      break;
+    case SENSORS_BACK:
+      sensors_case_timer = SENSORS_BACK;
       break;
     }
+  io_led (sensors_state);
   return tactic_finished;
 }
 
-bool
-pwm_test2 ()
-{
-  switch (state)
-    {
-    case 0:
-      if (!state_init)
-	{
-	  state_init = true;
-	  tactic_finished = false;
-	  io_led (false);
-
-	}
-      state++;
-      state_init = false;
-      break;
-    case 1:
-      dc += timer_speed_of_encoder_left_passive();
-      dc = saturation (dc, 2824, -2824);
-
-
-      if (dc > 500)
-      {
-    	  //wheel_1_forwards ();
-    	  wheel_2_forwards ();
-      }
-      else if (dc < -500)
-      {
-    	  //wheel_1_backwards ();
-    	  wheel_2_backwards ();
-      }
-
-      pwm_duty_cycle_right(abs (dc));
-      pwm_duty_cycle_left(abs (2824 - dc));
-
-      break;
-    }
-  return tactic_finished;
-}
+//case BRAKE:
+//if (!tactic_state_init)
+//  {
+//    tactic_state_init = true;
+//    previous_target = target_position;
+//  }
+//target_position = robot_position;
+//if (timer_delay_nonblocking(4000))
+//  {
+//    tactic_state_init = false;
+//    tactic_state = alternate_move;
+//  }
+//if (timer_delay_nonblocking(1000) && !sensors_state)
+//  {
+//    tactic_state_init = false;
+//    tactic_state = previous_tactic_state;
+//  }
+//break;

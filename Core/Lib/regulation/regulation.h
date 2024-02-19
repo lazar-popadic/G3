@@ -9,10 +9,26 @@
 #define LIB_MODULES_REGULATION_REGULATION_H_
 
 #include <stdint.h>
+#include "position/position.h"
+#include "speed/speed.h"
+
+#define V_REF_LIMIT_DEFAULT		1	// m/s
+#define W_REF_LIMIT_DEFAULT		12.6*4	// rad/s
 
 void
 regulation_init ();
 float
-saturation (float signal, float MAX, float MIN);
-
+float_saturation (float signal, float MAX, float MIN);
+float
+float_ramp (float signal, float desired_value, float slope);
+float
+float_ramp2 (float signal, float desired_value, float slope_acceleration, float slope_deceleration);
+int32_t
+int_saturation (int32_t signal, int32_t MAX, int32_t MIN);
+int32_t
+int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope);
+int32_t
+int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope, uint8_t prescaler);
+int8_t
+sign (float signal);
 #endif /* LIB_MODULES_REGULATION_REGULATION_H_ */
