@@ -21,7 +21,7 @@
 static const float KP_ROT = 16;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
-static const float KP_TRAN = 0;
+static const float KP_TRAN = 0.0024;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
@@ -54,8 +54,8 @@ regulation_position ()
       if (!regulation_phase_init)
 	{
 	  regulation_phase_init = true;
-	  regulation_rotation_finished ();
-	  regulation_translation_finished ();
+//	  regulation_rotation_finished ();
+//	  regulation_translation_finished ();
 	}
       regulation_rotation (theta_to_angle, 1);
       V_ref = 0;
@@ -67,7 +67,7 @@ regulation_position ()
       if (distance > EPSILON_DISTANCE && no_movement ())
 	{
 	  regulation_phase_init = false;
-	  regulation_rotation_finished ();
+//	  regulation_rotation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
       break;
@@ -76,8 +76,8 @@ regulation_position ()
       if (!regulation_phase_init)
 	{
 	  regulation_phase_init = true;
-	  regulation_rotation_finished ();
-	  regulation_translation_finished ();
+//	  regulation_rotation_finished ();
+//	  regulation_translation_finished ();
 	}
       regulation_rotation (theta_to_pos, 1);
       V_ref = 0;
@@ -89,7 +89,7 @@ regulation_position ()
       if (fabs (theta_to_pos) < EPSILON_THETA_SMALL && no_movement ())
 	{
 	  regulation_phase_init = false;
-	  regulation_rotation_finished ();
+//	  regulation_rotation_finished ();
 	  regulation_phase = TRAN_WITH_ROT;
 	}
       /* (ako se zada mala kretnja)
@@ -98,7 +98,7 @@ regulation_position ()
       if (fabs (distance) < EPSILON_DISTANCE && no_movement ())
 	{
 	  regulation_phase_init = false;
-	  regulation_rotation_finished ();
+//	  regulation_rotation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       break;
@@ -107,8 +107,8 @@ regulation_position ()
       if (!regulation_phase_init)
 	{
 	  regulation_phase_init = true;
-	  regulation_rotation_finished ();
-	  regulation_translation_finished ();
+//	  regulation_rotation_finished ();
+//	  regulation_translation_finished ();
 	}
       regulation_translation (distance);
       regulation_rotation (theta_to_pos, 0.5);
@@ -120,7 +120,7 @@ regulation_position ()
       if (distance < EPSILON_DISTANCE_ROT)
 	{
 	  regulation_phase_init = false;
-	  regulation_translation_finished ();
+//	  regulation_translation_finished ();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
       /*
@@ -131,7 +131,7 @@ regulation_position ()
       if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
 	{
 	  regulation_phase_init = false;
-	  regulation_translation_finished ();
+//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
       break;
@@ -140,8 +140,8 @@ regulation_position ()
       if (!regulation_phase_init)
 	{
 	  regulation_phase_init = true;
-	  regulation_rotation_finished ();
-	  regulation_translation_finished ();
+//	  regulation_rotation_finished ();
+//	  regulation_translation_finished ();
 	}
 //TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
       if (fabs (theta_to_pos) > (M_PI / 2))
@@ -157,20 +157,21 @@ regulation_position ()
       if (distance < EPSILON_DISTANCE)
 	{
 	  regulation_phase_init = false;
-	  regulation_translation_finished ();
+//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       /*
        * POJAVI SE VECA GRESKA U POZICIJI
        * onda
        * VRATI SE U OKRETANJE KA CILJU
+       * TODO: vidi ovo
        */
-      if (distance > EPSILON_DISTANCE_ROT)
-	{
-	  regulation_phase_init = false;
-	  regulation_translation_finished ();
-	  regulation_phase = ROT_TO_POS;
-	}
+//      if (distance > EPSILON_DISTANCE_ROT)
+//	{
+//	  regulation_phase_init = false;
+//	  regulation_translation_finished ();
+//	  regulation_phase = ROT_TO_POS;
+//	}
       break;
     }
 
@@ -193,8 +194,8 @@ regulation_rotation (float theta_er, float faktor)
   theta_er_d = theta_er - theta_er_previous;
 
   w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
-  w_ref_pid = float_saturation (w_ref, w_limit, -w_limit);
-  w_ref = float_ramp2(w_ref, w_ref_pid, 0.5, 5);
+  w_ref_pid = float_saturation (w_ref_pid, w_limit, -w_limit);
+  w_ref = float_ramp2(w_ref, w_ref_pid, 0.25, 20);
   w_ref *= faktor;
 
   theta_er_previous = theta_er;
@@ -211,8 +212,8 @@ regulation_translation (float distance_er)
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
-  V_ref_pid = float_saturation (V_ref, V_limit, -V_limit);
-  V_ref = float_ramp2(V_ref, V_ref_pid, 0.05, 0.5);
+  V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
+  V_ref = float_ramp2(V_ref, V_ref_pid, 0.05, 5);
 
   distance_er_previous = distance_er;
 }

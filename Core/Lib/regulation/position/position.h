@@ -11,9 +11,9 @@
 #include <stdint.h>
 
 #define EPSILON_THETA_SMALL	1.5	*0.0175		// 10 stepena
-#define EPSILON_THETA_BIG	5	*0.0175		// 15 stepeni
+#define EPSILON_THETA_BIG	15	*0.0175		// 15 stepeni
 #define EPSILON_DISTANCE	10			// 10 mm
-#define EPSILON_DISTANCE_ROT	1000			// 100 mm
+#define EPSILON_DISTANCE_ROT	100			// 100 mm
 
 #define ROT_TO_ANGLE		0
 #define ROT_TO_POS		1

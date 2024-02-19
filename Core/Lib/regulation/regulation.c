@@ -55,10 +55,14 @@ float_ramp (float signal, float desired_value, float slope)
 float
 float_ramp2 (float signal, float desired_value, float slope_acceleration, float slope_deceleration)
 {
-  if ((desired_value - signal) > slope_acceleration)
-    return signal + slope_acceleration;
-  if ((signal - desired_value) > slope_deceleration)
-    return signal - slope_deceleration;
+  static float abs_desired = 0;
+  static float abs_signal = 0;
+  abs_desired = fabs(desired_value);
+  abs_signal = fabs(signal);
+  if ((abs_desired - abs_signal) > slope_acceleration)
+    return signal + sign (desired_value - signal) * slope_acceleration;
+  if ((abs_signal - abs_desired) > slope_deceleration)
+    return signal + sign (desired_value - signal) * slope_deceleration;
   return desired_value;
 }
 

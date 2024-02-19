@@ -48,11 +48,11 @@ odometry_robot ()
   V_deltaT = (Vd_inc + Vl_inc) * 0.5 * inc2mm;	// [mm / 0.5ms] = [m / 2s]
   V_m_s = V_deltaT * 0.5;				// [m / s]
   w_rad_s = (Vd_inc - Vl_inc) * inc2rad_s;		// [rad / s]
-  w_deltaT = w_rad_s * 0.002;				// [rad / 0.5ms]
+  w_deltaT = w_rad_s * 0.002;				// [rad ]
 
+  robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad + w_deltaT / 2.0);
+  robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad + w_deltaT / 2.0);
   robot_position.theta_rad += w_deltaT;
-  robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad);
-  robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad);
 
   theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
   theta_degrees = robot_position.theta_rad * 180 / M_PI;

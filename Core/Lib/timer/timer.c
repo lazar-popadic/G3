@@ -20,6 +20,8 @@
 
 static void
 tim10_init ();
+extern volatile position robot_position;
+extern volatile float w_ref;
 
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
@@ -115,6 +117,9 @@ TIM1_UP_TIM10_IRQHandler ()
 	{
 	  odometry_robot ();
 	  regulation_position ();
+//	  float theta_desired = 3.14/2.0;
+//	  float Kp = 1.0;
+//	  w_ref = Kp * (theta_desired - robot_position.theta_rad);
 	}
 
       if (regulation_on)
