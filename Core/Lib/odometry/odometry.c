@@ -12,8 +12,8 @@
 #include <math.h>
 #include "../timer/timer.h"
 
-#define d 340.0
-#define d_odometrijskog 64.2
+#define d 333.0
+#define d_odometrijskog 65.75
 
 volatile double V_deltaT = 0;
 volatile double w_deltaT = 0;
@@ -55,7 +55,8 @@ odometry_robot ()
   robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad);
 
   theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
-  theta_degrees = theta_robot_normalized * 180 / M_PI;
+  theta_degrees = robot_position.theta_rad * 180 / M_PI;
+//  theta_degrees = theta_robot_normalized * 180 / M_PI;
 }
 
 void

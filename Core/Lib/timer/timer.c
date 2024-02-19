@@ -31,8 +31,6 @@ extern uint8_t tactic_state;
 extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
 
-volatile int16_t ref_test = 0;
-
 volatile bool regulation_on = true;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
@@ -112,18 +110,18 @@ TIM1_UP_TIM10_IRQHandler ()
 
       sys_time_half_ms++;
 
-      if (!(sys_time_half_ms % speed_loop_cnt))
-	odometry_robot ();
+      if (!(sys_time_half_ms % position_loop_cnt))
+	{
+	  odometry_robot ();
+	  regulation_position ();
+	}
 
       if (regulation_on)
 	{
-
-	  if (!(sys_time_half_ms % position_loop_cnt))
-	    regulation_position ();
 	  if (!(sys_time_half_ms % speed_loop_cnt))
 	    regulation_speed ();
 	}
-      if (!regulation_on)
+      else
 	{
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);

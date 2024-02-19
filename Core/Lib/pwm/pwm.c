@@ -42,7 +42,8 @@ tim3_init ()
 
   // Željena frekvencija za DC motor: 21kHz
   TIM3->PSC = 0;
-  TIM3->ARR = 4000 - 1;
+//  TIM3->ARR = 4000 - 1;
+  TIM3->ARR = 1680 - 1;
   // Željena frekvencija za RC servo motor: 50Hz
 
   // Podešavanje "PWM mode 1" za sva 4 kanala
@@ -72,7 +73,8 @@ tim4_init ()
 
   // Željena frekvencija za DC motor: 21kHz
   TIM4->PSC = 0;
-  TIM4->ARR = 4000 - 1;
+//  TIM4->ARR = 4000 - 1;
+  TIM4->ARR = 1680 - 1;
 
   // Podešavanje "PWM mode 1"
   TIM4->CCMR1 &= ~(0b111 << 4);

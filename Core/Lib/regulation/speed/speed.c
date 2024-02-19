@@ -12,22 +12,25 @@
 #include "../../h-bridge/h-bridge.h"
 #include <math.h>
 
-#define EI_LIMIT 	40 	// narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define V_LIMIT		2500
-#define W_LIMIT		2500
-#define U_LIMIT		2500
+#define EI_LIMIT 	1200 	// narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
+#define V_LIMIT		1200
+#define W_LIMIT		1200
+#define U_LIMIT		1200
 
-//TODO: izmeri offsete
-#define LEFT_MAXON_FORW_OFFSET	450	//bilo 490
-#define LEFT_MAXON_BACK_OFFSET	-450	//bilo -540
-#define RIGHT_MAXON_FORW_OFFSET	450
-#define RIGHT_MAXON_BACK_OFFSET	-450
+//#define LEFT_MAXON_FORW_OFFSET	118
+//#define LEFT_MAXON_BACK_OFFSET	-115
+//#define RIGHT_MAXON_FORW_OFFSET	75
+//#define RIGHT_MAXON_BACK_OFFSET	-75
+#define LEFT_MAXON_FORW_OFFSET	20
+#define LEFT_MAXON_BACK_OFFSET	-20
+#define RIGHT_MAXON_FORW_OFFSET	20
+#define RIGHT_MAXON_BACK_OFFSET	-20
 
-static const float KP_TRAN = 75.0;
+static const float KP_TRAN = 0;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-static const float KP_ROT = 50.0;
+static const float KP_ROT = 32;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
 
@@ -49,8 +52,6 @@ volatile static float u_v = 0;
 volatile static float u_w = 0;
 volatile float u_right = 0;
 volatile float u_left = 0;
-volatile static float left_offset = 0;
-volatile static float right_offset = 0;
 
 void
 regulation_speed ()
@@ -71,45 +72,41 @@ regulation_speed ()
   u_w = float_saturation (u_w, W_LIMIT, -W_LIMIT);
 
   u_right = u_v + u_w;
-  u_right = float_saturation (u_right, U_LIMIT, -U_LIMIT);
   u_left = u_v - u_w;
-  u_left = float_saturation (u_left, U_LIMIT, -U_LIMIT);
 
-  if (u_right > 50)
+  if (u_right > 10)
     {
-      right_offset = RIGHT_MAXON_FORW_OFFSET;
+      u_right += RIGHT_MAXON_FORW_OFFSET;
       right_wheel_forwards ();
     }
-  else if (u_right < -50)
+  else if (u_right < -10)
     {
-      right_offset = RIGHT_MAXON_BACK_OFFSET;
+      u_right += RIGHT_MAXON_BACK_OFFSET;
       right_wheel_backwards ();
     }
   else
     {
-      right_offset = 0;
       stop_right_wheel ();
     }
-  u_right += right_offset;
-  if (u_left > 50)
+
+  if (u_left > 10)
     {
-      left_offset = LEFT_MAXON_FORW_OFFSET;
+      u_left += LEFT_MAXON_FORW_OFFSET;
       left_wheel_forwards ();
     }
-  else if (u_left < -50)
+  else if (u_left < -10)
     {
-      left_offset = LEFT_MAXON_BACK_OFFSET;
+      u_left += LEFT_MAXON_BACK_OFFSET;
       left_wheel_backwards ();
     }
   else
     {
-      left_offset = 0;
       stop_left_wheel ();
     }
-  u_left += left_offset;
 
   // Tj. ovde postavlja referencu za struju
-  // mozda float rampa ovde
+  u_right = float_saturation (u_right, U_LIMIT, -U_LIMIT);
+  u_left = float_saturation (u_left, U_LIMIT, -U_LIMIT);
   pwm_duty_cycle_right ((uint16_t) fabs (u_right));
   pwm_duty_cycle_left ((uint16_t) fabs (u_left));
 

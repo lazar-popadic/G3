@@ -142,19 +142,31 @@ main (void)
 	      state_main_init = true;
 	      state_debug = 0;
 	    }
-	  set_rotation_speed_limit (w_max_test / 4);
-	  set_translation_speed_limit (v_max_test / 4);
+//	  set_rotation_speed_limit (w_max_test);
+//	  set_translation_speed_limit (v_max_test);
 	  move_to_angle (90, DEFAULT);
-	  if (movement_finished () && timer_delay_nonblocking (2000))
+	  if (movement_finished () && timer_delay_nonblocking (20))
 	    {
-//	      state_main++;
-	      state_main = END;
+	      state_main++;
+//	      state_main = END;
 	    }
 	  break;
 
 	case 1:
-	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad, tran_test, init_rot_test, final_rot_test);
-
+//	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad, tran_test, init_rot_test, final_rot_test);
+	  if (!state_main_init)
+	    {
+	      state_main_init = true;
+	      state_debug = 0;
+	    }
+//	  set_rotation_speed_limit (w_max_test);
+//	  set_translation_speed_limit (v_max_test);
+	  move_to_angle (0, DEFAULT);
+	  if (movement_finished () && timer_delay_nonblocking (20))
+	    {
+	      state_main++;
+//	      state_main = END;
+	    }
 //	  if (timer_delay_nonblocking (20) && movement_finished ())
 //	    state_main = END;
 	  break;
