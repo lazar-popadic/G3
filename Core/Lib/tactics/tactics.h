@@ -11,8 +11,6 @@
 #define BRAKE 200
 
 bool
-ax_test2 ();
-bool
 grabulja_test ();
 bool
 sensors_timer_test ();

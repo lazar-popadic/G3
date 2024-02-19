@@ -14,6 +14,7 @@
 #include "../sensors/sensors.h"
 #include "../tactics/tactics.h"
 #include "../pwm/pwm.h"
+#include "../h-bridge/h-bridge.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 
@@ -123,6 +124,8 @@ TIM1_UP_TIM10_IRQHandler ()
 	}
       else
 	{
+	  stop_right_wheel();
+	  stop_left_wheel();
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	}

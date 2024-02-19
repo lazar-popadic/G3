@@ -21,10 +21,6 @@
 //#define LEFT_MAXON_BACK_OFFSET	-115
 //#define RIGHT_MAXON_FORW_OFFSET	75
 //#define RIGHT_MAXON_BACK_OFFSET	-75
-#define LEFT_MAXON_FORW_OFFSET	20
-#define LEFT_MAXON_BACK_OFFSET	-20
-#define RIGHT_MAXON_FORW_OFFSET	20
-#define RIGHT_MAXON_BACK_OFFSET	-20
 
 static const float KP_TRAN = 0;
 static const float KI_TRAN = 0;
@@ -75,38 +71,22 @@ regulation_speed ()
   u_left = u_v - u_w;
 
   if (u_right > 10)
-    {
-      u_right += RIGHT_MAXON_FORW_OFFSET;
-      right_wheel_forwards ();
-    }
+    right_wheel_forwards ();
   else if (u_right < -10)
-    {
-      u_right += RIGHT_MAXON_BACK_OFFSET;
-      right_wheel_backwards ();
-    }
+    right_wheel_backwards ();
   else
-    {
-      stop_right_wheel ();
-    }
+    stop_right_wheel ();
 
   if (u_left > 10)
-    {
-      u_left += LEFT_MAXON_FORW_OFFSET;
-      left_wheel_forwards ();
-    }
+    left_wheel_forwards ();
   else if (u_left < -10)
-    {
-      u_left += LEFT_MAXON_BACK_OFFSET;
-      left_wheel_backwards ();
-    }
+    left_wheel_backwards ();
   else
-    {
-      stop_left_wheel ();
-    }
+    stop_left_wheel ();
 
-  // Tj. ovde postavlja referencu za struju
   u_right = float_saturation (u_right, U_LIMIT, -U_LIMIT);
   u_left = float_saturation (u_left, U_LIMIT, -U_LIMIT);
+  // Tj. ovde postavlja referencu za struju
   pwm_duty_cycle_right ((uint16_t) fabs (u_right));
   pwm_duty_cycle_left ((uint16_t) fabs (u_left));
 

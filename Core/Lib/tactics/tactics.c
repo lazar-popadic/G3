@@ -26,45 +26,6 @@ volatile uint8_t alternate_move = 0;
 extern volatile uint8_t state_angle;
 
 bool
-ax_test2 ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  tactic_finished = false;
-	  io_led (false);
-	}
-      ax_move (5, 0, AX_MAX_SPEED);
-
-      tactic_state++;
-      tactic_state_init = false;
-      break;
-    case 1:
-      if (timer_delay_nonblocking (2000))
-	tactic_state++;
-      break;
-    case 2:
-      //inicijalizacija
-      //telo stanja
-      ax_move (5, 1023, AX_MAX_SPEED);
-      //uslov prelaska
-      tactic_state++;
-      break;
-    case 3:
-      if (timer_delay_nonblocking (2000))
-	tactic_state = 0;
-      break;
-    case 4:
-      tactic_finished = true;
-      return tactic_finished;
-    }
-  return tactic_finished;
-}
-
-bool
 grabulja_test ()
 {
   switch (tactic_state)

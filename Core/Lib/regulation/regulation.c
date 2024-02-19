@@ -52,6 +52,16 @@ float_ramp (float signal, float desired_value, float slope)
   return desired_value;
 }
 
+float
+float_ramp2 (float signal, float desired_value, float slope_acceleration, float slope_deceleration)
+{
+  if ((desired_value - signal) > slope_acceleration)
+    return signal + slope_acceleration;
+  if ((signal - desired_value) > slope_deceleration)
+    return signal - slope_deceleration;
+  return desired_value;
+}
+
 int32_t
 int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope)
 {
