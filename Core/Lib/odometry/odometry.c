@@ -24,6 +24,8 @@ static double inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
 static double inc2rad_s = 0;
 int16_t Vd_inc = 0;
 int16_t Vl_inc = 0;
+int16_t Vd_sum = 0;
+int16_t Vl_sum = 0;
 
 volatile position robot_position =
   { 0, 0, 0 };
@@ -44,11 +46,13 @@ odometry_robot ()
 {
   Vd_inc = speed_of_encoder_right_passive ();
   Vl_inc = speed_of_encoder_left_passive ();
+  Vd_sum += Vd_inc;
+  Vl_sum += Vl_inc;
 
   V_deltaT = (Vd_inc + Vl_inc) * 0.5 * inc2mm;	// [mm / 0.5ms] = [m / 2s]
   V_m_s = V_deltaT * 0.5;				// [m / s]
   w_rad_s = (Vd_inc - Vl_inc) * inc2rad_s;		// [rad / s]
-  w_deltaT = w_rad_s * 0.002;				// [rad ]
+  w_deltaT = w_rad_s * 0.002;				// [rad / 2ms]
 
   robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad + w_deltaT / 2.0);
   robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad + w_deltaT / 2.0);
@@ -57,6 +61,7 @@ odometry_robot ()
   theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
   theta_degrees = robot_position.theta_rad * 180 / M_PI;
 //  theta_degrees = theta_robot_normalized * 180 / M_PI;
+  //+ w_deltaT / 2.0
 }
 
 void

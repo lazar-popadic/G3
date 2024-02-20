@@ -118,7 +118,7 @@ TIM1_UP_TIM10_IRQHandler ()
 	  odometry_robot ();
 	  regulation_position ();
 //	  float theta_desired = 3.14/2.0;
-//	  float Kp = 1.0;
+//	  float Kp = 10.0;
 //	  w_ref = Kp * (theta_desired - robot_position.theta_rad);
 	}
 

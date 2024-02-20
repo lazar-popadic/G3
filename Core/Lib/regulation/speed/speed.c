@@ -26,7 +26,7 @@ static const float KP_TRAN = 0;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-static const float KP_ROT = 32;
+static const float KP_ROT = 24;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
 

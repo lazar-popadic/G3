@@ -15,12 +15,12 @@
 #include "../../h-bridge/h-bridge.h"
 #include "../../pwm/pwm.h"
 
-#define THETA_I_LIMIT		12.6*4
+#define THETA_I_LIMIT		12.6*0.3
 #define DISTANCE_I_LIMIT	1
 
-static const float KP_ROT = 16;
-static const float KI_ROT = 0;
-static const float KD_ROT = 0;
+static const float KP_ROT = 48.0;
+static const float KI_ROT = THETA_I_LIMIT*0.25;
+static const float KD_ROT = 0.0;
 static const float KP_TRAN = 0.0024;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
@@ -195,7 +195,7 @@ regulation_rotation (float theta_er, float faktor)
 
   w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
   w_ref_pid = float_saturation (w_ref_pid, w_limit, -w_limit);
-  w_ref = float_ramp2(w_ref, w_ref_pid, 0.25, 20);
+  w_ref = float_ramp2(w_ref, w_ref_pid, 1.5, 999);
   w_ref *= faktor;
 
   theta_er_previous = theta_er;
@@ -213,7 +213,7 @@ regulation_translation (float distance_er)
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
   V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref = float_ramp2(V_ref, V_ref_pid, 0.05, 5);
+  V_ref = float_ramp2(V_ref, V_ref_pid, 0.05, 999);
 
   distance_er_previous = distance_er;
 }
