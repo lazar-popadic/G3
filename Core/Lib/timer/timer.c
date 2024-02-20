@@ -34,7 +34,7 @@ extern uint8_t tactic_state;
 extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
 
-volatile bool regulation_on = true;
+volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
 

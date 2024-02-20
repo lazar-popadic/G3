@@ -86,7 +86,7 @@ regulation_position ()
        * onda
        * TRANSLIRAJ KA CILJU (sa rotacijom)
        */
-      if (fabs (theta_to_pos) < EPSILON_THETA_SMALL && no_movement ())
+      if (fabs (theta_to_pos) < EPSILON_THETA_MEDIUM && no_movement ())
 	{
 	  regulation_phase_init = false;
 //	  regulation_rotation_finished ();
@@ -95,12 +95,12 @@ regulation_position ()
       /* (ako se zada mala kretnja)
        *
        */
-      if (fabs (distance) < EPSILON_DISTANCE && no_movement ())
-	{
-	  regulation_phase_init = false;
-//	  regulation_rotation_finished ();
-	  regulation_phase = ROT_TO_ANGLE;
-	}
+//      if (fabs (distance) < EPSILON_DISTANCE && no_movement ())
+//	{
+//	  regulation_phase_init = false;
+////	  regulation_rotation_finished ();
+//	  regulation_phase = ROT_TO_ANGLE;
+//	}
       break;
 
     case TRAN_WITH_ROT:
@@ -128,12 +128,12 @@ regulation_position ()
        * onda
        * OKRENI SE KA CILJU
        */
-      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
-	{
-	  regulation_phase_init = false;
-//	  regulation_translation_finished ();
-	  regulation_phase = ROT_TO_POS;
-	}
+//      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
+//	{
+//	  regulation_phase_init = false;
+////	  regulation_translation_finished ();
+//	  regulation_phase = ROT_TO_POS;
+//	}
       break;
 
     case TRAN_WITHOUT_ROT:

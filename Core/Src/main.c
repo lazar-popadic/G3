@@ -105,6 +105,7 @@ main (void)
 
   __enable_irq ();
 
+  regulation_on = false;
 //  timer_start_sys_time ();
   /* USER CODE END 2 */
 
@@ -145,7 +146,7 @@ main (void)
 	      state_main_init = true;
 	      state_debug = 0;
 	    }
-//	  set_rotation_speed_limit (w_max_test);
+	  set_rotation_speed_limit (w_max_test/4);
 //	  set_translation_speed_limit (v_max_test);
 	  move_to_angle (180, DEFAULT);
 //	  move_full(450, 450, 0, 1, 0, 0);
@@ -177,7 +178,7 @@ main (void)
 	  break;
 
 	case END:
-//	  regulation_on = false;
+	  regulation_on = false;
 	  break;
 	}
     } // while
