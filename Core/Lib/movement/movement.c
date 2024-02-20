@@ -122,6 +122,8 @@ movement_finished ()
   if (fabs (distance) < EPSILON_DISTANCE
       && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
     {
+      regulation_rotation_finished();	//TODO: vidi da li je ovo sad ispravljeno
+      regulation_translation_finished();
       movement_init = false;
       init_rot_dir = 0;
       final_rot_dir = 0;
