@@ -52,6 +52,8 @@ uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
 
 extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
+
+uint16_t ax_test = 512;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -117,7 +119,7 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms * 0.0005;
-      move_finished = movement_finished ();
+//      move_finished = movement_finished ();
 
 //      if (timer_end ())
 //      state_main = END;
@@ -134,12 +136,16 @@ main (void)
 	      state_main = 0;
 	      pwm_start ();
 	      set_starting_position (0, 0, 0);
-	      regulation_on = true;
+//	      regulation_on = true;
 	    }
 	  break;
 
 	case 0:
 //	  if (grabulja_test  ())
+	  xl_angle_move (2, ax_test);
+	  HAL_Delay(200);
+	  ax_move(4, ax_test, 200);
+	  HAL_Delay(200);
 	  if (!state_main_init)
 	    {
 	      state_main_init = true;

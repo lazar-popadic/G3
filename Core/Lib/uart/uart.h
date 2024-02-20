@@ -16,16 +16,22 @@ void
 uart_init ();
 
 void
-uart_send_byte (uint8_t data);
+uart6_send_byte (uint8_t data);
+void
+uart6_write (uint8_t data);
+uint8_t
+uart6_read ();
+bool
+uart6_is_empty ();
 
 void
-uart_write (uint8_t data);
-
+uart2_send_byte (uint8_t data);
+void
+uart2_write (uint8_t data);
 uint8_t
-uart_read ();
-
+uart2_read ();
 bool
-uart_is_empty ();
+uart2_is_empty ();
 
 
 

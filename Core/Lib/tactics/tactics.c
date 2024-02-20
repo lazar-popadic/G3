@@ -67,7 +67,35 @@ grabulja_test ()
       break;
     case 7:
       if (timer_delay_nonblocking (2500))
-	tactic_state = 0;
+	tactic_state++;
+      break;
+    case 8:
+      xl_angle_move (2, 1023);
+      tactic_state++;
+      break;
+    case 9:
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
+      break;
+    case 10:
+      xl_angle_move (2, 0);
+      tactic_state++;
+      break;
+    case 11:
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
+      break;
+    case 12:
+      xl_angle_move (3, 1023);
+      tactic_state++;
+      break;
+    case 13:
+      if (timer_delay_nonblocking (2500))
+	tactic_state++;
+      break;
+    case 14:
+      xl_angle_move (3, 0);
+      tactic_state = 0;
       break;
     case 20:
       tactic_finished = true;
