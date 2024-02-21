@@ -12,8 +12,8 @@
 #include "position/position.h"
 #include "speed/speed.h"
 
-#define V_REF_LIMIT_DEFAULT		2.0*4	// m/s
-#define W_REF_LIMIT_DEFAULT		12.6*4	// rad/s
+#define V_REF_LIMIT_DEFAULT		8.0	// m/s
+#define W_REF_LIMIT_DEFAULT		50.4	// rad/s
 
 void
 regulation_init ();
@@ -23,6 +23,8 @@ float
 float_ramp (float signal, float desired_value, float slope);
 float
 float_ramp2 (float signal, float desired_value, float slope_acceleration, float slope_deceleration);
+float
+float_ramp_acc (float signal, float desired_value, float slope_acceleration);
 int32_t
 int_saturation (int32_t signal, int32_t MAX, int32_t MIN);
 int32_t
