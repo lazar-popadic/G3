@@ -134,7 +134,7 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      pwm_start ();
-	      set_starting_position (0, 0, 0);
+	      set_starting_position (450 - 80, 2000 - 450 + 160, 0);
 	      regulation_on = true;
 	    }
 	  break;
@@ -147,17 +147,25 @@ main (void)
 	      state_debug = 0;
 	    }
 	  set_rotation_speed_limit (w_max_test);
-//	  set_translation_speed_limit (v_max_test);
-	  move_to_angle (90, DEFAULT);
-//	  move_full(450, 450, 0, 1, 0, 0);
+	  set_translation_speed_limit (v_max_test);
+//	  move_to_angle (90, DEFAULT);
+//	  move_full (1500, 1000, 0, 1, 0, 0);
+	  move_to_xy (1200, 1000, 1, 0);
 	  if (movement_finished () && timer_delay_nonblocking (20))
 	    {
-	      state_main++;
+	      state_main = 1;
 //	      state_main = END;
 	    }
 	  break;
 
 	case 1:
+	  if (timer_delay_nonblocking (2000))
+	    {
+	      state_main++;
+	    }
+	  break;
+
+	case 2:
 //	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad, tran_test, init_rot_test, final_rot_test);
 	  if (!state_main_init)
 	    {
@@ -165,16 +173,33 @@ main (void)
 	      state_debug = 0;
 	    }
 
-	  set_rotation_speed_limit (w_max_test/4);
-	  set_translation_speed_limit (v_max_test);
-	  move_to_angle (-90, DEFAULT);
+	  set_rotation_speed_limit (w_max_test / 3);
+	  set_translation_speed_limit (v_max_test / 3);
+	  move_to_xy (300, 1000, -1, 0);
+//	  move_to_angle (-90, DEFAULT);
 	  if (movement_finished () && timer_delay_nonblocking (20))
 	    {
-//	      state_main++;
-	      state_main = END;
+	      state_main = 3;
+//	      state_main = END;
 	    }
 //	  if (timer_delay_nonblocking (20) && movement_finished ())
 //	    state_main = END;
+	  break;
+
+	case 3:
+	  if (timer_delay_nonblocking (9000))
+	    {
+	      state_main++;
+	    }
+	  break;
+
+	case 4:
+	  move_full (450 - 80, 2000 - 450 + 160, 0, 1, 0, 0);
+	  if (movement_finished () && timer_delay_nonblocking (20))
+	    {
+	      //	      state_main++;
+	      state_main = END;
+	    }
 	  break;
 
 	case END:

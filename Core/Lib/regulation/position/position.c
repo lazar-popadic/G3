@@ -16,13 +16,14 @@
 #include "../../pwm/pwm.h"
 
 #define THETA_I_LIMIT		12.6*0.3
-#define DISTANCE_I_LIMIT	1
+#define DISTANCE_I_LIMIT	2.0*0.26
+
 
 static const float KP_ROT = 48.0;
 static const float KI_ROT = THETA_I_LIMIT*0.25;
 static const float KD_ROT = 0.0;
-static const float KP_TRAN = 0.0024;
-static const float KI_TRAN = 0;
+static const float KP_TRAN = 0.04;	//	8 / 0.8 = 100mm
+static const float KI_TRAN = DISTANCE_I_LIMIT*2.4;
 static const float KD_TRAN = 0;
 
 extern volatile float theta_to_pos;
@@ -40,7 +41,7 @@ volatile float V_ref = 0, w_ref = 0;
 extern volatile float V_limit, w_limit;
 
 volatile uint8_t regulation_phase = 0;
-volatile bool regulation_phase_init = false;
+//volatile bool regulation_phase_init = false;
 
 void
 regulation_position ()
@@ -51,12 +52,13 @@ regulation_position ()
 
     {
     case ROT_TO_ANGLE:
-      if (!regulation_phase_init)
-	{
-	  regulation_phase_init = true;
-//	  regulation_rotation_finished ();
-//	  regulation_translation_finished ();
-	}
+//      // TODO: vidi da li mozes da brises ovaj init
+//      if (!regulation_phase_init)
+//	{
+//	  regulation_phase_init = true;
+////	  regulation_rotation_finished ();
+////	  regulation_translation_finished ();
+//	}
       regulation_rotation (theta_to_angle, 1);
       V_ref = 0;
       /*
@@ -64,21 +66,21 @@ regulation_position ()
        * onda
        * OKRECI SE KA CILJU
        */
-      if (distance > EPSILON_DISTANCE && no_movement ())
+      if (fabs(distance) > EPSILON_DISTANCE && no_movement ())
 	{
-	  regulation_phase_init = false;
-//	  regulation_rotation_finished ();
+//	  regulation_phase_init = false;
+//	  regulation_rotation_finished ();	// TODO: msm da ovde ne mora
 	  regulation_phase = ROT_TO_POS;
 	}
       break;
 
     case ROT_TO_POS:
-      if (!regulation_phase_init)
-	{
-	  regulation_phase_init = true;
-//	  regulation_rotation_finished ();
-//	  regulation_translation_finished ();
-	}
+//      if (!regulation_phase_init)
+//	{
+//	  regulation_phase_init = true;
+////	  regulation_rotation_finished ();
+////	  regulation_translation_finished ();
+//	}
       regulation_rotation (theta_to_pos, 1);
       V_ref = 0;
       /*
@@ -88,8 +90,8 @@ regulation_position ()
        */
       if (fabs (theta_to_pos) < EPSILON_THETA_MEDIUM && no_movement ())
 	{
-	  regulation_phase_init = false;
-//	  regulation_rotation_finished ();
+//	  regulation_phase_init = false;
+	  regulation_rotation_finished ();
 	  regulation_phase = TRAN_WITH_ROT;
 	}
       /* (ako se zada mala kretnja)
@@ -104,23 +106,23 @@ regulation_position ()
       break;
 
     case TRAN_WITH_ROT:
-      if (!regulation_phase_init)
-	{
-	  regulation_phase_init = true;
-//	  regulation_rotation_finished ();
-//	  regulation_translation_finished ();
-	}
+//      if (!regulation_phase_init)
+//	{
+//	  regulation_phase_init = true;
+////	  regulation_rotation_finished ();
+////	  regulation_translation_finished ();
+//	}
       regulation_translation (distance);
-      regulation_rotation (theta_to_pos, 0.5);
+      regulation_rotation (theta_to_pos, 1.0);
       /*
        * PRIBLIZIO SE CILJU
        * onda
        * NASTAVI KA CILJU BEZ ROTACIJE
        */
-      if (distance < EPSILON_DISTANCE_ROT)
+      if (fabs(distance) < EPSILON_DISTANCE_ROT)
 	{
-	  regulation_phase_init = false;
-//	  regulation_translation_finished ();
+//	  regulation_phase_init = false;
+//	  regulation_translation_finished ();	// TODO: msm da ovde ne mora
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
       /*
@@ -128,21 +130,21 @@ regulation_position ()
        * onda
        * OKRENI SE KA CILJU
        */
-//      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
-//	{
+      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
+	{
 //	  regulation_phase_init = false;
-////	  regulation_translation_finished ();
-//	  regulation_phase = ROT_TO_POS;
-//	}
+//	  regulation_translation_finished ();
+	  regulation_phase = ROT_TO_POS;
+	}
       break;
 
     case TRAN_WITHOUT_ROT:
-      if (!regulation_phase_init)
-	{
-	  regulation_phase_init = true;
-//	  regulation_rotation_finished ();
-//	  regulation_translation_finished ();
-	}
+//      if (!regulation_phase_init)
+//	{
+//	  regulation_phase_init = true;
+////	  regulation_rotation_finished ();
+////	  regulation_translation_finished ();
+//	}
 //TODO: razmisli kako ce robot da reaguje kad prebaci distancu, vidi kako su to u +381
       if (fabs (theta_to_pos) > (M_PI / 2))
 	regulation_translation (-distance);
@@ -154,10 +156,10 @@ regulation_position ()
        * onda
        * DRZI ZADATI UGAO
        */
-      if (distance < EPSILON_DISTANCE)
+      if (fabs(distance) < EPSILON_DISTANCE)
 	{
-	  regulation_phase_init = false;
-//	  regulation_translation_finished ();
+//	  regulation_phase_init = false;
+	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       /*
@@ -213,7 +215,7 @@ regulation_translation (float distance_er)
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i
       + KD_TRAN * distance_er_d;
   V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref = float_ramp2(V_ref, V_ref_pid, 0.05, 999);
+  V_ref = float_ramp2(V_ref, V_ref_pid, 0.12, 999);
 
   distance_er_previous = distance_er;
 }

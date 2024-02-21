@@ -12,7 +12,7 @@
 #include "position/position.h"
 #include "speed/speed.h"
 
-#define V_REF_LIMIT_DEFAULT		1	// m/s
+#define V_REF_LIMIT_DEFAULT		2.0*4	// m/s
 #define W_REF_LIMIT_DEFAULT		12.6*4	// rad/s
 
 void

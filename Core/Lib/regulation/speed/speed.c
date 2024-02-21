@@ -22,11 +22,11 @@
 //#define RIGHT_MAXON_FORW_OFFSET	75
 //#define RIGHT_MAXON_BACK_OFFSET	-75
 
-static const float KP_TRAN = 0;
+static const float KP_TRAN = 120.0;
 static const float KI_TRAN = 0;
 static const float KD_TRAN = 0;
 
-static const float KP_ROT = 24;
+static const float KP_ROT = 24.0;
 static const float KI_ROT = 0;
 static const float KD_ROT = 0;
 
