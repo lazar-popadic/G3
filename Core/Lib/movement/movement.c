@@ -15,8 +15,8 @@
 #include <math.h>
 #include "../timer/timer.h"
 
-#define W_LIMIT		0.1
-#define V_LIMIT		0.01
+#define W_LIMIT		0.0001
+#define V_LIMIT		0.00001
 
 // meri
 extern volatile position robot_position;
@@ -48,6 +48,11 @@ calculate_movement ()
   error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
   theta_to_pos_target = atan2 (error.y_mm, error.x_mm);
 
+  // TODO: 	smisli drugacije ovo biranje smerova, bolje mozda u move_full
+  //		ali ovako ne mogu samo da prebacim tamo,
+  //		bilo bi dobro da tamo mogu da zadam uglove, a ovde samo greske da izracuna
+  //		al opet pravi problem init_rot_dir, koji mozda i ne mora da postoji
+
   switch (tran_dir)
     {
     default:
@@ -62,43 +67,43 @@ calculate_movement ()
   target_position.theta_rad = float_normalize_angle (target_position.theta_rad,
 						     robot_position.theta_rad);
 
-  switch (init_rot_dir)
-    {
-    default:
-      break;
-    case CCW:	// pozitivan smer
-      if (theta_to_pos_target
-	  < robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
-	{
-	  theta_to_pos_target += 2 * M_PI;
-	}
-      break;
-    case CW:	// negativan smer
-      if (theta_to_pos_target
-	  > robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
-	{
-	  theta_to_pos_target -= 2 * M_PI;
-	}
-      break;
-    }
-
-  switch (final_rot_dir)
-    {
-    default:
-      break;
-    case CCW:	// pozitivan smer
-      if (target_position.theta_rad < robot_position.theta_rad)
-	{
-	  target_position.theta_rad += 2 * M_PI;
-	}
-      break;
-    case CW:	// negativan smer
-      if (target_position.theta_rad > robot_position.theta_rad)
-	{
-	  target_position.theta_rad -= 2 * M_PI;
-	}
-      break;
-    }
+//  switch (init_rot_dir)
+//    {
+//    default:
+//      break;
+//    case CCW:	// pozitivan smer
+//      if (theta_to_pos_target
+//	  < robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
+//	{
+//	  theta_to_pos_target += 2 * M_PI;
+//	}
+//      break;
+//    case CW:	// negativan smer
+//      if (theta_to_pos_target
+//	  > robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
+//	{
+//	  theta_to_pos_target -= 2 * M_PI;
+//	}
+//      break;
+//    }
+//
+//  switch (final_rot_dir)
+//    {
+//    default:
+//      break;
+//    case CCW:	// pozitivan smer
+//      if (target_position.theta_rad < robot_position.theta_rad)
+//	{
+//	  target_position.theta_rad += 2 * M_PI;
+//	}
+//      break;
+//    case CW:	// negativan smer
+//      if (target_position.theta_rad > robot_position.theta_rad)
+//	{
+//	  target_position.theta_rad -= 2 * M_PI;
+//	}
+//      break;
+//    }
 
   error.theta_rad = target_position.theta_rad - robot_position.theta_rad;// [rad]
 
@@ -122,6 +127,8 @@ movement_finished ()
   if (fabs (distance) < EPSILON_DISTANCE
       && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
     {
+      regulation_rotation_finished();	//TODO: vidi da li je ovo sad ispravljeno
+      regulation_translation_finished();
       movement_init = false;
       init_rot_dir = 0;
       final_rot_dir = 0;
@@ -206,13 +213,13 @@ set_starting_position (float starting_x, float starting_y,
 }
 
 void
-set_translation_speed_limit (float V_max)
+set_translation_speed_limit (float perc)
 {
-  V_limit = V_max;
+  V_limit = perc*V_REF_LIMIT_DEFAULT;
 }
 
 void
-set_rotation_speed_limit (float w_max)
+set_rotation_speed_limit (float perc)
 {
-  w_limit = w_max;
+  w_limit = perc*W_REF_LIMIT_DEFAULT;
 }

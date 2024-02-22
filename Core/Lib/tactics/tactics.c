@@ -25,6 +25,9 @@ volatile position previous_target =
 volatile uint8_t alternate_move = 0;
 extern volatile uint8_t state_angle;
 
+float V_max_perc = 1.0, w_max_perc = 1.0;
+;
+
 bool
 grabulja_test ()
 {
@@ -103,6 +106,86 @@ sensors_timer_test ()
       break;
     }
   io_led (sensors_state);
+  return tactic_finished;
+}
+
+bool
+movement_test1 ()
+{
+  switch (tactic_state)
+    {
+    case 0:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  tactic_finished = false;
+	}
+      tactic_state++;
+      tactic_state_init = false;
+      break;
+
+    case 1:
+      set_rotation_speed_limit (1);
+      set_translation_speed_limit (1);
+      move_to_xy (3000 - 450, 2000 - 450, -1, 0);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+
+    case 2:
+      if (timer_delay_nonblocking (2000))
+	{
+	  tactic_state++;
+	}
+      break;
+
+    case 3:
+      set_rotation_speed_limit (1);
+      set_translation_speed_limit (1);
+      move_to_xy (3000 - 450, 450, 1, 0);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+
+    case 4:
+      if (timer_delay_nonblocking (2000))
+	{
+	  tactic_state++;
+	}
+      break;
+
+    case 5:
+      set_rotation_speed_limit (1);
+      set_translation_speed_limit (1);
+      move_to_xy (450, 450, -1, 0);
+//      move_full (3000-450, 450, 0, 1, 0, 0);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	}
+      break;
+
+    case 6:
+      set_rotation_speed_limit (1);
+      set_translation_speed_limit (1);
+      move_to_xy (450, 1550, 1, 0);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state = RETURN;
+	  tactic_state_init = false;
+	}
+      break;
+
+    case RETURN:
+      tactic_finished = true;
+      break;
+    }
   return tactic_finished;
 }
 

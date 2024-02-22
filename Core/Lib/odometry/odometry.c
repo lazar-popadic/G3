@@ -12,8 +12,9 @@
 #include <math.h>
 #include "../timer/timer.h"
 
-#define d 333.0
-#define d_odometrijskog 65.75
+#define d 334.2
+#define d_odometrijskog 65.94		//65.42
+#define d_odometrijskog_levi 65.68	//65.11
 
 volatile double V_deltaT = 0;
 volatile double w_deltaT = 0;
@@ -22,8 +23,12 @@ volatile double w_rad_s = 0;
 static double inc2rad = 0; //broj inkremenata pasivnog tocka za 1 krug robota
 static double inc2mm = 0;	//TODO: eksperimentalno koriguj oba ova
 static double inc2rad_s = 0;
+static double diff_factor = 0;
+double f_Vl_inc = 0;
 int16_t Vd_inc = 0;
 int16_t Vl_inc = 0;
+int16_t Vd_sum = 0;
+int16_t Vl_sum = 0;
 
 volatile position robot_position =
   { 0, 0, 0 };
@@ -37,6 +42,7 @@ odometry_init ()
   inc2mm = d_odometrijskog * M_PI / (4.0 * 2048.0);
   inc2rad = inc2mm / d;
   inc2rad_s = inc2rad * 500.0;
+  diff_factor = d_odometrijskog_levi / d_odometrijskog;
 }
 
 void
@@ -44,17 +50,22 @@ odometry_robot ()
 {
   Vd_inc = speed_of_encoder_right_passive ();
   Vl_inc = speed_of_encoder_left_passive ();
+  f_Vl_inc = (double)(Vl_inc) * diff_factor;
+  Vd_sum += Vd_inc;
+  Vl_sum += f_Vl_inc;
 
-  V_deltaT = (Vd_inc + Vl_inc) * 0.5 * inc2mm;	// [mm / 0.5ms] = [m / 2s]
-  V_m_s = V_deltaT * 0.5;				// [m / s]
-  w_rad_s = (Vd_inc - Vl_inc) * inc2rad_s;		// [rad / s]
-  w_deltaT = w_rad_s * 0.002;				// [rad ]
+  V_deltaT = ((double)Vd_inc + f_Vl_inc) * 0.5 * inc2mm;		// [mm / 0.5ms] = [m / 2s]
+  V_m_s = V_deltaT * 0.25;// ipak ovde treba 0.5, al ovako bolje radi	// [m / s]
+  w_rad_s = ((double)Vd_inc - f_Vl_inc) * inc2rad_s;			// [rad / s]
+  w_deltaT = w_rad_s * 0.002;						// [rad / 2ms]
 
-  robot_position.x_mm += V_deltaT * cos (robot_position.theta_rad + w_deltaT / 2.0);
-  robot_position.y_mm += V_deltaT * sin (robot_position.theta_rad + w_deltaT / 2.0);
+  robot_position.x_mm += V_deltaT
+      * cos (robot_position.theta_rad + w_deltaT / 2.0);
+  robot_position.y_mm += V_deltaT
+      * sin (robot_position.theta_rad + w_deltaT / 2.0);
   robot_position.theta_rad += w_deltaT;
 
-  theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
+//  theta_robot_normalized = float_normalize_angle (robot_position.theta_rad, 0);
   theta_degrees = robot_position.theta_rad * 180 / M_PI;
 //  theta_degrees = theta_robot_normalized * 180 / M_PI;
 }

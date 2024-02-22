@@ -22,13 +22,13 @@
 //#define RIGHT_MAXON_FORW_OFFSET	75
 //#define RIGHT_MAXON_BACK_OFFSET	-75
 
-static const float KP_TRAN = 0;
-static const float KI_TRAN = 0;
-static const float KD_TRAN = 0;
+static const float KP_TRAN = 120.0;
+//static const float KI_TRAN = 0;
+//static const float KD_TRAN = 0;
 
-static const float KP_ROT = 32;
-static const float KI_ROT = 0;
-static const float KD_ROT = 0;
+static const float KP_ROT = 24.0;
+//static const float KI_ROT = 0;
+//static const float KD_ROT = 0;
 
 extern volatile double V_m_s;
 extern volatile double w_rad_s;
@@ -36,13 +36,13 @@ extern volatile float V_ref;
 extern volatile float w_ref;
 
 volatile static float e_v = 0;
-volatile static float e_i_v = 0;
-volatile static float e_d_v = 0;
-volatile static float e_previous_v = 0;
+//volatile static float e_i_v = 0;
+//volatile static float e_d_v = 0;
+//volatile static float e_previous_v = 0;
 volatile static float e_w = 0;
-volatile static float e_i_w = 0;
-volatile static float e_d_w = 0;
-volatile static float e_previous_w = 0;
+//volatile static float e_i_w = 0;
+//volatile static float e_d_w = 0;
+//volatile static float e_previous_w = 0;
 
 volatile static float u_v = 0;
 volatile static float u_w = 0;
@@ -53,19 +53,21 @@ void
 regulation_speed ()
 {
   e_v = V_ref - V_m_s;
-  e_i_v += e_v;
-  e_i_v = float_saturation (e_i_v, EI_LIMIT, - EI_LIMIT);
-  e_d_v = e_v - e_previous_v;
+//  e_i_v += e_v;
+//  e_i_v = float_saturation (e_i_v, EI_LIMIT, - EI_LIMIT);
+//  e_d_v = e_v - e_previous_v;
 
   e_w = w_ref - w_rad_s;
-  e_i_w += e_w;
-  e_i_w = float_saturation (e_i_w, EI_LIMIT, - EI_LIMIT);
-  e_d_w = e_w - e_previous_w;
+//  e_i_w += e_w;
+//  e_i_w = float_saturation (e_i_w, EI_LIMIT, - EI_LIMIT);
+//  e_d_w = e_w - e_previous_w;
 
-  u_v = KP_TRAN * e_v + KI_TRAN * e_i_v + KD_TRAN * e_d_v;
-  u_v = float_saturation (u_v, V_LIMIT, -V_LIMIT);
-  u_w = KP_ROT * e_w + KI_ROT * e_i_w + KD_ROT * e_d_w;
-  u_w = float_saturation (u_w, W_LIMIT, -W_LIMIT);
+//  u_v = KP_TRAN * e_v + KI_TRAN * e_i_v + KD_TRAN * e_d_v;
+  u_v = KP_TRAN * e_v;
+//  u_v = float_saturation (u_v, V_LIMIT, -V_LIMIT);	// TODO: vidi da li ovo treba
+//  u_w = KP_ROT * e_w + KI_ROT * e_i_w + KD_ROT * e_d_w;
+  u_w = KP_ROT * e_w;
+//  u_w = float_saturation (u_w, W_LIMIT, -W_LIMIT);
 
   u_right = u_v + u_w;
   u_left = u_v - u_w;
@@ -90,6 +92,6 @@ regulation_speed ()
   pwm_duty_cycle_right ((uint16_t) fabs (u_right));
   pwm_duty_cycle_left ((uint16_t) fabs (u_left));
 
-  e_previous_v = e_v;
-  e_previous_w = e_w;
+//  e_previous_v = e_v;
+//  e_previous_w = e_w;
 }

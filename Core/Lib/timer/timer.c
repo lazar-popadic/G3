@@ -34,7 +34,7 @@ extern uint8_t tactic_state;
 extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
 
-volatile bool regulation_on = true;
+volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
 
@@ -117,9 +117,6 @@ TIM1_UP_TIM10_IRQHandler ()
 	{
 	  odometry_robot ();
 	  regulation_position ();
-//	  float theta_desired = 3.14/2.0;
-//	  float Kp = 1.0;
-//	  w_ref = Kp * (theta_desired - robot_position.theta_rad);
 	}
 
       if (regulation_on)

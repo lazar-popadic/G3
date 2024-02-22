@@ -24,8 +24,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define START 0xff 	//255
-#define END 0xfa	//250
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -42,8 +40,7 @@ uint8_t state_debug = 0;
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 
-uint16_t duty_cycle_test = 1000;
-float v_max_test = V_REF_LIMIT_DEFAULT, w_max_test = W_REF_LIMIT_DEFAULT;
+uint16_t duty_cycle_test = 100;
 bool move_finished;
 
 position pos_test =
@@ -105,6 +102,7 @@ main (void)
 
   __enable_irq ();
 
+  regulation_on = false;
 //  timer_start_sys_time ();
   /* USER CODE END 2 */
 
@@ -133,48 +131,14 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      pwm_start ();
-	      set_starting_position (0, 0, 0);
+	      set_starting_position (450 - 80, 2000 - 450 + 160, 180);
 	      regulation_on = true;
 	    }
 	  break;
 
 	case 0:
-//	  if (grabulja_test  ())
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-//	  set_rotation_speed_limit (w_max_test);
-//	  set_translation_speed_limit (v_max_test);
-	  move_to_angle (180, DEFAULT);
-//	  move_full(450, 450, 0, 1, 0, 0);
-	  if (movement_finished () && timer_delay_nonblocking (20))
-	    {
-//	      state_main++;
-	      state_main = END;
-	    }
-	  break;
-
-	case 1:
-//	  move_full (pos_test.x_mm, pos_test.y_mm, pos_test.theta_rad, tran_test, init_rot_test, final_rot_test);
-	  if (!state_main_init)
-	    {
-	      state_main_init = true;
-	      state_debug = 0;
-	    }
-
-	  set_rotation_speed_limit (w_max_test);
-	  set_translation_speed_limit (v_max_test);
-	  move_to_angle (0, DEFAULT);
-	  if (movement_finished () && timer_delay_nonblocking (20))
-	    {
-	      state_main++;
-//	      state_main = END;
-	    }
-//	  if (timer_delay_nonblocking (20) && movement_finished ())
-//	    state_main = END;
-	  break;
+	  if (movement_test1  () && timer_delay_nonblocking(2000))
+	    state_main = END;
 
 	case END:
 //	  regulation_on = false;

@@ -11,7 +11,6 @@
 #include "../h-bridge/h-bridge.h"
 #include <math.h>
 
-
 volatile static uint8_t ramp_counter = 0;
 volatile float V_limit, w_limit;
 
@@ -53,16 +52,29 @@ float_ramp (float signal, float desired_value, float slope)
 }
 
 float
-float_ramp2 (float signal, float desired_value, float slope_acceleration, float slope_deceleration)
+float_ramp2 (float signal, float desired_value, float slope_acceleration,
+	     float slope_deceleration)
 {
   static float abs_desired = 0;
   static float abs_signal = 0;
-  abs_desired = fabs(desired_value);
-  abs_signal = fabs(signal);
+  abs_desired = fabs (desired_value);
+  abs_signal = fabs (signal);
   if ((abs_desired - abs_signal) > slope_acceleration)
     return signal + sign (desired_value - signal) * slope_acceleration;
   if ((abs_signal - abs_desired) > slope_deceleration)
     return signal + sign (desired_value - signal) * slope_deceleration;
+  return desired_value;
+}
+
+float
+float_ramp_acc (float signal, float desired_value, float slope_acceleration)
+{
+  static float abs_desired = 0;
+  static float abs_signal = 0;
+  abs_desired = fabs (desired_value);
+  abs_signal = fabs (signal);
+  if ((abs_desired - abs_signal) > slope_acceleration)
+    return signal + sign (desired_value - signal) * slope_acceleration;
   return desired_value;
 }
 
