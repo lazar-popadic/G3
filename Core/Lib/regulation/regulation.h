@@ -12,8 +12,8 @@
 #include "position/position.h"
 #include "speed/speed.h"
 
-#define V_REF_LIMIT_DEFAULT		10.0	// m/s
-#define W_REF_LIMIT_DEFAULT		50.4	// rad/s
+#define V_REF_LIMIT_DEFAULT		20.0
+#define W_REF_LIMIT_DEFAULT		100.4
 
 void
 regulation_init ();

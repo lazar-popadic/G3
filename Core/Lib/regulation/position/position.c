@@ -16,7 +16,7 @@
 #include "../../pwm/pwm.h"
 
 #define THETA_I_LIMIT		3.78
-#define DISTANCE_I_LIMIT	0.52
+#define DISTANCE_I_LIMIT	0.45
 
 
 static const float KP_ROT = 48.0;
@@ -59,7 +59,7 @@ regulation_position ()
 ////	  regulation_rotation_finished ();
 ////	  regulation_translation_finished ();
 //	}
-      regulation_rotation (theta_to_angle, 1);
+      regulation_rotation (theta_to_angle, 1, 1);
       V_ref = 0;
       /*
        * POJAVI SE GRESKA U POZICIJI i NE KRECE SE
@@ -81,7 +81,7 @@ regulation_position ()
 ////	  regulation_rotation_finished ();
 ////	  regulation_translation_finished ();
 //	}
-      regulation_rotation (theta_to_pos, 1);
+      regulation_rotation (theta_to_pos, 1, 1);
       V_ref = 0;
       /*
        * OKRENUO SE KA CILJU i NE KRECE SE VISE
@@ -113,7 +113,7 @@ regulation_position ()
 ////	  regulation_translation_finished ();
 //	}
       regulation_translation (distance);
-      regulation_rotation (theta_to_pos, 1.0);
+      regulation_rotation (theta_to_pos, 1.0, 1);
       /*
        * PRIBLIZIO SE CILJU
        * onda
@@ -123,6 +123,7 @@ regulation_position ()
 	{
 //	  regulation_phase_init = false;
 //	  regulation_translation_finished ();	// TODO: msm da ovde ne mora
+//	  regulation_rotation_finished();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
       /*
@@ -150,7 +151,8 @@ regulation_position ()
 	regulation_translation (-distance);
       else
 	regulation_translation (distance);
-      w_ref = 0;
+//      w_ref = 0;
+      regulation_rotation (theta_to_pos, 0.2, 0.2);
       /*
        * NEMA GRESKE U POZICIJI
        * onda
@@ -188,11 +190,11 @@ regulation_position ()
  */
 
 void
-regulation_rotation (float theta_er, float faktor)
+regulation_rotation (float theta_er, float factor, float limit_factor)
 {
   static float w_ref_pid;
   theta_er_i += theta_er;
-  theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
+  theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT*limit_factor, -THETA_I_LIMIT*limit_factor);
 //  theta_er_d = theta_er - theta_er_previous;
 
 //  w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
@@ -200,7 +202,7 @@ regulation_rotation (float theta_er, float faktor)
   w_ref_pid = float_saturation (w_ref_pid, w_limit, -w_limit);
 //  w_ref = float_ramp2(w_ref, w_ref_pid, 1.5, 999);
   w_ref = float_ramp_acc(w_ref, w_ref_pid, 1.5);
-  w_ref *= faktor;
+  w_ref *= factor;
 
 //  theta_er_previous = theta_er;
 }

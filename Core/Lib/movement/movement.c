@@ -213,13 +213,13 @@ set_starting_position (float starting_x, float starting_y,
 }
 
 void
-set_translation_speed_limit (float V_max)
+set_translation_speed_limit (float perc)
 {
-  V_limit = V_max;
+  V_limit = perc*V_REF_LIMIT_DEFAULT;
 }
 
 void
-set_rotation_speed_limit (float w_max)
+set_rotation_speed_limit (float perc)
 {
-  w_limit = w_max;
+  w_limit = perc*W_REF_LIMIT_DEFAULT;
 }

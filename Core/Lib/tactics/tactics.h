@@ -9,10 +9,15 @@
 #define LIB_MODULES_TACTICS_TACTICS_H_
 
 #define BRAKE 200
+#define RETURN 249
+#define START 255
+#define END 250
 
 bool
 grabulja_test ();
 bool
 sensors_timer_test ();
+bool
+movement_test1();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */
