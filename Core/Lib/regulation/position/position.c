@@ -194,12 +194,12 @@ regulation_rotation (float theta_er, float factor, float limit_factor)
 {
   static float w_ref_pid;
   theta_er_i += theta_er;
-  theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT*limit_factor, -THETA_I_LIMIT*limit_factor);
+  theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
 //  theta_er_d = theta_er - theta_er_previous;
 
 //  w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
   w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i;
-  w_ref_pid = float_saturation (w_ref_pid, w_limit, -w_limit);
+  w_ref_pid = float_saturation (w_ref_pid, w_limit*limit_factor, -w_limit*limit_factor);
 //  w_ref = float_ramp2(w_ref, w_ref_pid, 1.5, 999);
   w_ref = float_ramp_acc(w_ref, w_ref_pid, 1.5);
   w_ref *= factor;
