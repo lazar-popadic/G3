@@ -139,8 +139,12 @@ main (void)
 	case 0:
 	  if (movement_test1  () && timer_delay_nonblocking(2000))
 	    state_main = END;
+	  break;
 
 	case END:
+// TODO: vidi da li ovo radi
+	  timer_stop_sys_time ();
+// TODO: vidi zasto ovo sjebe regulaciju odmah, kao da samo skoci ovde
 //	  regulation_on = false;
 	  break;
 	}

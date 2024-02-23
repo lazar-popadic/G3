@@ -62,10 +62,11 @@ calculate_movement ()
       break;
     }
 
-  theta_to_pos_target = float_normalize_angle (theta_to_pos_target,
-					       robot_position.theta_rad);
-  target_position.theta_rad = float_normalize_angle (target_position.theta_rad,
-						     robot_position.theta_rad);
+  // ovo sam isto mogao da dobijem i samo normalizacijom greske i robota
+//  theta_to_pos_target = float_normalize_angle (theta_to_pos_target,
+//					       robot_position.theta_rad);
+//  target_position.theta_rad = float_normalize_angle (target_position.theta_rad,
+//						     robot_position.theta_rad);
 
 //  switch (init_rot_dir)
 //    {
@@ -105,12 +106,13 @@ calculate_movement ()
 //      break;
 //    }
 
-  error.theta_rad = target_position.theta_rad - robot_position.theta_rad;// [rad]
+  error.theta_rad = target_position.theta_rad - robot_position.theta_rad; // [rad]
 
-  theta_to_pos = theta_to_pos_target - robot_position.theta_rad;	// [rad]
-  distance = sign(tran_dir)
+  theta_to_pos = float_normalize_angle (
+      theta_to_pos_target - robot_position.theta_rad, 0);	// [rad]
+  distance = sign (tran_dir)
       * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
-  theta_to_angle = error.theta_rad;					// [rad]
+  theta_to_angle = float_normalize_angle (error.theta_rad, 0);		// [rad]
 }
 
 bool
@@ -127,8 +129,8 @@ movement_finished ()
   if (fabs (distance) < EPSILON_DISTANCE
       && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
     {
-      regulation_rotation_finished();	//TODO: vidi da li je ovo sad ispravljeno
-      regulation_translation_finished();
+      regulation_rotation_finished ();//TODO: vidi da li je ovo sad ispravljeno
+      regulation_translation_finished ();
       movement_init = false;
       init_rot_dir = 0;
       final_rot_dir = 0;
@@ -215,11 +217,11 @@ set_starting_position (float starting_x, float starting_y,
 void
 set_translation_speed_limit (float perc)
 {
-  V_limit = perc*V_REF_LIMIT_DEFAULT;
+  V_limit = perc * V_REF_LIMIT_DEFAULT;
 }
 
 void
 set_rotation_speed_limit (float perc)
 {
-  w_limit = perc*W_REF_LIMIT_DEFAULT;
+  w_limit = perc * W_REF_LIMIT_DEFAULT;
 }

@@ -17,16 +17,14 @@
 #define SENSORS_HIGH_AND_LOW 	4
 #define SENSORS_OFF 		0
 
-//#define PLUS_MINUS_PI	0
-//#define MAX_PLUS_2PI	1
-//#define MIN_MINUS_2PI	2
-
 void
 timer_init ();
 bool
 timer_delay_nonblocking (uint32_t delay_ms);
 void
 timer_start_sys_time ();
+void
+timer_stop_sys_time ();
 bool
 timer_end ();
 

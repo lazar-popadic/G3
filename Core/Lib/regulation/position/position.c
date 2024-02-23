@@ -168,7 +168,7 @@ regulation_position ()
        * POJAVI SE VECA GRESKA U POZICIJI
        * onda
        * VRATI SE U OKRETANJE KA CILJU
-       * TODO: vidi ovo
+       * TODO: vidi ovo, cini mi se okej
        */
 //      if (distance > EPSILON_DISTANCE_ROT)
 //	{
@@ -195,16 +195,11 @@ regulation_rotation (float theta_er, float factor, float limit_factor)
   static float w_ref_pid;
   theta_er_i += theta_er;
   theta_er_i = float_saturation (theta_er_i, THETA_I_LIMIT, -THETA_I_LIMIT);
-//  theta_er_d = theta_er - theta_er_previous;
 
-//  w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i + KD_ROT * theta_er_d;
   w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i;
   w_ref_pid = float_saturation (w_ref_pid, w_limit*limit_factor, -w_limit*limit_factor);
-//  w_ref = float_ramp2(w_ref, w_ref_pid, 1.5, 999);
   w_ref = float_ramp_acc(w_ref, w_ref_pid, 1.5);
   w_ref *= factor;
-
-//  theta_er_previous = theta_er;
 }
 
 void
@@ -214,29 +209,20 @@ regulation_translation (float distance_er)
   distance_er_i += distance_er;
   distance_er_i = float_saturation (distance_er_i, DISTANCE_I_LIMIT,
 				    -DISTANCE_I_LIMIT);
-//  distance_er_d = distance_er - distance_er_previous;
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i;
-//      + KD_TRAN * distance_er_d;
   V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-//  V_ref = float_ramp2(V_ref, V_ref_pid, 0.12, 999);
   V_ref = float_ramp_acc(V_ref, V_ref_pid, 0.12);
-
-//  distance_er_previous = distance_er;
 }
 
 void
 regulation_rotation_finished ()
 {
   theta_er_i = 0;
-//  theta_er_d = 0;
-//  theta_er_previous = 0;
 }
 
 void
 regulation_translation_finished ()
 {
   distance_er_i = 0;
-//  distance_er_d = 0;
-//  distance_er_previous = 0;
 }

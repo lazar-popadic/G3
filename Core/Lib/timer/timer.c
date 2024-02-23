@@ -76,6 +76,12 @@ timer_start_sys_time ()
   TIM10->CR1 |= (0b1 << 0);	//tek ga ovo ukljucuje
 }
 
+void
+timer_stop_sys_time ()
+{
+  TIM10->CR1 &= ~(0b1 << 0);
+}
+
 bool
 timer_end ()
 {
