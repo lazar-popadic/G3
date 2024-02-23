@@ -12,7 +12,7 @@
 #include "position/position.h"
 #include "speed/speed.h"
 
-#define V_REF_LIMIT_DEFAULT		20.0
+#define V_REF_LIMIT_DEFAULT		25.0
 #define W_REF_LIMIT_DEFAULT		100.4
 
 void
@@ -27,10 +27,6 @@ float
 float_ramp_acc (float signal, float desired_value, float slope_acceleration);
 int32_t
 int_saturation (int32_t signal, int32_t MAX, int32_t MIN);
-int32_t
-int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope);
-int32_t
-int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope, uint8_t prescaler);
 int8_t
 sign (float signal);
 #endif /* LIB_MODULES_REGULATION_REGULATION_H_ */

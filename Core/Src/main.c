@@ -98,7 +98,7 @@ main (void)
   sensors_init ();
   h_bridge_init ();
   regulation_init ();
-  adc_dma_init ();
+//  adc_dma_init ();
 
   __enable_irq ();
 

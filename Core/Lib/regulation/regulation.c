@@ -69,39 +69,8 @@ float_ramp2 (float signal, float desired_value, float slope_acceleration,
 float
 float_ramp_acc (float signal, float desired_value, float slope_acceleration)
 {
-  static float abs_desired = 0;
-  static float abs_signal = 0;
-  abs_desired = fabs (desired_value);
-  abs_signal = fabs (signal);
-  if ((abs_desired - abs_signal) > slope_acceleration)
+  if ((fabs (desired_value) - fabs (signal)) > slope_acceleration)
     return signal + sign (desired_value - signal) * slope_acceleration;
-  return desired_value;
-}
-
-int32_t
-int_ramp_simple (int32_t signal, int32_t desired_value, int8_t slope)
-{
-  if (abs (desired_value - signal) > slope)
-    {
-      return signal + sign (desired_value - signal) * slope;
-    }
-  return desired_value;
-}
-
-int32_t
-int_ramp_advanced (int32_t signal, int32_t desired_value, int8_t slope,
-		   uint8_t prescaler)
-{
-  if (ramp_counter < prescaler)
-    {
-      ramp_counter++;
-      return signal;
-    }
-  ramp_counter = 0;
-  if (abs (desired_value - signal) > slope)
-    {
-      return signal + sign (desired_value - signal) * slope;
-    }
   return desired_value;
 }
 
