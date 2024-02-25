@@ -16,14 +16,14 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		3.78
-#define DISTANCE_I_LIMIT	0.45
+#define THETA_I_LIMIT		3.78+0.22
+#define DISTANCE_I_LIMIT	0.30
 
-static const float KP_ROT = 48.0;
-static const float KI_ROT = 0.945;
+static const float KP_ROT = 52.0;
+static const float KI_ROT = 0.945 + 0.055;
 
-static const float KP_TRAN = 0.036;
-static const float KI_TRAN = 1.248;
+static const float KP_TRAN = 0.028;
+static const float KI_TRAN = 0.4;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -91,12 +91,11 @@ regulation_position ()
     case TRAN_WITHOUT_ROT:
       if (fabs (distance) < EPSILON_DISTANCE)
 	{
-//	  regulation_phase_init = false;
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       // TODO: vidi ovo, cini mi se okej
-      if (fabs (distance) > EPSILON_DISTANCE_ROT)
+      if (fabs (distance) > EPSILON_DISTANCE_ROT*1.2)
 	{
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
@@ -106,8 +105,8 @@ regulation_position ()
       else
 	regulation_translation (distance);
       // TODO: vidi koja od ovih je bolja
-      w_ref = 0;
-//      regulation_rotation (theta_to_pos, 0.2, 0.2);
+//      w_ref = 0;
+      regulation_rotation (theta_to_pos, 0.2, 0.2);
       break;
     }
 
@@ -141,7 +140,7 @@ regulation_translation (float distance_er)
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i;
   V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.12);
+  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.14);
 }
 
 // TODO: vidi da li mu ovo uopste treba

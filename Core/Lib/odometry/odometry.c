@@ -41,23 +41,23 @@ odometry_init ()
 {
   inc2mm = d_odometrijskog * M_PI / (4.0 * 2048.0);
   inc2rad = inc2mm / d;
-  inc2rad_s = inc2rad * 500.0;	// TODO: ovde ubaci neki faktor da bude preciznije npr. 1,003 (360/359)
+  inc2rad_s = inc2rad * 500.0;// TODO: ovde ubaci neki faktor da bude preciznije npr. 1,003 (360/359)
   diff_factor = d_odometrijskog_levi / d_odometrijskog;
 }
 
 void
 odometry_robot ()
 {
-  Vd_inc = speed_of_encoder_right_passive ();
   Vl_inc = speed_of_encoder_left_passive ();
-  f_Vl_inc = (double)(Vl_inc) * diff_factor;
+  f_Vl_inc = (double) (Vl_inc) * diff_factor;
+  Vd_inc = speed_of_encoder_right_passive ();
 //  Vd_sum += Vd_inc;
 //  Vl_sum += f_Vl_inc;
 
-  V_deltaT = ((double)Vd_inc + f_Vl_inc) * 0.5 * inc2mm;		// [mm / 0.5ms] = [m / 2s]
-  V_m_s = V_deltaT * 0.25;// ipak ovde treba 0.5, al ovako bolje radi
-  w_rad_s = ((double)Vd_inc - f_Vl_inc) * inc2rad_s;			// [rad / s]
-  w_deltaT = w_rad_s * 0.002;						// [rad / 2ms]
+  V_deltaT = ((double) Vd_inc + f_Vl_inc) * 0.5 * inc2mm;// [mm / 0.5ms] = [m / 2s]
+  V_m_s = V_deltaT * 0.25;	// ipak ovde treba 0.5, al ovako bolje radi
+  w_rad_s = ((double) Vd_inc - f_Vl_inc) * inc2rad_s;		// [rad / s]
+  w_deltaT = w_rad_s * 0.002;					// [rad / 2ms]
 
   robot_position.x_mm += V_deltaT
       * cos (robot_position.theta_rad + w_deltaT / 2.0);
@@ -74,8 +74,7 @@ odometry_robot ()
 void
 normalize_robot_angle ()
 {
-  robot_position.theta_rad = float_normalize_angle (robot_position.theta_rad,
-						    0);
+  robot_position.theta_rad = simple_normalize (robot_position.theta_rad);
 }
 
 float
@@ -87,5 +86,15 @@ float_normalize_angle (float signal, float middle)
     return signal - (int8_t) ((signal - min) / (2 * M_PI)) * 2 * M_PI;
   if (signal < min)
     return signal + (int8_t) ((max - signal) / (2 * M_PI)) * 2 * M_PI;
+  return signal;
+}
+
+float
+simple_normalize (float signal)
+{
+  if (signal > M_PI)
+    return signal - 2 * M_PI;
+  if (signal < -M_PI)
+    return signal + 2 * M_PI;
   return signal;
 }

@@ -15,8 +15,8 @@
 #include <math.h>
 #include "../timer/timer.h"
 
-#define W_LIMIT		0.0001
-#define V_LIMIT		0.00001
+#define W_LIMIT		1
+#define V_LIMIT		0.2
 
 // meri
 extern volatile position robot_position;
@@ -46,79 +46,21 @@ calculate_movement ()
 {
   error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
   error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
-  theta_to_pos_target = atan2 (error.y_mm, error.x_mm);
-
-  // TODO: 	smisli drugacije ovo biranje smerova, bolje mozda u move_full
-  //		ali ovako ne mogu samo da prebacim tamo,
-  //		bilo bi dobro da tamo mogu da zadam uglove, a ovde samo greske da izracuna
-  //		al opet pravi problem init_rot_dir, koji mozda i ne mora da postoji
-
-  switch (tran_dir)
-    {
-    default:
-      break;
-    case BACKWARD:
-      theta_to_pos_target += M_PI;
-      break;
-    }
-
-  // ovo sam isto mogao da dobijem i samo normalizacijom greske i robota
-//  theta_to_pos_target = float_normalize_angle (theta_to_pos_target,
-//					       robot_position.theta_rad);
-//  target_position.theta_rad = float_normalize_angle (target_position.theta_rad,
-//						     robot_position.theta_rad);
-
-//  switch (init_rot_dir)
-//    {
-//    default:
-//      break;
-//    case CCW:	// pozitivan smer
-//      if (theta_to_pos_target
-//	  < robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
-//	{
-//	  theta_to_pos_target += 2 * M_PI;
-//	}
-//      break;
-//    case CW:	// negativan smer
-//      if (theta_to_pos_target
-//	  > robot_position.theta_rad&& regulation_phase != TRAN_WITH_ROT)
-//	{
-//	  theta_to_pos_target -= 2 * M_PI;
-//	}
-//      break;
-//    }
-//
-//  switch (final_rot_dir)
-//    {
-//    default:
-//      break;
-//    case CCW:	// pozitivan smer
-//      if (target_position.theta_rad < robot_position.theta_rad)
-//	{
-//	  target_position.theta_rad += 2 * M_PI;
-//	}
-//      break;
-//    case CW:	// negativan smer
-//      if (target_position.theta_rad > robot_position.theta_rad)
-//	{
-//	  target_position.theta_rad -= 2 * M_PI;
-//	}
-//      break;
-//    }
+  theta_to_pos_target = atan2 (error.y_mm, error.x_mm) + tran_dir * M_PI;
 
   error.theta_rad = target_position.theta_rad - robot_position.theta_rad; // [rad]
 
-  theta_to_pos = float_normalize_angle (
-      theta_to_pos_target - robot_position.theta_rad, 0);	// [rad]
-  distance = sign (tran_dir)
+  theta_to_pos = simple_normalize (
+      theta_to_pos_target - robot_position.theta_rad);	// [rad]
+  distance = (tran_dir * (-2) + 1)
       * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
-  theta_to_angle = float_normalize_angle (error.theta_rad, 0);		// [rad]
+  theta_to_angle = simple_normalize(error.theta_rad);		// [rad]
 }
 
 bool
 no_movement ()
 {
-  if (w_rad_s < W_LIMIT || V_m_s < V_LIMIT)
+  if (w_rad_s < W_LIMIT && V_m_s < V_LIMIT)
     return true;
   return false;
 }
@@ -141,27 +83,22 @@ movement_finished ()
 }
 
 void
-move_full (float x, float y, float theta, int8_t translation_direction,
-	   int8_t initial_rotation_direction, int8_t final_rotation_direction)
+move_full (float x, float y, float theta, int8_t translation_direction)
 {
   tran_dir = translation_direction;
-  init_rot_dir = initial_rotation_direction;
-  final_rot_dir = final_rotation_direction;
   target_position.x_mm = x;
   target_position.y_mm = y;
   target_position.theta_rad = theta;
 }
 
 void
-move_to_xy (float x, float y, int8_t translation_direction,
-	    int8_t rotation_direction)
+move_to_xy (float x, float y, int8_t translation_direction)
 {
-  move_full (x, y, robot_position.theta_rad, translation_direction,
-	     rotation_direction, DEFAULT);
+  move_full (x, y, robot_position.theta_rad, translation_direction);
 }
 
 void
-move_to_angle (float theta_degrees, int8_t rotation_direction)
+move_to_angle (float theta_degrees)
 {
   if (!movement_init)
     {
@@ -170,8 +107,7 @@ move_to_angle (float theta_degrees, int8_t rotation_direction)
       pos_init.y_mm = robot_position.y_mm;
       pos_init.theta_rad = theta_degrees * M_PI / 180;
     }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, DEFAULT, DEFAULT,
-	     rotation_direction);
+  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
 }
 
 void
@@ -185,24 +121,7 @@ move_on_direction (float distance, int8_t direction)
       pos_init.y_mm = robot_position.y_mm
 	  + direction * distance * sin (robot_position.theta_rad);
     }
-  move_full (pos_init.x_mm, pos_init.y_mm, robot_position.theta_rad, direction,
-  DEFAULT,
-	     DEFAULT);
-}
-
-void
-move_relative_angle (float angle_degrees)
-{
-  if (!movement_init)
-    {
-      movement_init = true;
-      pos_init.x_mm = robot_position.x_mm;
-      pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = robot_position.theta_rad
-	  + angle_degrees * M_PI / 180;
-    }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, DEFAULT, DEFAULT,
-  DEFAULT);
+  move_full (pos_init.x_mm, pos_init.y_mm, robot_position.theta_rad, direction);
 }
 
 void

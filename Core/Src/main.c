@@ -49,6 +49,7 @@ uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
 
 extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
+int16_t calib = 512;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -131,19 +132,24 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      pwm_start ();
-	      set_starting_position (450 - 80, 2000 - 450 + 160, 180);
+//	      set_starting_position (450 - 80, 80, 90);
 	      regulation_on = true;
 	    }
 	  break;
 
 	case 0:
-	  if (movement_test1  () && timer_delay_nonblocking(2000))
+//	      ax_move (4, calib, 200);
+	  if (grabulja_test  () && timer_delay_nonblocking(2000))
 	    state_main = END;
 	  break;
 
 	case END:
 // TODO: vidi da li ovo radi
-	  timer_stop_sys_time ();
+//	  stop_right_wheel();
+//	  stop_left_wheel();
+//	  pwm_duty_cycle_left (0);
+//	  pwm_duty_cycle_right (0);
+//	  timer_stop_sys_time ();
 // TODO: vidi zasto ovo sjebe regulaciju odmah, kao da samo skoci ovde
 //	  regulation_on = false;
 	  break;

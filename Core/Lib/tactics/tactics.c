@@ -37,44 +37,58 @@ grabulja_test ()
       if (!tactic_state_init)
 	{
 	  tactic_state_init = true;
+	  set_starting_position (80, 2000 - 450 + 80, 180);
 	  tactic_finished = false;
 	}
-      ax_move (7, 512 + 200, 200);
+      set_translation_speed_limit (1);
+      move_to_xy (1000, 2000 - 450 + 80, MECHANISM);
+      ax_move (4, 312, 200);
 
-      tactic_state++;
-      tactic_state_init = false;
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
       break;
     case 1:
-      if (timer_delay_nonblocking (2500))
-	tactic_state++;
+      set_translation_speed_limit (0.1);
+      move_to_xy (1000, 1200, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
       break;
     case 2:
-      ax_move (4, 850, 250);
-      tactic_state++;
+      ax_move (7, 512 - 50, 50);
+      if (timer_delay_nonblocking (1000))
+	tactic_state++;
       break;
     case 3:
-      if (timer_delay_nonblocking (2500))
+      ax_move (4, 800, 200);
+      if (timer_delay_nonblocking (1000))
 	tactic_state++;
       break;
     case 4:
-      ax_move (7, 512 - 200, 200);
-      tactic_state++;
+      ax_move (7, 512 + 100, 200);
+      if (timer_delay_nonblocking (1000))
+	tactic_state++;
       break;
     case 5:
-      if (timer_delay_nonblocking (2500))
+      set_translation_speed_limit (1.0);
+      move_to_xy (180, 2000 - 612.5, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (20))
 	tactic_state++;
       break;
     case 6:
-      ax_move (4, 1023, 250);
-      tactic_state++;
+      set_translation_speed_limit (0.1);
+      move_to_xy (80, 2000 - 612.5, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	tactic_state = RETURN;
       break;
-    case 7:
-      if (timer_delay_nonblocking (2500))
-	tactic_state = 0;
-      break;
-    case 20:
+    case RETURN:
       tactic_finished = true;
-      return tactic_finished;
+      break;
     }
   return tactic_finished;
 }
@@ -118,6 +132,7 @@ movement_test1 ()
       if (!tactic_state_init)
 	{
 	  tactic_state_init = true;
+	  set_starting_position (0, 2000 - 80, -90);
 	  tactic_finished = false;
 	}
       tactic_state++;
@@ -125,9 +140,9 @@ movement_test1 ()
       break;
 
     case 1:
-      set_rotation_speed_limit (1);
-      set_translation_speed_limit (1);
-      move_to_xy (3000 - 450, 2000 - 450, -1, 0);
+      set_rotation_speed_limit (1.0);
+      set_translation_speed_limit (1.0);
+      move_to_xy (0, 500, WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  tactic_state++;
@@ -136,45 +151,26 @@ movement_test1 ()
       break;
 
     case 2:
-      if (timer_delay_nonblocking (2000))
-	{
-	  tactic_state++;
-	}
-      break;
-
-    case 3:
-      set_rotation_speed_limit (1);
-      set_translation_speed_limit (1);
-      move_to_xy (3000 - 450, 450, 1, 0);
+//      set_translation_speed_limit (1.0);
+      move_to_xy (0, 2000 - 80 - 200, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
-	  tactic_state++;
+//	  tactic_state++;
+	  tactic_state = RETURN;
 	  tactic_state_init = false;
 	}
       break;
 
-    case 4:
-      if (timer_delay_nonblocking (2000))
-	{
-	  tactic_state++;
-	}
-      break;
-
-    case 5:
-      set_rotation_speed_limit (1);
-      set_translation_speed_limit (1);
-      move_to_xy (450, 450, -1, 0);
-//      move_full (3000-450, 450, 0, 1, 0, 0);
+    case 3:
+      move_to_xy (450, 2000 - 450, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  tactic_state++;
 	}
       break;
 
-    case 6:
-      set_rotation_speed_limit (1);
-      set_translation_speed_limit (1);
-      move_to_xy (450, 1550, 1, 0);
+    case 4:
+      move_to_xy (450, 1550, 0);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  tactic_state = RETURN;

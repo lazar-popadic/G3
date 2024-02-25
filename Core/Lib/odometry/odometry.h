@@ -23,5 +23,7 @@ void
 normalize_robot_angle ();
 float
 float_normalize_angle (float signal, float middle);
+float
+simple_normalize (float signal);
 
 #endif /* LIB_MODULES_ODOMETRIJA_ODOMETRIJA_H_ */
