@@ -27,6 +27,8 @@ void
 set_translation_speed_limit (float V_max);
 void
 set_rotation_speed_limit (float w_max);
+void
+set_transition_factor (float factor);
 
 void
 move_full (float x, float y, float theta, int8_t translation_direction);

@@ -41,7 +41,7 @@ regulation_speed ()
   e_w = w_ref - w_rad_s;
 
   u_v = KP_TRAN * e_v;
-  u_v = float_saturation (u_v, V_LIMIT, -V_LIMIT);	// TODO: vidi da li ovo treba
+  u_v = float_saturation (u_v, V_LIMIT, -V_LIMIT);
   u_w = KP_ROT * e_w;
   u_w = float_saturation (u_w, W_LIMIT, -W_LIMIT);
 

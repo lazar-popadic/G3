@@ -19,5 +19,7 @@ bool
 sensors_timer_test ();
 bool
 movement_test1();
+bool
+solar_test ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

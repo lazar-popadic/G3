@@ -15,8 +15,8 @@
 #include <math.h>
 #include "../timer/timer.h"
 
-#define W_LIMIT		1
-#define V_LIMIT		0.2
+#define W_LIMIT		5.0
+#define V_LIMIT		1.0
 
 // meri
 extern volatile position robot_position;
@@ -40,6 +40,7 @@ volatile static position pos_init =
 int8_t init_rot_dir = 0, final_rot_dir = 0, tran_dir = 1;
 extern volatile uint8_t regulation_phase;
 extern volatile float V_limit, w_limit;
+volatile float transition_factor = 1.0;
 
 void
 calculate_movement ()
@@ -54,7 +55,7 @@ calculate_movement ()
       theta_to_pos_target - robot_position.theta_rad);	// [rad]
   distance = (tran_dir * (-2) + 1)
       * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
-  theta_to_angle = simple_normalize(error.theta_rad);		// [rad]
+  theta_to_angle = simple_normalize (error.theta_rad);		// [rad]
 }
 
 bool
@@ -71,7 +72,7 @@ movement_finished ()
   if (fabs (distance) < EPSILON_DISTANCE
       && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
     {
-      regulation_rotation_finished ();//TODO: vidi da li je ovo sad ispravljeno
+      regulation_rotation_finished ();
       regulation_translation_finished ();
       movement_init = false;
       init_rot_dir = 0;
@@ -105,7 +106,7 @@ move_to_angle (float theta_degrees)
       movement_init = true;
       pos_init.x_mm = robot_position.x_mm;
       pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = theta_degrees * M_PI / 180;
+      pos_init.theta_rad = theta_degrees * M_PI / 180.0;
     }
   move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
 }
@@ -117,9 +118,9 @@ move_on_direction (float distance, int8_t direction)
     {
       movement_init = true;
       pos_init.x_mm = robot_position.x_mm
-	  + direction * distance * cos (robot_position.theta_rad);
+	  + (direction * (-2) + 1) * distance * cos (robot_position.theta_rad);
       pos_init.y_mm = robot_position.y_mm
-	  + direction * distance * sin (robot_position.theta_rad);
+	  + (direction * (-2) + 1) * distance * sin (robot_position.theta_rad);
     }
   move_full (pos_init.x_mm, pos_init.y_mm, robot_position.theta_rad, direction);
 }
@@ -143,4 +144,10 @@ void
 set_rotation_speed_limit (float perc)
 {
   w_limit = perc * W_REF_LIMIT_DEFAULT;
+}
+
+void
+set_transition_factor (float factor)
+{
+  transition_factor = factor;
 }

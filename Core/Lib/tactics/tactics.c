@@ -26,7 +26,128 @@ volatile uint8_t alternate_move = 0;
 extern volatile uint8_t state_angle;
 
 float V_max_perc = 1.0, w_max_perc = 1.0;
-;
+
+bool
+solar_test ()
+{
+  switch (tactic_state)
+    {
+    case 0:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  set_starting_position (3000 - 450 + 80, 450 - 160, 180);
+	  set_translation_speed_limit (0.2);
+	  set_rotation_speed_limit (1.0);
+	  tactic_finished = false;
+	}
+      move_full (3000 - 265, 160 + 30, M_PI, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (2000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+
+      break;
+
+    case 1:
+      solar_out_l ();
+      if (timer_delay_nonblocking (2000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 2:
+      solar_in_l ();
+      if (timer_delay_nonblocking (1000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 3:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  set_translation_speed_limit (1.0);
+	  set_rotation_speed_limit (1.0);
+	}
+      move_to_xy (3000 - 300 - 225, 160 + 30, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 4:
+      solar_out_l ();
+      if (timer_delay_nonblocking (2000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 5:
+      solar_in_l ();
+      if (timer_delay_nonblocking (1000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 6:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  set_translation_speed_limit (1.0);
+	  set_rotation_speed_limit (1.0);
+	}
+      move_to_xy (3000 - 290 - 450, 160 + 30, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 7:
+      solar_out_l ();
+      if (timer_delay_nonblocking (2000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 8:
+      solar_in_l ();
+      if (timer_delay_nonblocking (1000))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 9:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  set_translation_speed_limit (1.0);
+	  set_rotation_speed_limit (0.2);
+	}
+      solar_in_r ();
+      if (timer_delay_nonblocking(20))
+	move_to_xy (3000 - 450, 2000 - 450, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state_init = false;
+	  tactic_state = RETURN;
+	}
+      break;
+    case RETURN:
+      tactic_finished = true;
+      break;
+    }
+  return tactic_finished;
+}
 
 bool
 grabulja_test ()
@@ -37,11 +158,11 @@ grabulja_test ()
       if (!tactic_state_init)
 	{
 	  tactic_state_init = true;
-	  set_starting_position (80, 2000 - 450 + 80, 180);
+	  set_starting_position (3000 - 450 + 80, 450 - 160, 0);
 	  tactic_finished = false;
 	}
       set_translation_speed_limit (1);
-      move_to_xy (1000, 2000 - 450 + 80, MECHANISM);
+      move_to_xy (1000, 2000 - 450 + 80, WALL);
       ax_move (4, 312, 200);
 
       if (movement_finished () && timer_delay_nonblocking (20))
@@ -51,7 +172,7 @@ grabulja_test ()
 	}
       break;
     case 1:
-      set_translation_speed_limit (0.1);
+      set_translation_speed_limit (0.2);
       move_to_xy (1000, 1200, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -132,7 +253,7 @@ movement_test1 ()
       if (!tactic_state_init)
 	{
 	  tactic_state_init = true;
-	  set_starting_position (0, 2000 - 80, -90);
+	  set_starting_position (0, 2000 - 80, 0);
 	  tactic_finished = false;
 	}
       tactic_state++;
@@ -140,19 +261,23 @@ movement_test1 ()
       break;
 
     case 1:
-      set_rotation_speed_limit (1.0);
+      set_rotation_speed_limit (0.1);
       set_translation_speed_limit (1.0);
-      move_to_xy (0, 500, WALL);
-      if (movement_finished () && timer_delay_nonblocking (20))
+      move_to_angle(10);
+//      move_to_xy (0, 500, WALL);
+      if (movement_finished () && timer_delay_nonblocking (5000))
 	{
+//	  tactic_state = RETURN;
 	  tactic_state++;
 	  tactic_state_init = false;
 	}
       break;
 
     case 2:
+      set_rotation_speed_limit (1.0);
 //      set_translation_speed_limit (1.0);
-      move_to_xy (0, 2000 - 80 - 200, MECHANISM);
+//      move_to_xy (0, 2000 - 80 - 200, MECHANISM);
+      move_to_angle(90);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 //	  tactic_state++;
@@ -203,3 +328,13 @@ movement_test1 ()
 //    tactic_state = previous_tactic_state;
 //  }
 //break;
+
+//uint8_t
+//alternative_move (position brake, uint8_t current_case, uint8_t next_target, uint8_t next_task, uint8_t wait_time, uint8_t number_of_retries)
+//{
+//  target_position = brake;
+//  if (timer_delay_nonblocking(wait_time))
+//    {
+//      tactic_state = alternate_move;
+//    }
+//}

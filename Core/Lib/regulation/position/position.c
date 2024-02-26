@@ -16,14 +16,14 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		3.78+0.22
-#define DISTANCE_I_LIMIT	0.30
+#define THETA_I_LIMIT		2.8
+#define DISTANCE_I_LIMIT	0.36
 
-static const float KP_ROT = 52.0;
-static const float KI_ROT = 0.945 + 0.055;
+static const float KP_ROT = 56.0;
+static const float KI_ROT = 1.5;	//bilo 1
 
-static const float KP_TRAN = 0.028;
-static const float KI_TRAN = 0.4;
+static const float KP_TRAN = 0.032;
+static const float KI_TRAN = 0.36;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -48,7 +48,6 @@ regulation_position ()
     case ROT_TO_ANGLE:
       if (fabs (distance) > EPSILON_DISTANCE && no_movement ())
 	{
-//	  regulation_rotation_finished ();	// TODO: msm da ovde ne mora
 	  regulation_phase = ROT_TO_POS;
 	}
       regulation_rotation (theta_to_angle, 1, 1);
@@ -79,7 +78,7 @@ regulation_position ()
 //	  regulation_rotation_finished();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
-      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
+      if (fabs (theta_to_pos) > EPSILON_THETA_BIG*5)
 	{
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
@@ -94,8 +93,7 @@ regulation_position ()
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
-      // TODO: vidi ovo, cini mi se okej
-      if (fabs (distance) > EPSILON_DISTANCE_ROT*1.2)
+      if (fabs (distance) > EPSILON_DISTANCE_ROT*5)
 	{
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
@@ -105,8 +103,8 @@ regulation_position ()
       else
 	regulation_translation (distance);
       // TODO: vidi koja od ovih je bolja
-//      w_ref = 0;
-      regulation_rotation (theta_to_pos, 0.2, 0.2);
+      w_ref = 0;
+//      regulation_rotation (theta_to_pos, 0.2, 0.2);
       break;
     }
 
@@ -143,7 +141,6 @@ regulation_translation (float distance_er)
   V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.14);
 }
 
-// TODO: vidi da li mu ovo uopste treba
 void
 regulation_rotation_finished ()
 {
