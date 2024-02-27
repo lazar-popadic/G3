@@ -27,6 +27,48 @@ extern volatile uint8_t state_angle;
 
 float V_max_perc = 1.0, w_max_perc = 1.0;
 
+volatile target plant_blue1 =
+  { 1000, 1300 };
+volatile target plant_blue2 =
+  { 1000, 700 };
+volatile target plant_central1 =
+  { 1500, 1500 };
+volatile target plant_central2 =
+  { 1500, 500 };
+volatile target plant_yellow1 =
+  { 2000, 1300 };
+volatile target plant_yellow2 =
+  { 2000, 700 };
+
+volatile target planter_blue1 =
+  { 600 + (325 / 2), 2000 - 80 };
+volatile target planter_blue2 =
+  { 80, 2000 - 450 - (325 / 2) };
+volatile target planter_blue3 =
+  { 3000 - 80, 450 + (325 / 2) };
+volatile target planter_yellow1 =
+  { 3000 - 600 - (325 / 2), 2000 - 80 };
+volatile target planter_yellow2 =
+  { 3000 - 80, 2000 - 450 - (325 / 2) };
+volatile target planter_yellow3 =
+  { 80, 450 + (325 / 2) };
+
+volatile target home_blue1 =
+  { 450, 2000 - 450 };
+volatile target home_blue2 =
+  { 450, 450 };
+volatile target home_blue3 =
+  { 3000 - 450, 1000 };
+volatile target home_yellow1 =
+  { 3000 - 450, 2000 - 450 };
+volatile target home_yellow2 =
+  { 3000 - 450, 450 };
+volatile target home_yellow3 =
+  { 450, 1000 };
+// TODO: smisli za solare kako cemo
+
+target homes[3];
+
 bool
 solar_test ()
 {
@@ -41,7 +83,7 @@ solar_test ()
 	  set_rotation_speed_limit (1.0);
 	  tactic_finished = false;
 	}
-      move_full (3000 - 265, 160 + 30, M_PI, MECHANISM);
+      move_full (3000 - 265, 160 + 30, 180, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (2000))
 	{
 	  tactic_state++;
@@ -134,7 +176,7 @@ solar_test ()
 	  set_rotation_speed_limit (0.2);
 	}
       solar_in_r ();
-      if (timer_delay_nonblocking(20))
+      if (timer_delay_nonblocking (20))
 	move_to_xy (3000 - 450, 2000 - 450, WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -263,7 +305,7 @@ movement_test1 ()
     case 1:
       set_rotation_speed_limit (0.1);
       set_translation_speed_limit (1.0);
-      move_to_angle(10);
+      move_to_angle (10);
 //      move_to_xy (0, 500, WALL);
       if (movement_finished () && timer_delay_nonblocking (5000))
 	{
@@ -277,7 +319,7 @@ movement_test1 ()
       set_rotation_speed_limit (1.0);
 //      set_translation_speed_limit (1.0);
 //      move_to_xy (0, 2000 - 80 - 200, MECHANISM);
-      move_to_angle(90);
+      move_to_angle (90);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 //	  tactic_state++;
@@ -309,6 +351,39 @@ movement_test1 ()
     }
   return tactic_finished;
 }
+
+bool
+go_home_test ()
+{
+  switch (tactic_state)
+    {
+    case 0:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  set_starting_position (450-80, 1000, 0);
+	  homes[0] = home_blue2;
+	  homes[1] = home_blue1;
+	  homes[2] = home_blue3;
+	  tactic_finished = false;
+	}
+      tactic_state++;
+      tactic_state_init = false;
+      break;
+    case 1:
+      if(task_go_home (*homes))
+	{
+	  tactic_state = RETURN;
+	  tactic_state_init = false;
+	}
+      break;
+    case RETURN:
+      tactic_finished = true;
+      break;
+
+    }
+return tactic_finished;
+    }
 
 //case BRAKE:
 //if (!tactic_state_init)

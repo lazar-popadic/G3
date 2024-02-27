@@ -27,9 +27,9 @@ volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
 int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
-volatile bool sensors_state = false;
-extern uint8_t previous_tactic_state;
-extern uint8_t tactic_state;
+volatile bool interrupted = false;
+//extern uint8_t previous_tactic_state;
+//extern uint8_t tactic_state;
 
 extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
@@ -138,32 +138,27 @@ TIM1_UP_TIM10_IRQHandler ()
 	  pwm_duty_cycle_right (0);
 	}
 
-//      switch (sensors_case_timer)
-//	{
-//	case SENSORS_HIGH:
-//	  sensors_state = sensors_high ();
-//	  break;
-//	case SENSORS_LOW:
-//	  sensors_state = sensors_low ();
-//	  break;
-//	case SENSORS_BACK:
-//	  sensors_state = sensors_back ();
-//	  break;
-//	case SENSORS_HIGH_AND_LOW:
-//	  sensors_state = sensors_high() | sensors_low();
-//	  break;
-//	case SENSORS_OFF:
-//	  sensors_state = false;
-//	  break;
-//	default:
-//	  sensors_state = false;
-//	  break;
-//	}
-//
-//      if (sensors_state)
-//	{
-//	  previous_tactic_state = tactic_state;
-//	  tactic_state = BRAKE;
-//	}
+      switch (sensors_case_timer)
+	{
+	case SENSORS_HIGH:
+	  interrupted = sensors_high ();
+	  break;
+	case SENSORS_LOW:
+	  interrupted = sensors_low ();
+	  break;
+	case SENSORS_BACK:
+	  interrupted = sensors_back ();
+	  break;
+	case SENSORS_HIGH_AND_LOW:
+	  interrupted = sensors_high() | sensors_low();
+	  break;
+	case SENSORS_OFF:
+	  interrupted = false;
+	  break;
+	default:
+	  interrupted = false;
+	  break;
+	}
+
     }
 }

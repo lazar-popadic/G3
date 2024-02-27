@@ -84,12 +84,12 @@ movement_finished ()
 }
 
 void
-move_full (float x, float y, float theta, int8_t translation_direction)
+move_full (float x, float y, float theta_degrees, int8_t translation_direction)
 {
   tran_dir = translation_direction;
   target_position.x_mm = x;
   target_position.y_mm = y;
-  target_position.theta_rad = theta;
+  target_position.theta_rad = theta_degrees * M_PI / 180.0;
 }
 
 void
@@ -106,7 +106,22 @@ move_to_angle (float theta_degrees)
       movement_init = true;
       pos_init.x_mm = robot_position.x_mm;
       pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = theta_degrees * M_PI / 180.0;
+      pos_init.theta_rad = theta_degrees;
+    }
+  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad * 180.0 / M_PI,
+	     0);
+}
+
+void
+turn_to_pos (float x, float y, int8_t translation_direction)
+{
+  if (!movement_init)
+    {
+      movement_init = true;
+      pos_init.x_mm = robot_position.x_mm;
+      pos_init.y_mm = robot_position.y_mm;
+      pos_init.theta_rad = (atan2 (y - pos_init.y_mm, x - pos_init.x_mm)
+	  + translation_direction * M_PI) * 180.0 / M_PI;
     }
   move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
 }

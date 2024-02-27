@@ -43,6 +43,8 @@ extern volatile uint32_t sys_time_half_ms;
 uint16_t duty_cycle_test = 100;
 bool move_finished;
 
+extern target plant_blue1;
+
 position pos_test =
   { 0, 0, 0 };
 uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
@@ -132,6 +134,7 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      pwm_start ();
+//	      set_starting_position(450, 1000, 0);
 	      regulation_on = true;
 	    }
 	  break;
@@ -142,16 +145,17 @@ main (void)
 	  break;
 
 	case 1:
-	  if (solar_test () && timer_delay_nonblocking (2000))
+//	  turn_to_pos(plant_blue1.x, plant_blue1.y, 0);
+	  if (go_home_test () && timer_delay_nonblocking (2000))
 	    state_main = END;
 	  break;
 
 	case END:
-	  timer_stop_sys_time ();
-	  stop_right_wheel ();
-	  stop_left_wheel ();
-	  pwm_duty_cycle_left (0);
-	  pwm_duty_cycle_right (0);
+//	  timer_stop_sys_time ();
+//	  stop_right_wheel ();
+//	  stop_left_wheel ();
+//	  pwm_duty_cycle_left (0);
+//	  pwm_duty_cycle_right (0);
 	  break;
 	}
     } // while
