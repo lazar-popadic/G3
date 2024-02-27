@@ -15,7 +15,7 @@ volatile uint8_t task_counter = 1;
 extern volatile uint8_t sensors_case_timer;
 
 bool
-task_go_home (target home_array)
+task_go_home (target** home_array_pointer)
 {
   switch (task_case)
     {
@@ -28,8 +28,8 @@ task_go_home (target home_array)
 	  set_translation_speed_limit (1.0);
 	  sensors_case_timer = SENSORS_OFF;
 	}
-      turn_to_pos ((&home_array + task_counter * sizeof(target))->x,
-		   (&home_array + task_counter * sizeof(target))->y,
+      turn_to_pos ((*home_array_pointer + task_counter * sizeof(target))->x,
+		   (*home_array_pointer + task_counter * sizeof(target))->y,
 		   WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
@@ -51,8 +51,8 @@ task_go_home (target home_array)
 	  set_translation_speed_limit (1.0);
 	  sensors_case_timer = SENSORS_HIGH_AND_LOW;
 	}
-      move_to_xy ((&home_array + task_counter * sizeof(target))->x,
-		  (&home_array + task_counter * sizeof(target))->y,
+      move_to_xy ((*home_array_pointer + task_counter * sizeof(target))->x,
+		  (*home_array_pointer + task_counter * sizeof(target))->y,
 		  WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{

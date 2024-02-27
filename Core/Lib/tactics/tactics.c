@@ -68,6 +68,7 @@ volatile target home_yellow3 =
 // TODO: smisli za solare kako cemo
 
 target homes[3];
+target* homes_pointer = homes;
 
 bool
 solar_test ()
@@ -371,7 +372,7 @@ go_home_test ()
       tactic_state_init = false;
       break;
     case 1:
-      if(task_go_home (*homes))
+      if(task_go_home (homes_pointer))
 	{
 	  tactic_state = RETURN;
 	  tactic_state_init = false;

@@ -31,6 +31,8 @@ void
 set_transition_factor (float factor);
 
 void
+move_to_xy_offset (float x, float y, int8_t translation_direction, float offset);
+void
 turn_to_pos (float x, float y, int8_t translation_direction);
 void
 move_full (float x, float y, float theta_degrees, int8_t translation_direction);

@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "../timer/timer.h"
+#include "../tactics/task_modules.h"
 
 #define W_LIMIT		5.0
 #define V_LIMIT		1.0
@@ -41,6 +42,7 @@ int8_t init_rot_dir = 0, final_rot_dir = 0, tran_dir = 1;
 extern volatile uint8_t regulation_phase;
 extern volatile float V_limit, w_limit;
 volatile float transition_factor = 1.0;
+target offset;
 
 void
 calculate_movement ()
@@ -124,6 +126,23 @@ turn_to_pos (float x, float y, int8_t translation_direction)
 	  + translation_direction * M_PI) * 180.0 / M_PI;
     }
   move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
+}
+
+void
+move_to_xy_offset (float x, float y, int8_t translation_direction,
+		   float dist_offset)
+{
+  if (!movement_init)
+    {
+      float theta_target_rad = atan2 (
+	  y - robot_position.y_mm,
+	  x - robot_position.x_mm) + translation_direction * M_PI;
+      offset.x = dist_offset * cos (theta_target_rad);
+      offset.y = dist_offset * sin (theta_target_rad);
+      movement_init = true;
+    }
+  move_full (x - offset.x, y - offset.y, robot_position.theta_rad,
+	     translation_direction);
 }
 
 void

@@ -18,6 +18,6 @@ typedef struct
 } target;
 
 bool
-task_go_home (target home_array);
+task_go_home (target** home_array_pointer);
 
 #endif /* LIB_TACTICS_TASK_MODULES_H_ */
