@@ -42,5 +42,13 @@ void
 move_to_angle (float theta);
 void
 move_on_direction (float distance, int8_t direction);
+void
+hold_position ();
+void
+continue_movement ();
+void
+reset_movement ();
+void
+hold_position_with_reg ();
 
 #endif /* LIB_MOVEMENT_MOVEMENT_H_ */

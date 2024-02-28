@@ -24,5 +24,7 @@ bool
 solar_test ();
 bool
 go_home_test ();
+bool
+pickup_plant_test ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

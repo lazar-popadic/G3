@@ -18,7 +18,7 @@
 
 static const float KP_TRAN = 120.0;
 
-static const float KP_ROT = 24.0;
+static const float KP_ROT = 32.0;
 
 extern volatile double V_m_s;
 extern volatile double w_rad_s;

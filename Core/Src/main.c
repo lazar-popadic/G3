@@ -134,22 +134,27 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      pwm_start ();
-//	      set_starting_position(450, 1000, 0);
+	      set_starting_position (0, 0, 0);
 	      regulation_on = true;
 	    }
 	  break;
 	case 0:
 	  solar_in_l ();
-	  if (timer_delay_nonblocking(100))
+	  if (timer_delay_nonblocking (100))
 	    state_main = 1;
 	  break;
 
 	case 1:
-//	  turn_to_pos(plant_blue1.x, plant_blue1.y, 0);
-	  if (go_home_test () && timer_delay_nonblocking (2000))
+	  if (pickup_plant_test () && timer_delay_nonblocking (2000))
 	    state_main = END;
 	  break;
 
+//	case 2:
+//	  set_translation_speed_limit(0.1);
+//	  move_to_xy_offset (1000, 0, WALL, -300);
+//	  if (movement_finished () && timer_delay_nonblocking (100))
+//	    state_main++;
+//	  break;
 	case END:
 //	  timer_stop_sys_time ();
 //	  stop_right_wheel ();

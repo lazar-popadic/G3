@@ -69,6 +69,10 @@ volatile target home_yellow3 =
 
 target homes[3];
 target* homes_pointer = homes;
+target plants[6];
+target* plants_pointer = plants;
+target planters[6];
+target* planters_pointer = planters;
 
 bool
 solar_test ()
@@ -362,17 +366,53 @@ go_home_test ()
       if (!tactic_state_init)
 	{
 	  tactic_state_init = true;
-	  set_starting_position (450-80, 1000, 0);
+	  set_starting_position (450 - 80, 1000, 0);
 	  homes[0] = home_blue2;
 	  homes[1] = home_blue1;
-	  homes[2] = home_blue3;
+	  homes[2] = home_yellow3;
 	  tactic_finished = false;
 	}
       tactic_state++;
       tactic_state_init = false;
       break;
     case 1:
-      if(task_go_home (homes_pointer))
+      if (task_go_home (homes_pointer))
+	{
+	  tactic_state = RETURN;
+	  tactic_state_init = false;
+	}
+      break;
+    case RETURN:
+      tactic_finished = true;
+      break;
+
+    }
+  return tactic_finished;
+}
+
+bool
+pickup_plant_test ()
+{
+  switch (tactic_state)
+    {
+    case 0:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  set_starting_position (450-80, 1000, 0);
+	  plants[0] = plant_blue1;
+	  plants[1] = plant_blue2;
+	  plants[2] = plant_central1;
+	  plants[3] = plant_blue2;
+	  plants[4] = plant_blue1;
+	  plants[5] = plant_central1;
+	  tactic_finished = false;
+	}
+      tactic_state++;
+      tactic_state_init = false;
+      break;
+    case 1:
+      if(task_pickup_plants (plants_pointer))
 	{
 	  tactic_state = RETURN;
 	  tactic_state_init = false;

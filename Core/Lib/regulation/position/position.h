@@ -13,8 +13,8 @@
 #define EPSILON_THETA_SMALL	0.5	*0.0175		// 1.0 stepena
 #define EPSILON_THETA_MEDIUM	0.5	*0.0175		// 1.5 stepeni
 #define EPSILON_THETA_BIG	15	*0.0175		// 15 stepeni
-#define EPSILON_DISTANCE	25			// mm
-#define EPSILON_DISTANCE_ROT	60
+#define EPSILON_DISTANCE	30			// mm
+#define EPSILON_DISTANCE_ROT	120
 
 #define ROT_TO_ANGLE		0
 #define ROT_TO_POS		1

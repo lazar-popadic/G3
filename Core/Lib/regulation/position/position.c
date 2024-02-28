@@ -16,11 +16,11 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		2.8
+#define THETA_I_LIMIT		4.0
 #define DISTANCE_I_LIMIT	0.36
 
-static const float KP_ROT = 56.0;
-static const float KI_ROT = 1.5;	//bilo 1
+static const float KP_ROT = 42.0;
+static const float KI_ROT = 1.6;	//bilo 1
 
 static const float KP_TRAN = 0.032;
 static const float KI_TRAN = 0.36;
@@ -36,6 +36,7 @@ volatile float V_ref = 0, w_ref = 0;
 extern volatile float V_limit, w_limit;
 
 volatile uint8_t regulation_phase = 0;
+extern volatile float transition_factor;
 
 void
 regulation_position ()
@@ -104,7 +105,7 @@ regulation_position ()
 	regulation_translation (distance);
       // TODO: vidi koja od ovih je bolja
       w_ref = 0;
-//      regulation_rotation (theta_to_pos, 0.2, 0.2);
+//      regulation_rotation (theta_to_pos, 0.2, 0.05);
       break;
     }
 
