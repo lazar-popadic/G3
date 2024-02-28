@@ -20,5 +20,15 @@ void
 solar_out_r ();
 void
 solar_in_r ();
+void
+mechanism_up ();
+void
+mechanism_half_up ();
+void
+mechanism_down ();
+void
+mechanism_open ();
+void
+mechanism_close ();
 
 #endif /* LIB_MODULES_AX12A_AX12A_H_ */

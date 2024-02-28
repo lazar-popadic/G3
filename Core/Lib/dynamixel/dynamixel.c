@@ -67,3 +67,34 @@ solar_in_r ()
 {
   ax_move (9, 1023, 500);
 }
+
+void
+mechanism_up ()
+{
+  ax_move (7, 1023, 50);
+}
+
+void
+mechanism_half_up ()
+{
+  ax_move (7, 512, 50);
+}
+
+void
+mechanism_down ()
+{
+  ax_move (7, 0, 50);
+}
+
+void
+mechanism_open ()
+{
+  ax_move (4, 800, 200);
+}
+
+void
+mechanism_close ()
+{
+  ax_move (4, 300, 200);
+}
+
