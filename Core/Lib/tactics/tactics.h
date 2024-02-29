@@ -13,15 +13,6 @@
 #define START 255
 #define END 250
 
-
-bool
-grabulja_test ();
-bool
-sensors_timer_test ();
-bool
-movement_test1();
-bool
-solar_test ();
 bool
 go_home_test ();
 bool

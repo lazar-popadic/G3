@@ -65,297 +65,21 @@ volatile target home_yellow2 =
   { 3000 - 450, 450 };
 volatile target home_yellow3 =
   { 450, 1000 };
+
+volatile target solar_blue =
+  { 500, 190 };
+volatile target solar_central =
+  { 1500, 190 };
+volatile target solar_yellow =
+  { 2500, 190 };
 // TODO: smisli za solare kako cemo
 
 target homes[3];
-target* homes_pointer = homes;
+target *homes_pointer = homes;
 target plants[6];
-target* plants_pointer = plants;
+target *plants_pointer = plants;
 target planters[6];
-target* planters_pointer = planters;
-
-bool
-solar_test ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_starting_position (3000 - 450 + 80, 450 - 160, 180);
-	  set_translation_speed_limit (0.2);
-	  set_rotation_speed_limit (1.0);
-	  tactic_finished = false;
-	}
-      move_full (3000 - 265, 160 + 30, 180, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (2000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-
-      break;
-
-    case 1:
-      solar_out_l ();
-      if (timer_delay_nonblocking (2000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 2:
-      solar_in_l ();
-      if (timer_delay_nonblocking (1000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 3:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_translation_speed_limit (1.0);
-	  set_rotation_speed_limit (1.0);
-	}
-      move_to_xy (3000 - 300 - 225, 160 + 30, WALL);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 4:
-      solar_out_l ();
-      if (timer_delay_nonblocking (2000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 5:
-      solar_in_l ();
-      if (timer_delay_nonblocking (1000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 6:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_translation_speed_limit (1.0);
-	  set_rotation_speed_limit (1.0);
-	}
-      move_to_xy (3000 - 290 - 450, 160 + 30, WALL);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 7:
-      solar_out_l ();
-      if (timer_delay_nonblocking (2000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 8:
-      solar_in_l ();
-      if (timer_delay_nonblocking (1000))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 9:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_translation_speed_limit (1.0);
-	  set_rotation_speed_limit (0.2);
-	}
-      solar_in_r ();
-      if (timer_delay_nonblocking (20))
-	move_to_xy (3000 - 450, 2000 - 450, WALL);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state_init = false;
-	  tactic_state = RETURN;
-	}
-      break;
-    case RETURN:
-      tactic_finished = true;
-      break;
-    }
-  return tactic_finished;
-}
-
-bool
-grabulja_test ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_starting_position (3000 - 450 + 80, 450 - 160, 0);
-	  tactic_finished = false;
-	}
-      set_translation_speed_limit (1);
-      move_to_xy (1000, 2000 - 450 + 80, WALL);
-      ax_move (4, 312, 200);
-
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 1:
-      set_translation_speed_limit (0.2);
-      move_to_xy (1000, 1200, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-    case 2:
-      ax_move (7, 512 - 50, 50);
-      if (timer_delay_nonblocking (1000))
-	tactic_state++;
-      break;
-    case 3:
-      ax_move (4, 800, 200);
-      if (timer_delay_nonblocking (1000))
-	tactic_state++;
-      break;
-    case 4:
-      ax_move (7, 512 + 100, 200);
-      if (timer_delay_nonblocking (1000))
-	tactic_state++;
-      break;
-    case 5:
-      set_translation_speed_limit (1.0);
-      move_to_xy (180, 2000 - 612.5, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	tactic_state++;
-      break;
-    case 6:
-      set_translation_speed_limit (0.1);
-      move_to_xy (80, 2000 - 612.5, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	tactic_state = RETURN;
-      break;
-    case RETURN:
-      tactic_finished = true;
-      break;
-    }
-  return tactic_finished;
-}
-
-bool
-sensors_timer_test ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  tactic_finished = false;
-	  io_led (false);
-	  pwm_start ();
-	}
-      tactic_state++;
-      tactic_state_init = false;
-      break;
-    case SENSORS_HIGH:
-      sensors_case_timer = SENSORS_HIGH;
-      break;
-    case SENSORS_LOW:
-      sensors_case_timer = SENSORS_LOW;
-      break;
-    case SENSORS_BACK:
-      sensors_case_timer = SENSORS_BACK;
-      break;
-    }
-  io_led (sensors_state);
-  return tactic_finished;
-}
-
-bool
-movement_test1 ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_starting_position (0, 2000 - 80, 0);
-	  tactic_finished = false;
-	}
-      tactic_state++;
-      tactic_state_init = false;
-      break;
-
-    case 1:
-      set_rotation_speed_limit (0.1);
-      set_translation_speed_limit (1.0);
-      move_to_angle (10);
-//      move_to_xy (0, 500, WALL);
-      if (movement_finished () && timer_delay_nonblocking (5000))
-	{
-//	  tactic_state = RETURN;
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-
-    case 2:
-      set_rotation_speed_limit (1.0);
-//      set_translation_speed_limit (1.0);
-//      move_to_xy (0, 2000 - 80 - 200, MECHANISM);
-      move_to_angle (90);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-//	  tactic_state++;
-	  tactic_state = RETURN;
-	  tactic_state_init = false;
-	}
-      break;
-
-    case 3:
-      move_to_xy (450, 2000 - 450, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state++;
-	}
-      break;
-
-    case 4:
-      move_to_xy (450, 1550, 0);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  tactic_state = RETURN;
-	  tactic_state_init = false;
-	}
-      break;
-
-    case RETURN:
-      tactic_finished = true;
-      break;
-    }
-  return tactic_finished;
-}
+target *planters_pointer = planters;
 
 bool
 go_home_test ()
@@ -399,7 +123,7 @@ pickup_plant_test ()
       if (!tactic_state_init)
 	{
 	  tactic_state_init = true;
-	  set_starting_position (450-80, 1000, 0);
+	  set_starting_position (450 - 80, 1000, 0);
 	  plants[0] = plant_blue1;
 	  plants[1] = plant_blue2;
 	  plants[2] = plant_central1;
@@ -412,7 +136,7 @@ pickup_plant_test ()
       tactic_state_init = false;
       break;
     case 1:
-      if(task_pickup_plants (plants_pointer))
+      if (task_pickup_plants (plants_pointer))
 	{
 	  tactic_state = RETURN;
 	  tactic_state_init = false;
@@ -423,8 +147,8 @@ pickup_plant_test ()
       break;
 
     }
-return tactic_finished;
-    }
+  return tactic_finished;
+}
 
 //case BRAKE:
 //if (!tactic_state_init)

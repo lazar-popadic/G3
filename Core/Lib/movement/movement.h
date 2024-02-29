@@ -51,4 +51,13 @@ reset_movement ();
 void
 hold_position_with_reg ();
 
+void
+reset_x_coord_close ();
+void
+reset_y_coord_close ();
+void
+reset_x_coord_far ();
+void
+reset_y_coord_far ();
+
 #endif /* LIB_MOVEMENT_MOVEMENT_H_ */

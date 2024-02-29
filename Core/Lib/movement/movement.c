@@ -224,3 +224,31 @@ reset_movement ()
 {
   movement_init = false;
 }
+
+void
+reset_x_coord_close ()
+{
+  robot_position.x_mm = 90;
+  robot_position.theta_rad = M_PI;
+}
+
+void
+reset_y_coord_close ()
+{
+  robot_position.y_mm = 90;
+  robot_position.theta_rad = -M_PI * 0.5;
+}
+
+void
+reset_x_coord_far ()
+{
+  robot_position.x_mm = 3000 - 90;
+  robot_position.theta_rad = 0;
+}
+
+void
+reset_y_coord_far ()
+{
+  robot_position.y_mm = 2000 - 90;
+  robot_position.theta_rad = M_PI * 0.5;
+}

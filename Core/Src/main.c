@@ -138,23 +138,12 @@ main (void)
 	      regulation_on = true;
 	    }
 	  break;
-	case 0:
-	  solar_in_l ();
-	  if (timer_delay_nonblocking (100))
-	    state_main = 1;
-	  break;
 
-	case 1:
-	  if (pickup_plant_test () && timer_delay_nonblocking (2000))
+	case 0:
+	  if (positioning_solar_blue () && timer_delay_nonblocking (2000))
 	    state_main = END;
 	  break;
 
-//	case 2:
-//	  set_translation_speed_limit(0.1);
-//	  move_to_xy_offset (1000, 0, WALL, -300);
-//	  if (movement_finished () && timer_delay_nonblocking (100))
-//	    state_main++;
-//	  break;
 	case END:
 //	  timer_stop_sys_time ();
 //	  stop_right_wheel ();

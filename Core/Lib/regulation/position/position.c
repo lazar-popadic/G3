@@ -79,7 +79,7 @@ regulation_position ()
 //	  regulation_rotation_finished();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
-      if (fabs (theta_to_pos) > EPSILON_THETA_BIG*5)
+      if (fabs (theta_to_pos) > EPSILON_THETA_BIG*2.0)
 	{
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
@@ -94,18 +94,17 @@ regulation_position ()
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
-      if (fabs (distance) > EPSILON_DISTANCE_ROT*5)
-	{
-	  regulation_translation_finished ();
-	  regulation_phase = ROT_TO_POS;
-	}
+      // TODO: vidi zasto ovo ne radi kako treba
+//      if (fabs (distance) > EPSILON_DISTANCE_ROT*2.0)
+//	{
+//	  regulation_translation_finished ();
+//	  regulation_phase = ROT_TO_POS;
+//	}
       if (fabs (theta_to_pos) > (M_PI / 2))
 	regulation_translation (-distance);
       else
 	regulation_translation (distance);
-      // TODO: vidi koja od ovih je bolja
       w_ref = 0;
-//      regulation_rotation (theta_to_pos, 0.2, 0.05);
       break;
     }
 
