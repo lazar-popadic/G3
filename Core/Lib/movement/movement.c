@@ -16,8 +16,8 @@
 #include "../timer/timer.h"
 #include "../tactics/task_modules.h"
 
-#define W_LIMIT		5.0
-#define V_LIMIT		1.0
+#define W_LIMIT		0.5
+#define V_LIMIT		0.1
 
 // meri
 extern volatile position robot_position;
@@ -122,7 +122,7 @@ move_to_angle (float theta_degrees)
       pos_init.y_mm = robot_position.y_mm;
       pos_init.theta_rad = theta_degrees;
     }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad * 180.0 / M_PI,
+  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad ,
 	     0);
 }
 

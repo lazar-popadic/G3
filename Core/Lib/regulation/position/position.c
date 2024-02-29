@@ -16,11 +16,11 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		4.0
+#define THETA_I_LIMIT		4.2
 #define DISTANCE_I_LIMIT	0.36
 
-static const float KP_ROT = 42.0;
-static const float KI_ROT = 1.6;	//bilo 1
+static const float KP_ROT = 32.0;
+static const float KI_ROT = 1.2;	//bilo 1
 
 static const float KP_TRAN = 0.032;
 static const float KI_TRAN = 0.36;
@@ -47,7 +47,7 @@ regulation_position ()
 
     {
     case ROT_TO_ANGLE:
-      if (fabs (distance) > EPSILON_DISTANCE && no_movement ())
+      if (fabs (distance) > EPSILON_DISTANCE*1.5 && no_movement ())
 	{
 	  regulation_phase = ROT_TO_POS;
 	}
@@ -79,7 +79,7 @@ regulation_position ()
 //	  regulation_rotation_finished();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
-      if (fabs (theta_to_pos) > EPSILON_THETA_BIG*2.0)
+      if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
 	{
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
@@ -95,11 +95,11 @@ regulation_position ()
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       // TODO: vidi zasto ovo ne radi kako treba
-//      if (fabs (distance) > EPSILON_DISTANCE_ROT*2.0)
-//	{
-//	  regulation_translation_finished ();
-//	  regulation_phase = ROT_TO_POS;
-//	}
+      if (fabs (distance) > EPSILON_DISTANCE_ROT*2.0)
+	{
+	  regulation_translation_finished ();
+	  regulation_phase = ROT_TO_POS;
+	}
       if (fabs (theta_to_pos) > (M_PI / 2))
 	regulation_translation (-distance);
       else

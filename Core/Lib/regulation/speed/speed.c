@@ -18,7 +18,7 @@
 
 static const float KP_TRAN = 120.0;
 
-static const float KP_ROT = 32.0;	// TODO: povecaj ovde, smanji u pozicionoj
+static const float KP_ROT = 28.0;	// TODO: povecaj ovde, smanji u pozicionoj
 
 extern volatile double V_m_s;
 extern volatile double w_rad_s;

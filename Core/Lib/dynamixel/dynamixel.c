@@ -47,7 +47,7 @@ ax_move (uint8_t id, uint16_t angle, uint16_t speed)
 void
 solar_out_l ()
 {
-  ax_move (10, 800, 400);
+  ax_move (10, 800, 500);
 }
 
 void
@@ -59,7 +59,7 @@ solar_in_l ()
 void
 solar_out_r ()
 {
-  ax_move (9, 1023-800, 400);
+  ax_move (9, 1023-800, 500);
 }
 
 void

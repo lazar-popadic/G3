@@ -140,7 +140,14 @@ main (void)
 	  break;
 
 	case 0:
-	  if (positioning_solar_blue () && timer_delay_nonblocking (2000))
+//	  set_translation_speed_limit(0.4);
+//	  move_on_direction(1000, MECHANISM);
+	  if (positioning_solar_blue ())
+	    state_main++;
+	  break;
+
+	case 1:
+	  if (task_solar_from_start (BLUE))
 	    state_main = END;
 	  break;
 
@@ -150,6 +157,7 @@ main (void)
 //	  stop_left_wheel ();
 //	  pwm_duty_cycle_left (0);
 //	  pwm_duty_cycle_right (0);
+	  hold_position ();
 	  break;
 	}
     } // while
