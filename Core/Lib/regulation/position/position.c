@@ -16,14 +16,14 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		4.2
-#define DISTANCE_I_LIMIT	0.36
+#define THETA_I_LIMIT		3.2
+#define DISTANCE_I_LIMIT	3.0
 
-static const float KP_ROT = 32.0;
-static const float KI_ROT = 1.2;	//bilo 1
+static const float KP_ROT = 28.0;
+static const float KI_ROT = 0.8;	//bilo 1
 
-static const float KP_TRAN = 0.032;
-static const float KI_TRAN = 0.36;
+static const float KP_TRAN = 0.024;
+static const float KI_TRAN = 1.0;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -95,11 +95,11 @@ regulation_position ()
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       // TODO: vidi zasto ovo ne radi kako treba
-      if (fabs (distance) > EPSILON_DISTANCE_ROT*2.0)
-	{
-	  regulation_translation_finished ();
-	  regulation_phase = ROT_TO_POS;
-	}
+//      if (fabs (distance) > EPSILON_DISTANCE_ROT*5.0)
+//	{
+//	  regulation_translation_finished ();
+//	  regulation_phase = ROT_TO_POS;
+//	}
       if (fabs (theta_to_pos) > (M_PI / 2))
 	regulation_translation (-distance);
       else
@@ -138,7 +138,7 @@ regulation_translation (float distance_er)
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i;
   V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.14);
+  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.16);
 }
 
 void

@@ -16,9 +16,9 @@
 #define W_LIMIT		1200
 #define U_LIMIT		1200
 
-static const float KP_TRAN = 120.0;
+static const float KP_TRAN = 75.0;
 
-static const float KP_ROT = 28.0;	// TODO: povecaj ovde, smanji u pozicionoj
+static const float KP_ROT = 25.0;
 
 extern volatile double V_m_s;
 extern volatile double w_rad_s;

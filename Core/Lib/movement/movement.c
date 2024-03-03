@@ -16,8 +16,8 @@
 #include "../timer/timer.h"
 #include "../tactics/task_modules.h"
 
-#define W_LIMIT		0.5
-#define V_LIMIT		0.1
+#define W_LIMIT		0.1
+#define V_LIMIT		0.05
 
 // meri
 extern volatile position robot_position;
