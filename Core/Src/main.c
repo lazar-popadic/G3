@@ -35,7 +35,6 @@
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
 bool state_main_init = false;
-uint8_t state_debug = 0;
 
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
@@ -53,6 +52,8 @@ extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
 int16_t calib1 = 512;
 int16_t calib2 = 512;
+volatile float ref_test;
+extern volatile float V_ref, w_ref;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -119,6 +120,7 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms * 0.0005;
+//      w_ref = ref_test;
 
 //      if (timer_end ())
 //      state_main = END;
@@ -140,8 +142,12 @@ main (void)
 	  break;
 
 	case 0:
-//	  set_translation_speed_limit(1.0);
-//	  move_on_direction(1000, WALL);
+//	  pwm_duty_cycle_left ((uint16_t) ref_test);
+//	  pwm_duty_cycle_right ((uint16_t) ref_test);
+//	  set_translation_speed_limit (1.0);
+//	  move_on_direction(2500, WALL);
+//	  if (movement_finished () && timer_delay_nonblocking (100))
+//	    state_main = END;
 	  if (positioning_solar_blue ())
 	    state_main++;
 	  break;

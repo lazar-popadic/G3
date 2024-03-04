@@ -20,6 +20,8 @@ regulation_init ();
 float
 float_saturation (float signal, float MAX, float MIN);
 float
+float_saturation2 (float signal, float MAX, float MIN, float limit);
+float
 float_ramp (float signal, float desired_value, float slope);
 float
 float_ramp2 (float signal, float desired_value, float slope_acceleration, float slope_deceleration);

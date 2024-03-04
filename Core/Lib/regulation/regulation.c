@@ -31,6 +31,18 @@ float_saturation (float signal, float MAX, float MIN)
   return signal;
 }
 
+float
+float_saturation2 (float signal, float MAX, float MIN, float limit)
+{
+  if (fabs (signal) > MAX)
+    return sign (signal) * MAX;
+  if (fabs (signal) < limit)
+    return 0;
+  if (fabs (signal) < MIN)
+    return sign (signal) * MIN;
+  return signal;
+}
+
 int32_t
 int_saturation (int32_t signal, int32_t MAX, int32_t MIN)
 {
