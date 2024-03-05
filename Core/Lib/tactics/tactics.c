@@ -150,6 +150,66 @@ pickup_plant_test ()
   return tactic_finished;
 }
 
+bool
+test_tactic_yellow ()
+{
+  switch (tactic_state)
+    {
+    case 0:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  plants[0] = plant_central2;
+	  plants[1] = plant_yellow1;
+	  plants[2] = plant_yellow2;
+	  plants[3] = plant_central1;
+	  plants[4] = plant_blue2;
+	  plants[5] = plant_blue1;
+	  planters[0] = planter_yellow2;
+	  planters[1] = planter_yellow3;
+	  planters[2] = planter_yellow1;
+	  tactic_finished = false;
+	}
+      tactic_state++;
+      tactic_state_init = false;
+      break;
+    case 1:
+      if (task_solar_from_start (YELLOW))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 2:
+      if (task_pickup_plants (plants_pointer))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 3:
+      if (task_central_solar_without (YELLOW))
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 4:
+      if (task_dropoff_plants_x (planters_pointer, YELLOW))
+	{
+	  tactic_state = RETURN;
+	  tactic_state_init = false;
+	}
+      break;
+    case RETURN:
+      tactic_finished = true;
+      break;
+
+    }
+  return tactic_finished;
+
+}
+
 //case BRAKE:
 //if (!tactic_state_init)
 //  {

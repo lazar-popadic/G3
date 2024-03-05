@@ -24,9 +24,13 @@ task_go_home (target* home_array_pointer);
 bool
 task_pickup_plants (target *plant_array_pointer);
 bool
+task_dropoff_plants_x (target *planter_array_pointer, uint8_t side);
+bool
 task_solar_from_start (uint8_t side);
 bool
 task_central_solar(uint8_t side);
+bool
+task_central_solar_without (uint8_t side);
 bool
 positioning_solar_blue ();
 bool

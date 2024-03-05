@@ -148,17 +148,12 @@ main (void)
 //	  move_on_direction(2500, WALL);
 //	  if (movement_finished () && timer_delay_nonblocking (100))
 //	    state_main = END;
-	  if (positioning_solar_blue ())
+	  if (positioning_solar_yellow ())
 	    state_main++;
 	  break;
 
 	case 1:
-	  if (task_solar_from_start(BLUE))
-	    state_main ++;
-	  break;
-
-	case 2:
-	  if (task_central_solar (BLUE))
+	  if (test_tactic_yellow())
 	    state_main = END;
 	  break;
 
