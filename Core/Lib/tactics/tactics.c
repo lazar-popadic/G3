@@ -40,17 +40,17 @@ volatile target plant_yellow1 =
 volatile target plant_yellow2 =
   { 2000, 700 };
 
-volatile target planter_blue1 =
+volatile target planter_blue_y =
   { 600 + (325 / 2), 2000 - 80 };
-volatile target planter_blue2 =
+volatile target planter_blue_x_close =
   { 80, 2000 - 450 - (325 / 2) };
-volatile target planter_blue3 =
+volatile target planter_blue_x_far =
   { 3000 - 80, 450 + (325 / 2) };
-volatile target planter_yellow1 =
+volatile target planter_yellow_y =
   { 3000 - 600 - (325 / 2), 2000 - 80 };
-volatile target planter_yellow2 =
+volatile target planter_yellow_x_close =
   { 3000 - 80, 2000 - 450 - (325 / 2) };
-volatile target planter_yellow3 =
+volatile target planter_yellow_x_far =
   { 80, 450 + (325 / 2) };
 
 volatile target home_blue1 =
@@ -78,8 +78,6 @@ target homes[3];
 target *homes_pointer = homes;
 target plants[6];
 target *plants_pointer = plants;
-target planters[6];
-target *planters_pointer = planters;
 
 bool
 go_home_test ()
@@ -165,10 +163,6 @@ test_tactic_yellow ()
 	  plants[3] = plant_central1;
 	  plants[4] = plant_blue2;
 	  plants[5] = plant_blue1;
-
-	  planters[0] = planter_yellow2;
-	  planters[1] = planter_yellow3;
-	  planters[2] = planter_yellow1;
 	  tactic_finished = false;
 	}
       tactic_state++;
@@ -196,7 +190,7 @@ test_tactic_yellow ()
 	}
       break;
     case 4:
-      if (task_dropoff_plants_x (planters_pointer, YELLOW))
+      if (task_dropoff_plants_x_close (YELLOW))
 	{
 	  tactic_state = RETURN;
 	  tactic_state_init = false;

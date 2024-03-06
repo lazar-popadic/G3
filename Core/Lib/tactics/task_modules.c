@@ -15,6 +15,12 @@ volatile uint8_t task_counter = 0;
 extern volatile uint8_t sensors_case_timer;
 extern volatile float transition_factor;
 extern volatile target solar_central;
+extern volatile target planter_blue_y;
+extern volatile target planter_blue_x_close;
+extern volatile target planter_blue_x_far;
+extern volatile target planter_yellow_y;
+extern volatile target planter_yellow_x_close;
+extern volatile target planter_yellow_x_far;
 
 static void
 interrupted_func (uint8_t no_targets);
@@ -186,7 +192,7 @@ task_pickup_plants (target *plant_array_pointer)
 }
 
 bool
-task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
+task_dropoff_plants_x_close (uint8_t side)	//TODO: promeni u 3 funkcije, y ,x_close, x_far
 {
   switch (task_case)
     {
@@ -199,8 +205,12 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
 	set_translation_speed_limit (1.0);
 	transition_factor = 1.0;
       }
-      move_full (side * 3000 - (2 * side - 1) * 200, 1000, (1 - side) * 180,
-      WALL);
+      if (side == BLUE)
+	move_full(200, 1000, 180, WALL);
+      else
+	move_full(3000-200, 1000, 0, WALL);
+//      move_full (side * 3000 - (2 * side - 1) * 200, 1000, (1 - side) * 180,
+//      WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -221,7 +231,10 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
 	}
       break;
     case 2:
-      reset_x_coord_far ();	//TODO ovde ne moze samo far, odvoj nekako
+      if (side == BLUE)
+	reset_x_coord_close();
+      else
+	reset_x_coord_far ();
       reset_movement ();
       task_case++;
       break;
@@ -231,7 +244,7 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
 	task_finished = false;
 	set_translation_speed_limit (1.0);
       }
-      move_on_direction (75, MECHANISM);
+      move_on_direction (120, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -240,8 +253,12 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
       break;
 
     case 4:
-      move_full (side * 3000 - (2 * side - 1) * 200,
-		 (planter_array_pointer + task_counter)->y, side * 180, WALL);
+      if (side == BLUE)
+	move_full(planter_blue_x_close.x, planter_blue_x_close.y, 0, MECHANISM);
+      else
+	move_full(planter_yellow_x_close.x, planter_yellow_x_close.y, 180, MECHANISM);
+//      move_full (side * 3000 - (2 * side - 1) * 200,
+//		 (planter_array_pointer + task_counter)->y, side * 180, WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -277,6 +294,10 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
 	}
       break;
     case 8:
+      {
+	task_init = true;
+	set_translation_speed_limit (1.0);
+      }
       move_on_direction(150, WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
