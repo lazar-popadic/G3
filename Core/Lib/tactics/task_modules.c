@@ -209,11 +209,9 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
       break;
     case 1:
       {
-	sensors_case_timer = SENSORS_BACK;
 	task_init = true;
 	task_finished = false;
-	set_rotation_speed_limit (0.4);
-	set_translation_speed_limit (1.0);
+	set_translation_speed_limit (0.4);
       }
       move_on_direction (200, WALL);
       if (timer_delay_nonblocking (2000))
@@ -228,7 +226,12 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
       task_case++;
       break;
     case 3:
-      move_on_direction (100, MECHANISM);
+      {
+	task_init = true;
+	task_finished = false;
+	set_translation_speed_limit (1.0);
+      }
+      move_on_direction (75, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -237,17 +240,47 @@ task_dropoff_plants_x (target *planter_array_pointer, uint8_t side)
       break;
 
     case 4:
-      {
-	sensors_case_timer = SENSORS_BACK;
-	task_init = true;
-	task_finished = false;
-	set_rotation_speed_limit (0.4);
-	set_translation_speed_limit (1.0);
-      }
-      move_to_xy ((planter_array_pointer + task_counter)->x, 100, WALL);
+      move_full (side * 3000 - (2 * side - 1) * 200,
+		 (planter_array_pointer + task_counter)->y, side * 180, WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
+	  task_init = false;
+	}
+      break;
+    case 5:
+      {
+	task_init = true;
+	set_translation_speed_limit (0.4);
+      }
+      move_on_direction (150, MECHANISM);
+      if (timer_delay_nonblocking(3000))
+	{
+	  task_case++;
+	  task_init = false;
+	}
+      break;
+    case 6:
+      mechanism_half_down();
+      if (timer_delay_nonblocking(2000))
+	{
+	  task_case++;
+	  task_init = false;
+	}
+      break;
+    case 7:
+      mechanism_open();
+      if (timer_delay_nonblocking(2000))
+	{
+	  task_case++;
+	  task_init = false;
+	}
+      break;
+    case 8:
+      move_on_direction(150, WALL);
+      if (movement_finished () && timer_delay_nonblocking (100))
+	{
+	  task_case = 100;
 	  task_init = false;
 	}
       break;

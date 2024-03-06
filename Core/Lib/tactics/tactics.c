@@ -165,6 +165,7 @@ test_tactic_yellow ()
 	  plants[3] = plant_central1;
 	  plants[4] = plant_blue2;
 	  plants[5] = plant_blue1;
+
 	  planters[0] = planter_yellow2;
 	  planters[1] = planter_yellow3;
 	  planters[2] = planter_yellow1;

@@ -81,6 +81,12 @@ mechanism_half_up ()
 }
 
 void
+mechanism_half_down ()
+{
+  ax_move (7, 512, 50);
+}
+
+void
 mechanism_down ()
 {
   ax_move (7, 0, 50);
