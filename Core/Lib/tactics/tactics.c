@@ -26,6 +26,7 @@ volatile uint8_t alternate_move = 0;
 extern volatile uint8_t state_angle;
 
 float V_max_perc = 1.0, w_max_perc = 1.0;
+volatile int8_t current_task_status;
 
 volatile target plant_blue1 =
   { 1000, 1300 };
@@ -80,75 +81,6 @@ target plants[6];
 target *plants_pointer = plants;
 
 bool
-go_home_test ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_starting_position (450 - 80, 1000, 0);
-	  homes[0] = home_blue2;
-	  homes[1] = home_blue1;
-	  homes[2] = home_yellow3;
-	  tactic_finished = false;
-	}
-      tactic_state++;
-      tactic_state_init = false;
-      break;
-    case 1:
-      if (task_go_home (homes_pointer))
-	{
-	  tactic_state = RETURN;
-	  tactic_state_init = false;
-	}
-      break;
-    case RETURN:
-      tactic_finished = true;
-      break;
-
-    }
-  return tactic_finished;
-}
-
-bool
-pickup_plant_test ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  set_starting_position (450 - 80, 1000, 0);
-	  plants[0] = plant_blue1;
-	  plants[1] = plant_blue2;
-	  plants[2] = plant_central1;
-	  plants[3] = plant_blue2;
-	  plants[4] = plant_blue1;
-	  plants[5] = plant_central1;
-	  tactic_finished = false;
-	}
-      tactic_state++;
-      tactic_state_init = false;
-      break;
-    case 1:
-      if (task_pickup_plants (plants_pointer))
-	{
-	  tactic_state = RETURN;
-	  tactic_state_init = false;
-	}
-      break;
-    case RETURN:
-      tactic_finished = true;
-      break;
-
-    }
-  return tactic_finished;
-}
-
-bool
 test_tactic_yellow ()
 {
   switch (tactic_state)
@@ -163,34 +95,55 @@ test_tactic_yellow ()
 	  plants[3] = plant_central1;
 	  plants[4] = plant_blue2;
 	  plants[5] = plant_blue1;
+
+	  homes[0] = home_yellow2;
+	  homes[1] = home_yellow3;
+	  homes[2] = home_yellow1;
 	  tactic_finished = false;
 	}
       tactic_state++;
       tactic_state_init = false;
       break;
     case 1:
-      if (task_solar_from_start (YELLOW))
+      current_task_status = task_solar_from_start (YELLOW);
+      if (current_task_status == 1)
 	{
 	  tactic_state++;
 	  tactic_state_init = false;
 	}
       break;
     case 2:
-      if (task_pickup_plants (plants_pointer))
+      current_task_status = task_pickup_plants (plants_pointer, 2);
+      if (current_task_status == 1)
 	{
 	  tactic_state++;
 	  tactic_state_init = false;
 	}
+      else if (current_task_status == -1)
+	{
+	  tactic_state = 5;
+	  tactic_state_init = false;
+	}
       break;
     case 3:
-      if (task_central_solar_without (YELLOW))
+      current_task_status = task_central_solar_without (YELLOW);
+      if (current_task_status == 1)
 	{
 	  tactic_state++;
 	  tactic_state_init = false;
 	}
       break;
     case 4:
-      if (task_dropoff_plants_x_close (YELLOW))
+      current_task_status = task_dropoff_plants_x_close (YELLOW);
+      if (current_task_status == 1)
+	{
+	  tactic_state ++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 5:
+      current_task_status = task_go_home(homes_pointer);
+      if (current_task_status == 1)
 	{
 	  tactic_state = RETURN;
 	  tactic_state_init = false;

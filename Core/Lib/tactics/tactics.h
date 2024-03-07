@@ -14,10 +14,6 @@
 #define END 250
 
 bool
-go_home_test ();
-bool
-pickup_plant_test ();
-bool
 test_tactic_yellow ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */
