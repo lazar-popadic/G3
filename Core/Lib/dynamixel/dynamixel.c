@@ -71,36 +71,36 @@ solar_in_r ()
 void
 mechanism_up ()
 {
-  ax_move (7, 1023, 50);
+  ax_move (7, 768, 250);
 }
 
 void
 mechanism_half_up ()
 {
-  ax_move (7, 512, 50);
+  ax_move (7, 512, 100);
 }
 
 void
 mechanism_half_down ()
 {
-  ax_move (7, 512, 50);
+  ax_move (7, 666, 100);
 }
 
 void
 mechanism_down ()
 {
-  ax_move (7, 0, 50);
+  ax_move (7, 512, 250);
 }
 
 void
 mechanism_open ()
 {
-  ax_move (4, 800, 200);
+  ax_move (4, 472, 500);
 }
 
 void
 mechanism_close ()
 {
-  ax_move (4, 300, 200);
+  ax_move (4, 850, 200);
 }
 

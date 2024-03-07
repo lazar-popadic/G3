@@ -132,13 +132,13 @@ main (void)
 	  break;
 
 	case START:
-	  if (io_cinc ())
+//	  if (io_cinc ())
 	    {
 	      timer_start_sys_time ();
 	      state_main = 0;
-	      pwm_start ();
-	      set_starting_position (2820, 1000, 180);
-	      regulation_on = true;
+//	      pwm_start ();
+//	      set_starting_position (2820, 1000, 180);
+//	      regulation_on = true;
 	    }
 	  break;
 
