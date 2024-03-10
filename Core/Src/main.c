@@ -124,7 +124,7 @@ main (void)
 
 //      if (timer_end ())
 //      state_main = END;
-      ax_move(4, calib1, 500);
+//      ax_move(4, calib1, 500);
 
       switch (state_main)
 	{
@@ -136,35 +136,79 @@ main (void)
 	    {
 	      timer_start_sys_time ();
 	      state_main = 0;
-//	      pwm_start ();
-//	      set_starting_position (2820, 1000, 180);
-//	      regulation_on = true;
+	      pwm_start ();
+	      set_starting_position (2820, 1000, 180);
+	      regulation_on = true;
 	    }
 	  break;
-
-//	case 1:
-////	  pwm_duty_cycle_left ((uint16_t) ref_test);
-////	  pwm_duty_cycle_right ((uint16_t) ref_test);
-////	  set_translation_speed_limit (1.0);
-////	  move_on_direction(2500, WALL);
-////	  if (movement_finished () && timer_delay_nonblocking (100))
-////	    state_main = END;
-//	  if (positioning_solar_yellow ())
-//	    state_main++;
-//	  break;
+//
 //
 //	case 0:
-//	  if (test_tactic_yellow())
-//	    state_main = END;
+//	  mechanism_open();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main = 10;
+//	  break;
+//
+//	case 10:
+//	  mechanism_half_up();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 11:
+//	  mechanism_close();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 12:
+//	  mechanism_up();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 13:
+//	  mechanism_half_down();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 14:
+//	  mechanism_open();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 15:
+//	  mechanism_down();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
 //	  break;
 
+	case 0:
+//	  pwm_duty_cycle_left ((uint16_t) ref_test);
+//	  pwm_duty_cycle_right ((uint16_t) ref_test);
+//	  set_translation_speed_limit (1.0);
+//	  move_on_direction(2500, WALL);
+//	  if (movement_finished () && timer_delay_nonblocking (100))
+//	    state_main = END;
+	  mechanism_open();
+	  if (positioning_solar_blue ())
+	    state_main++;
+	  break;
+
+	case 1:
+	  if (test_tactic_blue())
+	    state_main = END;
+	  break;
+
 	case END:
-//	  timer_stop_sys_time ();
-//	  stop_right_wheel ();
-//	  stop_left_wheel ();
-//	  pwm_duty_cycle_left (0);
-//	  pwm_duty_cycle_right (0);
-//	  hold_position ();
+	  timer_stop_sys_time ();
+	  stop_right_wheel ();
+	  stop_left_wheel ();
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
+	  hold_position ();
 	  break;
 	}
     } // while

@@ -177,7 +177,7 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
       break;
     case 3:
       mechanism_half_up ();
-      if (timer_delay_nonblocking (200))
+      if (timer_delay_nonblocking (2000))
 	{
 	  task_case++;
 	  task_init = false;
@@ -185,7 +185,7 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
       break;
     case 4:
       mechanism_close ();
-      if (timer_delay_nonblocking (200))
+      if (timer_delay_nonblocking (2000))
 	{
 	  task_case++;
 	  task_init = false;
@@ -193,7 +193,7 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
       break;
     case 5:
       mechanism_up ();
-      if (timer_delay_nonblocking (200))
+      if (timer_delay_nonblocking (2000))
 	{
 	  task_case = 100;
 	  task_init = false;
@@ -228,11 +228,9 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 	transition_factor = 1.0;
       }
       if (side == BLUE)
-	move_full (200, 1000, 180, WALL);
+	move_full (250, 1000, 180, WALL);
       else
 	move_full (3000 - 200, 1000, 0, WALL);
-//      move_full (side * 3000 - (2 * side - 1) * 200, 1000, (1 - side) * 180,
-//      WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -240,12 +238,13 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 	}
       break;
     case 1:
-      {
-	task_init = true;
-	set_translation_speed_limit (0.4);
-      }
-      move_on_direction (200, WALL);
-      if (timer_delay_nonblocking (2000))
+      if (!task_init)
+	{
+	  task_init = true;
+	  set_translation_speed_limit (0.4);
+	}
+      move_on_direction (250, WALL);
+      if (timer_delay_nonblocking (3000))
 	{
 	  task_case++;
 	  task_init = false;
@@ -260,11 +259,12 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
       task_case++;
       break;
     case 3:
-      {
-	task_init = true;
-	set_translation_speed_limit (1.0);
-      }
-      move_on_direction (120, MECHANISM);
+      if (!task_init)
+	{
+	  task_init = true;
+	  set_translation_speed_limit (1.0);
+	}
+      move_on_direction (80, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -274,10 +274,10 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 
     case 4:
       if (side == BLUE)
-	move_full (planter_blue_x_close.x, planter_blue_x_close.y, 0,
+	move_full (planter_blue_x_close.x + 120, planter_blue_x_close.y, 0,
 	MECHANISM);
       else
-	move_full (planter_yellow_x_close.x, planter_yellow_x_close.y, 180,
+	move_full (planter_yellow_x_close.x + 120, planter_yellow_x_close.y, 180,
 	MECHANISM);
 //      move_full (side * 3000 - (2 * side - 1) * 200,
 //		 (planter_array_pointer + task_counter)->y, side * 180, WALL);
@@ -288,10 +288,11 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 	}
       break;
     case 5:
-      {
-	task_init = true;
-	set_translation_speed_limit (0.4);
-      }
+      if (!task_init)
+	{
+	  task_init = true;
+	  set_translation_speed_limit (0.4);
+	}
       move_on_direction (150, MECHANISM);
       if (timer_delay_nonblocking (3000))
 	{
@@ -300,6 +301,11 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 	}
       break;
     case 6:
+      if (!task_init)
+	{
+	  task_init = true;
+	  reset_movement ();
+	}
       mechanism_half_down ();
       if (timer_delay_nonblocking (2000))
 	{
@@ -308,7 +314,7 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 	}
       break;
     case 7:
-      mechanism_open ();
+      mechanism_open_slow ();
       if (timer_delay_nonblocking (2000))
 	{
 	  task_case++;
@@ -316,10 +322,11 @@ task_dropoff_plants_x_close (uint8_t side) //TODO: promeni u 3 funkcije, y ,x_cl
 	}
       break;
     case 8:
-      {
-	task_init = true;
-	set_translation_speed_limit (1.0);
-      }
+      if (!task_init)
+	{
+	  task_init = true;
+	  set_translation_speed_limit (1.0);
+	}
       move_on_direction (150, WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
@@ -452,9 +459,17 @@ task_central_solar_without (uint8_t side)
 	solar_in_l ();
       if (timer_delay_nonblocking (1000))
 	{
-	  task_case = 100;
+	  task_case++;
 	}
       break;
+    case 9:
+      move_to_angle (-90);
+      if (movement_finished () && timer_delay_nonblocking (500))
+	task_case++;
+    case 10:
+      move_on_direction (100, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (500))
+	task_case = 100;
 
     case 100:
       reset_task ();

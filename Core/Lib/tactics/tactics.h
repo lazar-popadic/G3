@@ -15,5 +15,7 @@
 
 bool
 test_tactic_yellow ();
+bool
+test_tactic_blue ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

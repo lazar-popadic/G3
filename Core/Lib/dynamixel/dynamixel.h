@@ -31,6 +31,8 @@ mechanism_down ();
 void
 mechanism_open ();
 void
+mechanism_open_slow ();
+void
 mechanism_close ();
 
 #endif /* LIB_MODULES_AX12A_AX12A_H_ */
