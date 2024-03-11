@@ -174,15 +174,15 @@ test_tactic_blue ()
 	  plants[4] = plant_yellow2;
 	  plants[5] = plant_yellow1;
 
-	  homes[0] = home_blue2;
+	  homes[0] = home_blue1;
 	  homes[1] = home_blue3;
-	  homes[2] = home_blue1;
+	  homes[2] = home_blue2;
 	  tactic_finished = false;
 	}
       tactic_state++;
       tactic_state_init = false;
       break;
-    case 11:
+    case 1:
       current_task_status = task_solar_from_start (BLUE);
       if (current_task_status == 1)
 	{
@@ -190,7 +190,7 @@ test_tactic_blue ()
 	  tactic_state_init = false;
 	}
       break;
-    case 1:
+    case 2:
       current_task_status = task_pickup_plants (plants_pointer, 2);
       if (current_task_status == 1)
 	{
@@ -203,7 +203,7 @@ test_tactic_blue ()
 	  tactic_state_init = false;
 	}
       break;
-    case 13:
+    case 3:
       current_task_status = task_central_solar_without (BLUE);
       if (current_task_status == 1)
 	{
@@ -211,7 +211,7 @@ test_tactic_blue ()
 	  tactic_state_init = false;
 	}
       break;
-    case 2:
+    case 4:
       current_task_status = task_dropoff_plants_x_close (BLUE);
       if (current_task_status == 1)
 	{

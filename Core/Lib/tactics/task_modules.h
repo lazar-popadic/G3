@@ -30,6 +30,10 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries);
 int8_t
 task_dropoff_plants_x_close (uint8_t side);
 int8_t
+task_dropoff_plants_x_far (uint8_t side);
+int8_t
+task_dropoff_plants_y (uint8_t side);
+int8_t
 task_solar_from_start (uint8_t side);
 int8_t
 task_central_solar_without (uint8_t side);

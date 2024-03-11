@@ -124,7 +124,7 @@ main (void)
 
 //      if (timer_end ())
 //      state_main = END;
-//      ax_move(4, calib1, 500);
+//      ax_move(9, calib1, 500);
 
       switch (state_main)
 	{
@@ -188,11 +188,13 @@ main (void)
 	case 0:
 //	  pwm_duty_cycle_left ((uint16_t) ref_test);
 //	  pwm_duty_cycle_right ((uint16_t) ref_test);
-//	  set_translation_speed_limit (1.0);
-//	  move_on_direction(2500, WALL);
+//	  set_translation_speed_limit (0.2);
+//	  move_on_direction(500, MECHANISM);
 //	  if (movement_finished () && timer_delay_nonblocking (100))
 //	    state_main = END;
 	  mechanism_open();
+	  solar_in_l();
+	  solar_in_r();
 	  if (positioning_solar_blue ())
 	    state_main++;
 	  break;
