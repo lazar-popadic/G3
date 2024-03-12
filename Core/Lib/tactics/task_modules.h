@@ -41,6 +41,10 @@ int8_t
 positioning_solar_blue ();
 int8_t
 positioning_solar_yellow ();
+int8_t
+positioning_up_blue (target first_plant);
+int8_t
+positioning_up_yellow (target first_plant);
 
 void
 reset_task ();

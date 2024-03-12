@@ -15,6 +15,8 @@
 
 bool
 test_tactic_yellow ();
+void
+load_test_tactic_blue_targets();
 bool
 test_tactic_blue ();
 

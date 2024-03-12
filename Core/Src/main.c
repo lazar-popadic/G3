@@ -42,7 +42,13 @@ extern volatile uint32_t sys_time_half_ms;
 uint16_t duty_cycle_test = 100;
 bool move_finished;
 
-extern target plant_blue1;
+extern target *plants_pointer;
+extern volatile target plant_blue1;
+extern volatile target plant_blue2;
+extern volatile target plant_central1;
+extern volatile target plant_central2;
+extern volatile target plant_yellow1;
+extern volatile target plant_yellow2;
 
 position pos_test =
   { 0, 0, 0 };
@@ -133,13 +139,13 @@ main (void)
 
 	case START:
 //	  if (io_cinc ())
-	    {
-	      timer_start_sys_time ();
-	      state_main = 0;
-	      pwm_start ();
-	      set_starting_position (2820, 1000, 180);
-	      regulation_on = true;
-	    }
+	  {
+	    timer_start_sys_time ();
+	    state_main = 0;
+	    pwm_start ();
+//	    set_starting_position (2820, 1000, 180);
+	    regulation_on = true;
+	  }
 	  break;
 //
 //
@@ -192,15 +198,15 @@ main (void)
 //	  move_on_direction(500, MECHANISM);
 //	  if (movement_finished () && timer_delay_nonblocking (100))
 //	    state_main = END;
-	  mechanism_open();
-	  solar_in_l();
-	  solar_in_r();
-	  if (positioning_solar_blue ())
+	  mechanism_open ();
+	  solar_in_l ();
+	  solar_in_r ();
+	  if (positioning_up_blue (plant_blue1))
 	    state_main++;
 	  break;
 
 	case 1:
-	  if (test_tactic_blue())
+	  if (test_tactic_blue ())
 	    state_main = END;
 	  break;
 
