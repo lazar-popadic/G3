@@ -563,36 +563,23 @@ task_dropoff_plants_y (uint8_t side)
       reset_movement ();
       task_case++;
       break;
-    case 3:
-      if (!task_init)
-	{
-	  task_init = true;
-	  set_translation_speed_limit (1.0);
-	}
-      move_on_direction (80, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (100))
-	{
-	  task_case++;
-	  task_init = false;
-	}
-      break;
 
-    case 4:
-      if (side == BLUE)
-	move_full (planter_blue_y.x, planter_blue_x_far.y - 120, -90,
+    case 3:
+//      if (side == BLUE)
+	move_full (robot_position.x_mm, robot_position.y_mm - 120, -90,
 	MECHANISM);
-      else
-	move_full (planter_yellow_y.x + 120, planter_yellow_x_far.y, -90,
-	MECHANISM);
+//      else
+//	move_full (robot_position.x_mm, robot_position.y_mm - 120, -90,
+//	MECHANISM);
 //      move_full (side * 3000 - (2 * side - 1) * 200,
 //		 (planter_array_pointer + task_counter)->y, side * 180, WALL);
-      if (movement_finished () && timer_delay_nonblocking (100))
+      if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
 	  task_init = false;
 	}
       break;
-    case 5:
+    case 4:
       if (!task_init)
 	{
 	  task_init = true;
@@ -605,7 +592,7 @@ task_dropoff_plants_y (uint8_t side)
 	  task_init = false;
 	}
       break;
-    case 6:
+    case 5:
       if (!task_init)
 	{
 	  task_init = true;
@@ -618,7 +605,7 @@ task_dropoff_plants_y (uint8_t side)
 	  task_init = false;
 	}
       break;
-    case 7:
+    case 6:
       mechanism_open_slow ();
       if (timer_delay_nonblocking (2000))
 	{
@@ -626,7 +613,7 @@ task_dropoff_plants_y (uint8_t side)
 	  task_init = false;
 	}
       break;
-    case 8:
+    case 7:
       if (!task_init)
 	{
 	  task_init = true;
@@ -639,7 +626,7 @@ task_dropoff_plants_y (uint8_t side)
 	  task_init = false;
 	}
       break;
-    case 9:
+    case 8:
       if (!task_init)
 	{
 	  task_init = true;
