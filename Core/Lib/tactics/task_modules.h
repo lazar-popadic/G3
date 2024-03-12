@@ -26,7 +26,7 @@ typedef struct
 int8_t
 task_go_home (target *home_array_pointer);
 int8_t
-task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries);
+task_pickup_plants (target plant_target);
 int8_t
 task_dropoff_plants_x_close (uint8_t side);
 int8_t

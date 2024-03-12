@@ -14,10 +14,10 @@
 #define END 250
 
 bool
-test_tactic_yellow ();
-void
-load_test_tactic_blue_targets();
-bool
 test_tactic_blue ();
+void
+pop_plant ();
+void
+swap_first2_plants ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

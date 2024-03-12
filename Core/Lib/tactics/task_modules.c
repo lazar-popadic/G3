@@ -11,7 +11,7 @@ volatile int8_t task_status = TASK_IN_PROGRESS;
 volatile bool task_init = false;
 volatile uint8_t task_case = 0;
 extern volatile bool interrupted;
-volatile uint8_t task_counter = 0;
+volatile uint8_t task_counter = 0;	//TODO: izbaci ovo i ispravi task_go_home
 extern volatile uint8_t sensors_case_timer;
 extern volatile float transition_factor;
 extern volatile target solar_central;
@@ -22,8 +22,6 @@ extern volatile target planter_yellow_y;
 extern volatile target planter_yellow_x_close;
 extern volatile target planter_yellow_x_far;
 extern position robot_position;
-volatile int8_t plants_done[3] =
-  { -1, -1, -1 };
 volatile uint8_t plant_counter = 0;
 
 static int8_t
@@ -47,9 +45,6 @@ task_go_home (target *home_array_pointer)
       turn_to_pos ((home_array_pointer + task_counter + plant_counter)->x,
 		   (home_array_pointer + task_counter + plant_counter)->y,
 		   WALL);
-//      if (timer_delay_nonblocking (100))
-//	{
-//	  continue_movement ();
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -98,15 +93,8 @@ task_go_home (target *home_array_pointer)
 }
 
 int8_t
-task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
+task_pickup_plants (target plant_target)
 {
-  // TODO: sredi ovo
-//  do
-//    {
-//      task_counter++;
-//    }
-//  while (task_counter == plants_done[0] || task_counter == plants_done[1]
-//      || task_counter == plants_done[2]);
   switch (task_case)
     {
     case 0:
@@ -119,12 +107,8 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
 	  set_translation_speed_limit (1.0);
 	  transition_factor = 1.0;
 	}
-      turn_to_pos ((plant_array_pointer + task_counter + plant_counter)->x,
-		   (plant_array_pointer + task_counter + plant_counter)->y,
-		   MECHANISM);
-//      if (timer_delay_nonblocking (100))
-//      {
-//	continue_movement ();
+      turn_to_pos (plant_target.x, plant_target.y,
+      MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -140,10 +124,7 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
 	  set_translation_speed_limit (1.0);
 	  transition_factor = 2000.0;
 	}
-      move_to_xy_offset (
-	  (plant_array_pointer + task_counter + plant_counter)->x,
-	  (plant_array_pointer + task_counter + plant_counter)->y, MECHANISM,
-	  -300);
+      move_to_xy_offset (plant_target.x, plant_target.y, MECHANISM, -350);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -151,14 +132,7 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
 	}
       if (interrupted)
 	{
-	  task_case = 0;
-	  if (interrupted_func (number_of_retries))
-	    task_case = 200;
-	  else
-	    {
-	      task_counter++;
-	      task_init = false;
-	    }
+	  task_case = 200;
 	}
       break;
     case 2:
@@ -166,10 +140,10 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
 	{
 	  task_init = true;
 	  set_rotation_speed_limit (1.0);
-	  set_translation_speed_limit (0.3);
+	  set_translation_speed_limit (0.5);
 	  transition_factor = 1.0;
 	}
-      move_on_direction (400, MECHANISM);
+      move_on_direction (350, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -177,15 +151,7 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
 	}
       if (interrupted)
 	{
-
-	  task_case = 0;
-	  if (interrupted_func (number_of_retries))
-	    task_case = 200;
-	  else
-	    {
-	      task_counter++;
-	      task_init = false;
-	    }
+	  task_case = 200;
 	}
       break;
     case 3:
@@ -216,7 +182,6 @@ task_pickup_plants (target *plant_array_pointer, uint8_t number_of_retries)
     case 100:
       reset_task ();
       task_status = TASK_SUCCESS;
-      plants_done[plant_counter] = task_counter;
       plant_counter++;
       break;
 
@@ -295,8 +260,6 @@ task_dropoff_plants_x_close (uint8_t side)
 	move_full (planter_yellow_x_close.x + 120, planter_yellow_x_close.y,
 		   180,
 		   MECHANISM);
-//      move_full (side * 3000 - (2 * side - 1) * 200,
-//		 (planter_array_pointer + task_counter )->y, side * 180, WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -441,8 +404,6 @@ task_dropoff_plants_x_far (uint8_t side)
       else
 	move_full (planter_yellow_x_far.x + 120, planter_yellow_x_far.y, 180,
 	MECHANISM);
-//      move_full (side * 3000 - (2 * side - 1) * 200,
-//		 (planter_array_pointer + task_counter )->y, side * 180, WALL);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -565,14 +526,8 @@ task_dropoff_plants_y (uint8_t side)
       break;
 
     case 3:
-//      if (side == BLUE)
-	move_full (robot_position.x_mm, robot_position.y_mm - 120, -90,
-	MECHANISM);
-//      else
-//	move_full (robot_position.x_mm, robot_position.y_mm - 120, -90,
-//	MECHANISM);
-//      move_full (side * 3000 - (2 * side - 1) * 200,
-//		 (planter_array_pointer + task_counter)->y, side * 180, WALL);
+      move_full (robot_position.x_mm, robot_position.y_mm - 120, -90,
+      MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
@@ -777,10 +732,12 @@ task_central_solar_without (uint8_t side)
       move_to_angle (-90);
       if (movement_finished () && timer_delay_nonblocking (500))
 	task_case++;
+      break;
     case 10:
       move_on_direction (100, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (500))
 	task_case = 100;
+      break;
 
     case 100:
       reset_task ();
