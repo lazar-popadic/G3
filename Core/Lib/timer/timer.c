@@ -146,11 +146,10 @@ TIM1_UP_TIM10_IRQHandler ()
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	}
+
       if (fabs(w_rad_s) < W_LIMIT * transition_factor
           && fabs(V_m_s) < V_LIMIT * transition_factor)
-	{
-	  robot_moving = false;
-	}
+	robot_moving = false;
       else
 	robot_moving = true;
 

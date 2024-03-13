@@ -65,7 +65,7 @@ regulation_position ()
       /* (ako se zada mala kretnja)
        *
        */
-//      if (fabs (distance) < EPSILON_DISTANCE && no_movement ())
+//      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
 //	{
 ////	  regulation_rotation_finished ();
 //	  regulation_phase = ROT_TO_ANGLE;
@@ -90,7 +90,8 @@ regulation_position ()
       break;
 
     case TRAN_WITHOUT_ROT:
-      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
+      if (fabs (distance) < EPSILON_DISTANCE
+	  && !robot_moving)
 	{
 //	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;

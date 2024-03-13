@@ -44,6 +44,7 @@ extern volatile float V_limit, w_limit;
 volatile float transition_factor = 1.0;
 target offset;
 uint8_t hold_position_state = 0;
+extern volatile bool robot_moving;
 
 void
 calculate_movement ()
@@ -74,8 +75,8 @@ calculate_movement ()
 bool
 no_movement ()
 {
-  if (fabs(w_rad_s) < W_LIMIT * transition_factor
-      && fabs(V_m_s) < V_LIMIT * transition_factor)
+  if (fabs (w_rad_s) < W_LIMIT * transition_factor
+      && fabs (V_m_s) < V_LIMIT * transition_factor)
     return true;
   return false;
 }
@@ -83,8 +84,9 @@ no_movement ()
 bool
 movement_finished ()
 {
-  if (fabs (distance) < EPSILON_DISTANCE
-      && fabs (theta_to_angle) < EPSILON_THETA_SMALL && no_movement ())
+  if (fabs (distance) < EPSILON_DISTANCE * transition_factor
+      && fabs (theta_to_angle) < EPSILON_THETA_SMALL * transition_factor
+      && !robot_moving)
     {
       regulation_rotation_finished ();
       regulation_translation_finished ();
@@ -109,7 +111,8 @@ move_full (float x, float y, float theta_degrees, int8_t translation_direction)
 void
 move_to_xy (float x, float y, int8_t translation_direction)
 {
-  move_full (x, y, robot_position.theta_rad, translation_direction);
+  move_full (x, y, robot_position.theta_rad / M_PI * 180.0,
+	     translation_direction);
 }
 
 void
@@ -122,8 +125,7 @@ move_to_angle (float theta_degrees)
       pos_init.y_mm = robot_position.y_mm;
       pos_init.theta_rad = theta_degrees;
     }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad ,
-	     0);
+  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
 }
 
 void

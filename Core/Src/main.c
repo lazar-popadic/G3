@@ -40,9 +40,7 @@ uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 
 uint16_t duty_cycle_test = 100;
-bool move_finished;
 
-extern target *plants_pointer;
 extern volatile target plant_blue1;
 extern volatile target plant_blue2;
 extern volatile target plant_central1;
@@ -138,14 +136,14 @@ main (void)
 	  break;
 
 	case START:
-//	  if (io_cinc ())
+	  if (io_cinc ())
 	  {
 	    timer_start_sys_time ();
 	    state_main = 0;
 	    pwm_start ();
-	    set_starting_position (1000, 1000, 0);
+	    set_starting_position (0, 0, 0);
 	    regulation_on = true;
-	    set_rotation_speed_limit(1.0);
+//	    set_rotation_speed_limit(1.0);
 //	    move_to_angle(-179);
 //	    move_on_direction(1500, WALL);
 	  }
