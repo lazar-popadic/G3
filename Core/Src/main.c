@@ -143,8 +143,11 @@ main (void)
 	    timer_start_sys_time ();
 	    state_main = 0;
 	    pwm_start ();
-//	    set_starting_position (2820, 1000, 180);
+	    set_starting_position (1000, 1000, 0);
 	    regulation_on = true;
+	    set_rotation_speed_limit(1.0);
+//	    move_to_angle(-179);
+//	    move_on_direction(1500, WALL);
 	  }
 	  break;
 //

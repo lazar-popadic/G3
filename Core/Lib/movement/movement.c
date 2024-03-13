@@ -16,8 +16,8 @@
 #include "../timer/timer.h"
 #include "../tactics/task_modules.h"
 
-#define W_LIMIT		0.1
-#define V_LIMIT		0.05
+#define W_LIMIT		0.0001
+#define V_LIMIT		0.00005
 
 // meri
 extern volatile position robot_position;
@@ -74,8 +74,8 @@ calculate_movement ()
 bool
 no_movement ()
 {
-  if (w_rad_s < W_LIMIT * transition_factor
-      && V_m_s < V_LIMIT * transition_factor)
+  if (fabs(w_rad_s) < W_LIMIT * transition_factor
+      && fabs(V_m_s) < V_LIMIT * transition_factor)
     return true;
   return false;
 }

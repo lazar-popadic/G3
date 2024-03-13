@@ -11,7 +11,7 @@ volatile int8_t task_status = TASK_IN_PROGRESS;
 volatile bool task_init = false;
 volatile uint8_t task_case = 0;
 extern volatile bool interrupted;
-volatile uint8_t task_counter = 0;	//TODO: izbaci ovo i ispravi task_go_home
+volatile uint8_t task_counter = 0;//TODO: izbaci ovo i ispravi task_go_home
 extern volatile uint8_t sensors_case_timer;
 extern volatile float transition_factor;
 extern volatile target solar_central;
@@ -122,7 +122,7 @@ task_pickup_plants (target plant_target)
 	  task_init = true;
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (1.0);
-	  transition_factor = 2000.0;
+	  transition_factor = 10000.0;
 	}
       move_to_xy_offset (plant_target.x, plant_target.y, MECHANISM, -350);
       if (movement_finished () && timer_delay_nonblocking (100))
@@ -140,10 +140,11 @@ task_pickup_plants (target plant_target)
 	{
 	  task_init = true;
 	  set_rotation_speed_limit (1.0);
-	  set_translation_speed_limit (0.5);
+	  set_translation_speed_limit (0.4);
 	  transition_factor = 1.0;
 	}
-      move_on_direction (350, MECHANISM);
+      move_to_xy_offset (plant_target.x, plant_target.y, MECHANISM, 100);
+//      move_on_direction (350, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (100))
 	{
 	  task_case++;
@@ -1071,7 +1072,7 @@ positioning_up_blue (target first_plant)// u polje bilo gde, okrenut na 0
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (1.0);
-	  set_translation_speed_limit (0.4);
+	  set_translation_speed_limit (0.3);
 	  transition_factor = 1.0;
 	}
       move_on_direction (450, WALL);
@@ -1106,7 +1107,7 @@ positioning_up_blue (target first_plant)// u polje bilo gde, okrenut na 0
     case 4:
       reset_y_coord_far ();
       reset_movement ();
-      set_translation_speed_limit (0.5);
+      set_translation_speed_limit (0.3);
       task_case++;
       break;
     case 5:
@@ -1153,7 +1154,7 @@ positioning_up_yellow (target first_plant)// u polje bilo gde, okrenut na 90
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (1.0);
-	  set_translation_speed_limit (0.4);
+	  set_translation_speed_limit (0.3);
 	  transition_factor = 1.0;
 	}
       move_on_direction (450, WALL);
@@ -1188,7 +1189,7 @@ positioning_up_yellow (target first_plant)// u polje bilo gde, okrenut na 90
     case 4:
       reset_x_coord_far ();
       reset_movement ();
-      set_translation_speed_limit (0.5);
+      set_translation_speed_limit (0.3);
       task_case++;
       break;
     case 5:

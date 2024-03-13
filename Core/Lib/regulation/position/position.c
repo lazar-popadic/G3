@@ -16,14 +16,14 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		3.6
-#define DISTANCE_I_LIMIT	1.0
+#define THETA_I_LIMIT		4.0
+#define DISTANCE_I_LIMIT	0.008
 
-static const float KP_ROT = 28.0;
-static const float KI_ROT = 1.0;	//bilo 1
+static const float KP_ROT = 24.0;
+static const float KI_ROT = 1.0;
 
-static const float KP_TRAN = 0.08;
-static const float KI_TRAN = 0.1;
+static const float KP_TRAN = 0.05;
+static const float KI_TRAN = 0.0008;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -37,6 +37,7 @@ extern volatile float V_limit, w_limit;
 
 volatile uint8_t regulation_phase = 0;
 extern volatile float transition_factor;
+extern volatile bool robot_moving;
 
 void
 regulation_position ()
@@ -47,7 +48,7 @@ regulation_position ()
 
     {
     case ROT_TO_ANGLE:
-      if (fabs (distance) > EPSILON_DISTANCE * 1.5 && no_movement ())
+      if (fabs (distance) > EPSILON_DISTANCE * 2.0 && !robot_moving)
 	{
 	  regulation_phase = ROT_TO_POS;
 	}
@@ -56,7 +57,7 @@ regulation_position ()
       break;
 
     case ROT_TO_POS:
-      if (fabs (theta_to_pos) < EPSILON_THETA_MEDIUM && no_movement ())
+      if (fabs (theta_to_pos) < EPSILON_THETA_MEDIUM && !robot_moving)
 	{
 	  regulation_rotation_finished ();
 	  regulation_phase = TRAN_WITH_ROT;
@@ -84,26 +85,25 @@ regulation_position ()
 	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
-      regulation_translation (distance);
+      regulation_translation (distance, 1);
       regulation_rotation (theta_to_pos, 1.0, 1);
       break;
 
     case TRAN_WITHOUT_ROT:
-      if (fabs (distance) < EPSILON_DISTANCE && no_movement ())
+      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
 	{
-	  regulation_translation_finished ();
+//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
-      // TODO: vidi zasto ovo ne radi kako treba
       if (fabs (distance) > EPSILON_DISTANCE_ROT * 2.0)
 	{
-	  regulation_translation_finished ();
+//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
       if (fabs (theta_to_pos) > (M_PI / 2))
-	regulation_translation (-distance);
+	regulation_translation (-distance, 1);
       else
-	regulation_translation (distance);
+	regulation_translation (distance, 1);
       w_ref = 0;
       break;
     }
@@ -125,12 +125,12 @@ regulation_rotation (float theta_er, float factor, float limit_factor)
   w_ref_pid = float_saturation (w_ref_pid, w_limit * limit_factor,
 				-w_limit * limit_factor);
 //  w_ref_pid = float_saturation2 (w_ref_pid, w_limit * limit_factor, 3.0, 0.4);
-  w_ref = float_ramp_acc (w_ref, w_ref_pid, 1.5);
+  w_ref = float_ramp_acc (w_ref, w_ref_pid, 1.6);
   w_ref *= factor;
 }
 
 void
-regulation_translation (float distance_er)
+regulation_translation (float distance_er, float factor)
 {
   static float V_ref_pid;
   distance_er_i += distance_er;
@@ -139,8 +139,9 @@ regulation_translation (float distance_er)
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i;
 //  V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 2.0, 0.15);
-  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.16);
+  V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 2.0, 0.01);
+  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.24);
+  V_ref *= factor;
 }
 
 void

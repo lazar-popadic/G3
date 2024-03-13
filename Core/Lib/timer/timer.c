@@ -15,13 +15,21 @@
 #include "../tactics/tactics.h"
 #include "../pwm/pwm.h"
 #include "../h-bridge/h-bridge.h"
+#include <math.h>
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
+
+#define W_LIMIT		0.001
+#define V_LIMIT		0.0005
 
 static void
 tim10_init ();
 extern volatile position robot_position;
 extern volatile float w_ref;
+
+extern volatile float V_m_s;
+extern volatile float w_rad_s;
+extern volatile float transition_factor;
 
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
@@ -37,6 +45,7 @@ extern volatile int16_t ref_speed_right;
 volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
+volatile bool robot_moving = false;
 
 void
 timer_init ()
@@ -137,6 +146,13 @@ TIM1_UP_TIM10_IRQHandler ()
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	}
+      if (fabs(w_rad_s) < W_LIMIT * transition_factor
+          && fabs(V_m_s) < V_LIMIT * transition_factor)
+	{
+	  robot_moving = false;
+	}
+      else
+	robot_moving = true;
 
       switch (sensors_case_timer)
 	{

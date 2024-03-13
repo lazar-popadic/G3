@@ -16,7 +16,7 @@
 #define W_LIMIT		1200
 #define U_LIMIT		1200
 
-static const float KP_TRAN = 75.0;
+static const float KP_TRAN = 100.0;
 
 static const float KP_ROT = 25.0;
 

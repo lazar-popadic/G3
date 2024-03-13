@@ -51,8 +51,8 @@ odometry_robot ()
   Vl_inc = speed_of_encoder_left_passive ();
   f_Vl_inc = (double) (Vl_inc) * diff_factor;
   Vd_inc = speed_of_encoder_right_passive ();
-//  Vd_sum += Vd_inc;
-//  Vl_sum += f_Vl_inc;
+  Vd_sum += Vd_inc;
+  Vl_sum += f_Vl_inc;
 
   V_deltaT = ((double) Vd_inc + f_Vl_inc) * 0.5 * inc2mm;// [mm / 0.5ms] = [m / 2s]
   V_m_s = V_deltaT * 0.25;	// ipak ovde treba 0.5, al ovako bolje radi
