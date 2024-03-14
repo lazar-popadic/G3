@@ -77,13 +77,13 @@ mechanism_up ()
 void
 mechanism_half_up ()
 {
-  ax_move (7, 660, 100);
+  ax_move (7, 650, 100);
 }
 
 void
 mechanism_half_down ()
 {
-  ax_move (7, 660, 50);
+  ax_move (7, 650, 50);
 }
 
 void
@@ -101,7 +101,13 @@ mechanism_open ()
 void
 mechanism_open_slow ()
 {
-  ax_move (4, 472, 100);
+  ax_move (4, 472, 125);
+}
+
+void
+mechanism_half_open ()
+{
+  ax_move (4, 650, 125);
 }
 
 void

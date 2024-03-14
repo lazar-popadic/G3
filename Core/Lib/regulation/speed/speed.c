@@ -12,13 +12,13 @@
 #include "../../h-bridge/h-bridge.h"
 #include <math.h>
 
-#define V_LIMIT		1200
-#define W_LIMIT		1200
+#define V_LIMIT		1150
+#define W_LIMIT		1150
 #define U_LIMIT		1200
 
-static const float KP_TRAN = 100.0;
+static const float KP_TRAN = 64.0;
 
-static const float KP_ROT = 25.0;
+static const float KP_ROT = 28.0;
 
 extern volatile double V_m_s;
 extern volatile double w_rad_s;

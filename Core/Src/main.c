@@ -137,16 +137,16 @@ main (void)
 
 	case START:
 	  if (io_cinc ())
-	  {
-	    timer_start_sys_time ();
-	    state_main = 0;
-	    pwm_start ();
-	    set_starting_position (0, 0, 0);
-	    regulation_on = true;
+	    {
+	      timer_start_sys_time ();
+	      state_main = 0;
+	      pwm_start ();
+	      set_starting_position (0, 0, 0);
+	      regulation_on = true;
 //	    set_rotation_speed_limit(1.0);
 //	    move_to_angle(-179);
 //	    move_on_direction(1500, WALL);
-	  }
+	    }
 	  break;
 //
 //
@@ -193,32 +193,39 @@ main (void)
 //	  break;
 
 	case 0:
-//	  pwm_duty_cycle_left ((uint16_t) ref_test);
-//	  pwm_duty_cycle_right ((uint16_t) ref_test);
-//	  set_translation_speed_limit (0.2);
-//	  move_on_direction(500, MECHANISM);
-//	  if (movement_finished () && timer_delay_nonblocking (100))
-//	    state_main = END;
+//	  set_translation_speed_limit(0.25);
+//	  move_to_xy_offset (2000, 0, WALL, 100);
+//	  set_rotation_speed_limit(1.0);
+//	  move_to_angle(90);
+//	  if (movement_finished () && timer_delay_nonblocking (20))
+//	    state_main++;
+
 	  mechanism_open ();
 	  solar_in_l ();
 	  solar_in_r ();
-	  if (positioning_up_blue (plant_blue1))
+	  if (positioning_up_blue (plant_blue2))
 	    state_main++;
 	  break;
 
 	case 1:
+//	  set_translation_speed_limit(1.0);
+//	  set_rotation_speed_limit(1.0);
+//	  move_to_angle(75);
+//	  move_to_xy_offset (2000, 0, WALL, -100);
+
+//	  if (movement_finished () && timer_delay_nonblocking (20))
 	  if (test_tactic_blue ())
 	    state_main = END;
 	  break;
-
-	case END:
-	  timer_stop_sys_time ();
-	  stop_right_wheel ();
-	  stop_left_wheel ();
-	  pwm_duty_cycle_left (0);
-	  pwm_duty_cycle_right (0);
-	  hold_position ();
-	  break;
+//
+//	case END:
+//	  timer_stop_sys_time ();
+//	  stop_right_wheel ();
+//	  stop_left_wheel ();
+//	  pwm_duty_cycle_left (0);
+//	  pwm_duty_cycle_right (0);
+//	  hold_position ();
+//	  break;
 	}
     } // while
   /* USER CODE END 3 */
