@@ -84,7 +84,7 @@ io_cinc ()
     counter++;
   else
     counter = 0;
-  if (counter > 64000)
+  if (counter > 6400)
     return true;
   return false;
 }

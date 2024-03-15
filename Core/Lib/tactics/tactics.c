@@ -161,8 +161,106 @@ test_tactic_blue ()
     case 6:
 //      current_task_status = task_go_home (homes_pointer);
 //      if (current_task_status == 1)
-      move_to_xy (450,450, MECHANISM);
-      if (movement_finished() && timer_delay_nonblocking(20))
+      move_to_xy (450, 450, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  tactic_state = RETURN;
+	  tactic_state_init = false;
+	}
+      break;
+    case RETURN:
+      tactic_finished = true;
+      break;
+
+    }
+  return tactic_finished;
+
+}
+
+bool
+test_tactic_yellow ()
+{
+  switch (tactic_state)
+    {
+    case 0:
+      if (!tactic_state_init)
+	{
+	  tactic_state_init = true;
+	  plants[0] = plant_yellow2;
+	  plants[1] = plant_yellow1;
+	  plants[2] = plant_central1;
+	  plants[3] = plant_central2;
+	  plants[4] = plant_blue2;
+	  plants[5] = plant_blue1;
+
+	  homes[0] = home_yellow1;
+	  homes[1] = home_yellow3;
+	  homes[2] = home_yellow2;
+	  tactic_finished = false;
+	}
+      tactic_state++;
+      tactic_state_init = false;
+      break;
+    case 1:
+      current_task_status = task_pickup_plants (plants[0]);
+      if (current_task_status == 1)
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	  pop_plant ();
+	}
+      else if (current_task_status == -1)
+	{
+	  swap_first2_plants ();
+	  tactic_state = 1;
+	  tactic_state_init = false;
+	}
+      break;
+    case 2:
+      current_task_status = task_dropoff_plants_x_close (YELLOW);
+      if (current_task_status == 1)
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 3:
+      current_task_status = task_pickup_plants (plants[0]);
+      if (current_task_status == 1)
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	  pop_plant ();
+	}
+      else if (current_task_status == -1)
+	{
+	  // TODO: if (retries) ovo else tactic_state = go_home
+	  swap_first2_plants ();
+	  tactic_state = 1;
+	  tactic_state_init = false;
+	}
+      break;
+    case 4:
+      current_task_status = task_dropoff_plants_y (YELLOW);
+      if (current_task_status == 1)
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 5:
+      current_task_status = reserved_solar (YELLOW);
+      if (current_task_status == 1)
+	{
+	  tactic_state++;
+	  tactic_state_init = false;
+	}
+      break;
+    case 6:
+//      current_task_status = task_go_home (homes_pointer);
+//      if (current_task_status == 1)
+      move_to_xy (3000 - 450, 450, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  tactic_state = RETURN;
 	  tactic_state_init = false;

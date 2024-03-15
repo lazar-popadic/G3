@@ -203,7 +203,7 @@ main (void)
 	  mechanism_open ();
 	  solar_in_l ();
 	  solar_in_r ();
-	  if (positioning_up_blue (plant_blue2))
+	  if (positioning_up_yellow (plant_yellow2))
 	    state_main++;
 	  break;
 
@@ -214,7 +214,7 @@ main (void)
 //	  move_to_xy_offset (2000, 0, WALL, -100);
 
 //	  if (movement_finished () && timer_delay_nonblocking (20))
-	  if (test_tactic_blue ())
+	  if (test_tactic_yellow ())
 	    state_main = END;
 	  break;
 //

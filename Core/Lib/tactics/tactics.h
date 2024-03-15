@@ -15,6 +15,8 @@
 
 bool
 test_tactic_blue ();
+bool
+test_tactic_yellow ();
 void
 pop_plant ();
 void
