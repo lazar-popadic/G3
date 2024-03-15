@@ -48,6 +48,7 @@ extern "C" {
 #include "../Lib/h-bridge/h-bridge.h"
 #include "../Lib/adc_dma_ioc/adc_dma.h"
 #include "../Lib/movement/movement.h"
+#include "../Lib/tactics/task_modules.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

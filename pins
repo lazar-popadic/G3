@@ -1,10 +1,8 @@
 port A:
 	0 - enc2 A - tim5
 	1 - enc2 B	
-	4 - adc4
 	5 - enc1 A	- tim2
 	6 - cinc
-	7 - adc7
 	8 - M1DIR
 	9 - M2DIR
 	10 - M1SLP

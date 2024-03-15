@@ -35,13 +35,18 @@
 /* USER CODE BEGIN PV */
 uint8_t state_main = START;
 bool state_main_init = false;
-uint8_t state_debug = 0;
 
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 
 uint16_t duty_cycle_test = 100;
-bool move_finished;
+
+extern volatile target plant_blue1;
+extern volatile target plant_blue2;
+extern volatile target plant_central1;
+extern volatile target plant_central2;
+extern volatile target plant_yellow1;
+extern volatile target plant_yellow2;
 
 position pos_test =
   { 0, 0, 0 };
@@ -49,6 +54,10 @@ uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
 
 extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
+int16_t calib1 = 512;
+int16_t calib2 = 512;
+volatile float ref_test;
+extern volatile float V_ref, w_ref;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,7 +107,7 @@ main (void)
   sensors_init ();
   h_bridge_init ();
   regulation_init ();
-  adc_dma_init ();
+//  adc_dma_init ();
 
   __enable_irq ();
 
@@ -115,10 +124,11 @@ main (void)
 
       /* USER CODE BEGIN 3 */
       sys_time_s = sys_time_half_ms * 0.0005;
-      move_finished = movement_finished ();
+//      w_ref = ref_test;
 
 //      if (timer_end ())
 //      state_main = END;
+//      ax_move(9, calib1, 500);
 
       switch (state_main)
 	{
@@ -131,18 +141,91 @@ main (void)
 	      timer_start_sys_time ();
 	      state_main = 0;
 	      pwm_start ();
-	      set_starting_position (450 - 80, 2000 - 450 + 160, 180);
+	      set_starting_position (0, 0, 0);
 	      regulation_on = true;
+//	    set_rotation_speed_limit(1.0);
+//	    move_to_angle(-179);
+//	    move_on_direction(1500, WALL);
 	    }
 	  break;
+//
+//
+//	case 0:
+//	  mechanism_open();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main = 10;
+//	  break;
+//
+//	case 10:
+//	  mechanism_half_up();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 11:
+//	  mechanism_close();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 12:
+//	  mechanism_up();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 13:
+//	  mechanism_half_down();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 14:
+//	  mechanism_open();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 15:
+//	  mechanism_down();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
 
 	case 0:
-	  if (movement_test1  () && timer_delay_nonblocking(2000))
-	    state_main = END;
+//	  set_translation_speed_limit(0.25);
+//	  move_to_xy_offset (2000, 0, WALL, 100);
+//	  set_rotation_speed_limit(1.0);
+//	  move_to_angle(90);
+//	  if (movement_finished () && timer_delay_nonblocking (20))
+//	    state_main++;
 
-	case END:
-//	  regulation_on = false;
+	  mechanism_open ();
+	  solar_in_l ();
+	  solar_in_r ();
+	  if (positioning_up_yellow (plant_yellow2))
+	    state_main++;
 	  break;
+
+	case 1:
+//	  set_translation_speed_limit(1.0);
+//	  set_rotation_speed_limit(1.0);
+//	  move_to_angle(75);
+//	  move_to_xy_offset (2000, 0, WALL, -100);
+
+//	  if (movement_finished () && timer_delay_nonblocking (20))
+	  if (test_tactic_yellow ())
+	    state_main = END;
+	  break;
+//
+//	case END:
+//	  timer_stop_sys_time ();
+//	  stop_right_wheel ();
+//	  stop_left_wheel ();
+//	  pwm_duty_cycle_left (0);
+//	  pwm_duty_cycle_right (0);
+//	  hold_position ();
+//	  break;
 	}
     } // while
   /* USER CODE END 3 */

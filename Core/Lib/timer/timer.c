@@ -15,21 +15,29 @@
 #include "../tactics/tactics.h"
 #include "../pwm/pwm.h"
 #include "../h-bridge/h-bridge.h"
+#include <math.h>
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
+
+#define W_LIMIT		0.0001*0.0001
+#define V_LIMIT		0.00005*0.0001
 
 static void
 tim10_init ();
 extern volatile position robot_position;
 extern volatile float w_ref;
 
+extern volatile float V_m_s;
+extern volatile float w_rad_s;
+extern volatile float transition_factor;
+
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
 int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
-volatile bool sensors_state = false;
-extern uint8_t previous_tactic_state;
-extern uint8_t tactic_state;
+volatile bool interrupted = false;
+//extern uint8_t previous_tactic_state;
+//extern uint8_t tactic_state;
 
 extern volatile int16_t ref_speed_left;
 extern volatile int16_t ref_speed_right;
@@ -37,6 +45,7 @@ extern volatile int16_t ref_speed_right;
 volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
+volatile bool robot_moving = false;
 
 void
 timer_init ()
@@ -74,6 +83,12 @@ void
 timer_start_sys_time ()
 {
   TIM10->CR1 |= (0b1 << 0);	//tek ga ovo ukljucuje
+}
+
+void
+timer_stop_sys_time ()
+{
+  TIM10->CR1 &= ~(0b1 << 0);
 }
 
 bool
@@ -132,32 +147,33 @@ TIM1_UP_TIM10_IRQHandler ()
 	  pwm_duty_cycle_right (0);
 	}
 
-//      switch (sensors_case_timer)
-//	{
-//	case SENSORS_HIGH:
-//	  sensors_state = sensors_high ();
-//	  break;
-//	case SENSORS_LOW:
-//	  sensors_state = sensors_low ();
-//	  break;
-//	case SENSORS_BACK:
-//	  sensors_state = sensors_back ();
-//	  break;
-//	case SENSORS_HIGH_AND_LOW:
-//	  sensors_state = sensors_high() | sensors_low();
-//	  break;
-//	case SENSORS_OFF:
-//	  sensors_state = false;
-//	  break;
-//	default:
-//	  sensors_state = false;
-//	  break;
-//	}
-//
-//      if (sensors_state)
-//	{
-//	  previous_tactic_state = tactic_state;
-//	  tactic_state = BRAKE;
-//	}
+      if (fabs(w_rad_s) < W_LIMIT * transition_factor
+          && fabs(V_m_s) < V_LIMIT * transition_factor)
+	robot_moving = false;
+      else
+	robot_moving = true;
+
+      switch (sensors_case_timer)
+	{
+	case SENSORS_HIGH:
+	  interrupted = sensors_high ();
+	  break;
+	case SENSORS_LOW:
+	  interrupted = sensors_low ();
+	  break;
+	case SENSORS_BACK:
+	  interrupted = sensors_back ();
+	  break;
+	case SENSORS_HIGH_AND_LOW:
+	  interrupted = sensors_high() | sensors_low();
+	  break;
+	case SENSORS_OFF:
+	  interrupted = false;
+	  break;
+	default:
+	  interrupted = false;
+	  break;
+	}
+
     }
 }

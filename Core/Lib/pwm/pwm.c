@@ -16,15 +16,15 @@ static void
 tim4_init ();
 static void
 io_init ();
-static void
-interrupt_init ();
+//static void
+//interrupt_init ();
 
 static uint8_t const TIM3_CH2 = 7;	//PC7
 static uint8_t const TIM4_CH1 = 6;	//PB6
 
-extern ADC_HandleTypeDef hadc1;
-extern DMA_HandleTypeDef hdma_adc1;
-extern uint8_t adc_value[2];
+//extern ADC_HandleTypeDef hadc1;
+//extern DMA_HandleTypeDef hdma_adc1;
+//extern uint8_t adc_value[2];
 
 void
 pwm_init ()
@@ -135,24 +135,24 @@ pwm_duty_cycle_left (uint16_t duty_cycle)
   TIM4->CCR1 = duty_cycle;
 }
 
-static void
-interrupt_init ()
-{
-  TIM3->DIER |= (0b1 << 0);	//dozvola prekida
-  uint8_t const TIM3_INTERRUPT = 29;
-  NVIC->ISER[0] |= (0b1 << TIM3_INTERRUPT);
-}
-
-void
-TIM3_IRQHandler ()
-{
-  if ((TIM3->SR & (0b1 << 0)) == (0b1 << 0))
-    {
-      TIM3->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
-      // ovde zovi adc start
-      HAL_ADC_Start_DMA(&hadc1,(uint32_t*)&adc_value,2);
-    }
-}
+//static void
+//interrupt_init ()
+//{
+//  TIM3->DIER |= (0b1 << 0);	//dozvola prekida
+//  uint8_t const TIM3_INTERRUPT = 29;
+//  NVIC->ISER[0] |= (0b1 << TIM3_INTERRUPT);
+//}
+//
+//void
+//TIM3_IRQHandler ()
+//{
+//  if ((TIM3->SR & (0b1 << 0)) == (0b1 << 0))
+//    {
+//      TIM3->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
+//      // ovde zovi adc start
+//      HAL_ADC_Start_DMA(&hadc1,(uint32_t*)&adc_value,2);
+//    }
+//}
 
 /*
  * prag:

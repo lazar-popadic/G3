@@ -43,3 +43,76 @@ ax_move (uint8_t id, uint16_t angle, uint16_t speed)
       uart_send_byte (ax_move[i]);
     }
 }
+
+void
+solar_out_l ()
+{
+  ax_move (10, 100, 1023);
+}
+
+void
+solar_in_l ()
+{
+  ax_move (10, 680, 520);
+}
+
+void
+solar_out_r ()
+{
+  ax_move (9, 940, 520);
+}
+
+void
+solar_in_r ()
+{
+  ax_move (9, 360, 520);
+}
+
+void
+mechanism_up ()
+{
+  ax_move (7, 768, 250);
+}
+
+void
+mechanism_half_up ()
+{
+  ax_move (7, 650, 100);
+}
+
+void
+mechanism_half_down ()
+{
+  ax_move (7, 650, 50);
+}
+
+void
+mechanism_down ()
+{
+  ax_move (7, 512, 250);
+}
+
+void
+mechanism_open ()
+{
+  ax_move (4, 472, 500);
+}
+
+void
+mechanism_open_slow ()
+{
+  ax_move (4, 472, 125);
+}
+
+void
+mechanism_half_open ()
+{
+  ax_move (4, 650, 125);
+}
+
+void
+mechanism_close ()
+{
+  ax_move (4, 900, 200);
+}
+

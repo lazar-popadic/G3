@@ -11,11 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define CCW		1
-#define CW		-1
-#define FORWARD		1
-#define BACKWARD	-1
-#define DEFAULT		0
+#define MECHANISM	1
+#define WALL		0
 
 void
 calculate_movement ();
@@ -30,18 +27,37 @@ void
 set_translation_speed_limit (float V_max);
 void
 set_rotation_speed_limit (float w_max);
+void
+set_transition_factor (float factor);
 
 void
-move_full (float x, float y, float theta, int8_t translation_direction,
-	   int8_t initial_rotation_direction, int8_t final_rotation_direction);
+move_to_xy_offset (float x, float y, int8_t translation_direction, float offset);
 void
-move_to_xy (float x, float y, int8_t translation_direction,
-	    int8_t rotation_direction);
+turn_to_pos (float x, float y, int8_t translation_direction);
 void
-move_to_angle (float theta, int8_t rotation_direction);
+move_full (float x, float y, float theta_degrees, int8_t translation_direction);
+void
+move_to_xy (float x, float y, int8_t translation_direction);
+void
+move_to_angle (float theta);
 void
 move_on_direction (float distance, int8_t direction);
 void
-move_relative_angle (float angle_degrees);
+hold_position ();
+void
+continue_movement ();
+void
+reset_movement ();
+void
+hold_position_with_reg ();
+
+void
+reset_x_coord_close ();
+void
+reset_y_coord_close ();
+void
+reset_x_coord_far ();
+void
+reset_y_coord_far ();
 
 #endif /* LIB_MOVEMENT_MOVEMENT_H_ */

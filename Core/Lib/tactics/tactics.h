@@ -14,10 +14,12 @@
 #define END 250
 
 bool
-grabulja_test ();
+test_tactic_blue ();
 bool
-sensors_timer_test ();
-bool
-movement_test1();
+test_tactic_yellow ();
+void
+pop_plant ();
+void
+swap_first2_plants ();
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */
