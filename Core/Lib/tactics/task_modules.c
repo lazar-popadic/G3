@@ -24,28 +24,23 @@ extern volatile target planter_yellow_x_far;
 extern position robot_position;
 volatile uint8_t plant_counter = 0;
 
-static int8_t
-interrupted_func (uint8_t no_targets);
-
 int8_t
-task_go_home (target *home_array_pointer)
+task_go_home (target home, uint8_t direction, uint8_t sensors)
 {
   switch (task_case)
     {
     case 0:
       if (!task_init)
 	{
-	  sensors_case_timer = SENSORS_HIGH_AND_LOW;
+	  sensors_case_timer = sensors;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (1.0);
 	  transition_factor = 1.0;
 	}
-      turn_to_pos ((home_array_pointer + task_counter + plant_counter)->x,
-		   (home_array_pointer + task_counter + plant_counter)->y,
-		   WALL);
-      if (movement_finished () && timer_delay_nonblocking (100))
+      turn_to_pos (home.x, home.y, direction);
+      if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
 	  task_init = false;
@@ -60,24 +55,14 @@ task_go_home (target *home_array_pointer)
 	  set_translation_speed_limit (1.0);
 	  transition_factor = 1.0;
 	}
-      move_to_xy ((home_array_pointer + task_counter + plant_counter)->x,
-		  (home_array_pointer + task_counter + plant_counter)->y,
-		  WALL);
-      if (movement_finished () && timer_delay_nonblocking (100))
+      move_to_xy (home.x, home.y, direction);
+      if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case = 100;
-	  task_init = false;
 	}
       if (interrupted)
 	{
-	  task_case = 0;
-	  if (interrupted_func (2))
-	    task_case = 200;
-	  else
-	    {
-	      task_counter++;
-	      task_init = false;
-	    }
+	  task_case = 200;
 	}
       break;
     case 100:
@@ -655,7 +640,7 @@ task_dropoff_plants_y (uint8_t side)
 }
 
 int8_t
-task_central_solar_without (uint8_t side)
+task_central_solar (uint8_t side)
 {
   switch (task_case)
     {
@@ -1331,18 +1316,6 @@ positioning_up_yellow (target first_plant)// u polje bilo gde, okrenut na 90
       break;
     }
   return task_status;
-}
-
-static int8_t
-interrupted_func (uint8_t no_targets)
-{
-  hold_position_with_reg ();
-  task_init = false;
-  reset_movement ();
-  if (task_counter == no_targets)
-    return 0;
-  else
-    return 1;
 }
 
 void

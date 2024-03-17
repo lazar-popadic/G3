@@ -24,7 +24,7 @@ typedef struct
 } target;
 
 int8_t
-task_go_home (target *home_array_pointer);
+task_go_home (target home_target, uint8_t direction, uint8_t sensors);
 int8_t
 task_pickup_plants (target plant_target);
 int8_t
@@ -36,7 +36,7 @@ task_dropoff_plants_y (uint8_t side);
 int8_t
 task_solar_from_start (uint8_t side);
 int8_t
-task_central_solar_without (uint8_t side);
+task_central_solar (uint8_t side);
 int8_t
 positioning_solar_blue ();
 int8_t

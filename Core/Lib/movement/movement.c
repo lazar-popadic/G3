@@ -49,9 +49,9 @@ extern volatile bool robot_moving;
 void
 calculate_movement ()
 {
-  switch (hold_position_state)
-    {
-    case 0:
+//  switch (hold_position_state)
+//    {
+//    case 0:
       error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
       error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
       theta_to_pos_target = atan2 (error.y_mm, error.x_mm) + tran_dir * M_PI;
@@ -63,13 +63,13 @@ calculate_movement ()
       distance = (tran_dir * (-2) + 1)
 	  * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
       theta_to_angle = simple_normalize (error.theta_rad);		// [rad]
-      break;
-    case 1:
-      theta_to_pos = 0;
-      distance = 0;
-      theta_to_angle = 0;
-      break;
-    }
+//      break;
+//    case 1:
+//      theta_to_pos = 0;
+//      distance = 0;
+//      theta_to_angle = 0;
+//      break;
+//    }
 }
 
 bool
@@ -183,25 +183,25 @@ set_starting_position (float starting_x, float starting_y,
   robot_position.theta_rad = starting_theta_degrees * M_PI / 180;
 }
 
-void
-hold_position ()
-{
-  hold_position_state = 1;
-}
+//void
+//hold_position ()
+//{
+//  hold_position_state = 1;
+//}
+//
+//void
+//continue_movement ()
+//{
+//  hold_position_state = 0;
+//}
 
-void
-continue_movement ()
-{
-  hold_position_state = 0;
-}
-
-void
-hold_position_with_reg ()
-{
-  target_position.x_mm = robot_position.x_mm;
-  target_position.y_mm = robot_position.y_mm;
-  target_position.theta_rad = robot_position.theta_rad;
-}
+//void
+//hold_position_with_reg ()
+//{
+//  target_position.x_mm = robot_position.x_mm;
+//  target_position.y_mm = robot_position.y_mm;
+//  target_position.theta_rad = robot_position.theta_rad;
+//}
 
 void
 set_translation_speed_limit (float perc)
