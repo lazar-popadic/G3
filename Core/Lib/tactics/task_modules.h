@@ -28,6 +28,8 @@ task_go_home (target home_target, uint8_t direction, uint8_t sensors);
 int8_t
 task_pickup_plants (target plant_target);
 int8_t
+task_dropoff_x_close_2 (uint8_t side);
+int8_t
 task_dropoff_plants_x_close (uint8_t side);
 int8_t
 task_dropoff_plants_x_far (uint8_t side);

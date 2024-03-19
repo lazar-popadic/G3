@@ -148,49 +148,6 @@ main (void)
 //	    move_on_direction(1500, WALL);
 	    }
 	  break;
-//
-//
-//	case 0:
-//	  mechanism_open();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main = 10;
-//	  break;
-//
-//	case 10:
-//	  mechanism_half_up();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main ++;
-//	  break;
-//
-//	case 11:
-//	  mechanism_close();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main ++;
-//	  break;
-//
-//	case 12:
-//	  mechanism_up();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main ++;
-//	  break;
-//
-//	case 13:
-//	  mechanism_half_down();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main ++;
-//	  break;
-//
-//	case 14:
-//	  mechanism_open();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main ++;
-//	  break;
-//
-//	case 15:
-//	  mechanism_down();
-//	  if(timer_delay_nonblocking(2000))
-//	    state_main ++;
-//	  break;
 
 	case 0:
 //	  set_translation_speed_limit(0.25);
