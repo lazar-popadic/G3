@@ -36,7 +36,9 @@ task_dropoff_plants_y (uint8_t side);
 int8_t
 task_solar_from_start (uint8_t side);
 int8_t
-task_central_solar (uint8_t side);
+task_central_solar_long (uint8_t side, uint8_t first_dir);
+int8_t
+task_central_solar_short (uint8_t side, uint8_t first_dir);
 int8_t
 positioning_solar_blue ();
 int8_t

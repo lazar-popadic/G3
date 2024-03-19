@@ -148,7 +148,49 @@ main (void)
 //	    move_on_direction(1500, WALL);
 	    }
 	  break;
-
+//
+//
+//	case 0:
+//	  mechanism_open();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main = 10;
+//	  break;
+//
+//	case 10:
+//	  mechanism_half_up();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 11:
+//	  mechanism_close();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 12:
+//	  mechanism_up();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 13:
+//	  mechanism_half_down();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 14:
+//	  mechanism_open();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
+//
+//	case 15:
+//	  mechanism_down();
+//	  if(timer_delay_nonblocking(2000))
+//	    state_main ++;
+//	  break;
 
 	case 0:
 //	  set_translation_speed_limit(0.25);
@@ -161,18 +203,12 @@ main (void)
 	  mechanism_open ();
 	  solar_in_l ();
 	  solar_in_r ();
-	  if (positioning_up_blue (plant_blue2))
+	  if (positioning_up_yellow (plant_yellow1))
 	    state_main++;
 	  break;
 
 	case 1:
-//	  set_translation_speed_limit(1.0);
-//	  set_rotation_speed_limit(1.0);
-//	  move_to_angle(75);
-//	  move_to_xy_offset (2000, 0, WALL, -100);
-
-//	  if (movement_finished () && timer_delay_nonblocking (20))
-	  if (test_tactic_blue ())
+	  if (test_tactic_yellow ())
 	    state_main = END;
 	  break;
 //
