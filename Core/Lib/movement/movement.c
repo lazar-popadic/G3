@@ -52,17 +52,17 @@ calculate_movement ()
 //  switch (hold_position_state)
 //    {
 //    case 0:
-      error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
-      error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
-      theta_to_pos_target = atan2 (error.y_mm, error.x_mm) + tran_dir * M_PI;
+  error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
+  error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
+  theta_to_pos_target = atan2 (error.y_mm, error.x_mm) + tran_dir * M_PI;
 
-      error.theta_rad = target_position.theta_rad - robot_position.theta_rad; // [rad]
+  error.theta_rad = target_position.theta_rad - robot_position.theta_rad; // [rad]
 
-      theta_to_pos = simple_normalize (
-	  theta_to_pos_target - robot_position.theta_rad);	// [rad]
-      distance = (tran_dir * (-2) + 1)
-	  * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
-      theta_to_angle = simple_normalize (error.theta_rad);		// [rad]
+  theta_to_pos = simple_normalize (
+      theta_to_pos_target - robot_position.theta_rad);	// [rad]
+  distance = (tran_dir * (-2) + 1)
+      * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
+  theta_to_angle = simple_normalize (error.theta_rad);		// [rad]
 //      break;
 //    case 1:
 //      theta_to_pos = 0;
@@ -137,15 +137,12 @@ move_to_angle_2 (float theta_degrees)
 void
 turn_to_pos (float x, float y, int8_t translation_direction)
 {
-  if (!movement_init)
-    {
-      movement_init = true;
-      pos_init.x_mm = robot_position.x_mm;
-      pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = (atan2 (y - pos_init.y_mm, x - pos_init.x_mm)
-	  + translation_direction * M_PI) * 180.0 / M_PI;
-    }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
+  move_full (
+      robot_position.x_mm,
+      robot_position.y_mm,
+      (atan2 (y - robot_position.y_mm, x - robot_position.x_mm)
+	  + translation_direction * M_PI) * 180.0 / M_PI,
+      0);
 }
 
 void

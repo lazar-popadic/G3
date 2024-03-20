@@ -30,11 +30,9 @@ task_pickup_plants (target plant_target);
 int8_t
 task_dropoff_x_close_2 (uint8_t side);
 int8_t
-task_dropoff_plants_x_close (uint8_t side);
+task_dropoff_x_far_2 (uint8_t side);
 int8_t
-task_dropoff_plants_x_far (uint8_t side);
-int8_t
-task_dropoff_plants_y (uint8_t side);
+task_dropoff_y_2 (uint8_t side);
 int8_t
 task_solar_from_start (uint8_t side);
 int8_t

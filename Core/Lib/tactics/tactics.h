@@ -14,7 +14,9 @@
 #define END 250
 
 bool
-test_tactic_yellow ();
+pussy_smoke_yellow ();
+bool
+risky_yellow ();
 void
 pop_plant ();
 void

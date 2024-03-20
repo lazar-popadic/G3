@@ -101,18 +101,18 @@ mechanism_open ()
 void
 mechanism_open_slow ()
 {
-  ax_move (4, 472, 125);
+  ax_move (4, 472, 100);
 }
 
 void
 mechanism_half_open ()
 {
-  ax_move (4, 650, 125);
+  ax_move (4, 700, 500);
 }
 
 void
 mechanism_close ()
 {
-  ax_move (4, 900, 200);
+  ax_move (4, 900, 400);
 }
 

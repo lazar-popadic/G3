@@ -47,6 +47,11 @@ extern volatile target plant_central1;
 extern volatile target plant_central2;
 extern volatile target plant_yellow1;
 extern volatile target plant_yellow2;
+extern volatile float transition_factor;
+extern int16_t Vd_sum;
+extern int16_t Vl_sum;
+extern int16_t Vd_inc;
+extern int16_t Vl_inc;
 
 position pos_test =
   { 0, 0, 0 };
@@ -139,44 +144,62 @@ main (void)
 	  if (io_cinc ())
 	    {
 	      timer_start_sys_time ();
+	      Vd_sum = 0;
+	      Vl_sum = 0;
+	      Vd_inc = 0;
+	      Vl_inc = 0;
 	      state_main = 0;
 	      pwm_start ();
-	      set_starting_position (0, 0, 0);
+//	      set_starting_position (3000 - 450 + 80, 2000 - 450 + 160 + 5, 0);	pussy smoke yellow
+	      set_starting_position (450-80, 1000 - 225 + 160 + 5, 180);
 	      regulation_on = true;
+	      set_rotation_speed_limit (1.0);
+	      set_translation_speed_limit (1.0);
 //	    set_rotation_speed_limit(1.0);
 //	    move_to_angle(-179);
 //	    move_on_direction(1500, WALL);
 	    }
-	  break;
-
-	case 0:
-//	  set_translation_speed_limit(0.25);
-//	  move_to_xy_offset (2000, 0, WALL, 100);
-//	  set_rotation_speed_limit(1.0);
-//	  move_to_angle(90);
-//	  if (movement_finished () && timer_delay_nonblocking (20))
-//	    state_main++;
-
 	  mechanism_open ();
 	  solar_in_l ();
 	  solar_in_r ();
-	  if (positioning_up_yellow (plant_yellow1))
-	    state_main++;
+	  break;
+
+	case 0:
+//	  set_translation_speed_limit(1.0);
+//	  move_to_xy_offset (2000, 0, WALL, 100);
+//	  set_rotation_speed_limit(1.0);
+//	  move_to_angle(180);
+//	  if (movement_finished () && timer_delay_nonblocking (20))
+//	    state_main++;
+
+	  transition_factor = 2.5;
+	  turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+
+	  state_main++;
 	  break;
 
 	case 1:
-	  if (test_tactic_yellow ())
+	  if (movement_finished () && timer_delay_nonblocking (20))
+	    {
+	      reset_movement ();
+	      transition_factor = 1.0;
+	      state_main++;
+	    }
+	  break;
+
+	case 2:
+	  if (risky_yellow ())
 	    state_main = END;
 	  break;
 //
-//	case END:
-//	  timer_stop_sys_time ();
-//	  stop_right_wheel ();
-//	  stop_left_wheel ();
-//	  pwm_duty_cycle_left (0);
-//	  pwm_duty_cycle_right (0);
-//	  hold_position ();
-//	  break;
+	case END:
+	  timer_stop_sys_time ();
+	  stop_right_wheel ();
+	  stop_left_wheel ();
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
+	  regulation_on = false;
+	  break;
 	}
     } // while
   /* USER CODE END 3 */
