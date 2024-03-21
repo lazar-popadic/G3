@@ -84,7 +84,7 @@ io_cinc ()
     counter++;
   else
     counter = 0;
-  if (counter > 4)
+  if (counter > 64)
     return true;
   return false;
 }

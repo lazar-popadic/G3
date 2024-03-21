@@ -22,4 +22,7 @@ port C:
 	4 - infra senzor4 - niski
 	5 - infra senzor5
 	7 - M1PWM
+	10 - prekidac - pozicioniranje
+	11 - prekidac - izbor strane
+	12 - prekidac - izbor taktike
  	13 - button

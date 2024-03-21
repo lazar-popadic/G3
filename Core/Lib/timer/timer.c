@@ -91,6 +91,13 @@ timer_stop_sys_time ()
   TIM10->CR1 &= ~(0b1 << 0);
 }
 
+void
+reset_and_stop_timer ()
+{
+  TIM10->CR1 &= ~(0b1 << 0);
+  sys_time_half_ms = 0;
+}
+
 bool
 timer_end ()
 {

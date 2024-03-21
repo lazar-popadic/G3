@@ -10,6 +10,12 @@
 
 #include <stdbool.h>
 
+bool
+position_switch_on ();
+bool
+blue_side_selected ();
+bool
+tactic_1_selected ();
 void
 sensors_init ();
 bool

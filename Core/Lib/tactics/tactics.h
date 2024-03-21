@@ -12,9 +12,11 @@
 #define RETURN 249
 #define START 255
 #define END 250
+#define POSITIONING 253
+#define RESET_BEFORE_START 254
 
 bool
-pussy_smoke_yellow ();
+safe_yellow ();
 bool
 risky_yellow ();
 void

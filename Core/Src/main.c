@@ -33,13 +33,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t state_main = START;
+uint8_t state_main = POSITIONING;
 bool state_main_init = false;
 
 uint16_t sys_time_s = 0;
 extern volatile uint32_t sys_time_half_ms;
 
 uint16_t duty_cycle_test = 100;
+
+bool positioning_done = false;
+uint8_t selected_tactic = 0;
 
 extern volatile target plant_blue1;
 extern volatile target plant_blue2;
@@ -53,16 +56,11 @@ extern int16_t Vl_sum;
 extern int16_t Vd_inc;
 extern int16_t Vl_inc;
 
-position pos_test =
-  { 0, 0, 0 };
-uint8_t init_rot_test = 0, final_rot_test = 0, tran_test = 1;
-
 extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
 int16_t calib1 = 512;
 int16_t calib2 = 512;
-volatile float ref_test;
-extern volatile float V_ref, w_ref;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -140,6 +138,63 @@ main (void)
 	default:
 	  break;
 
+	case POSITIONING:
+	  if (position_switch_on () && !positioning_done)
+	    {
+	      transition_factor = 2.5;
+	      timer_start_sys_time ();
+	      Vd_sum = 0;
+	      Vl_sum = 0;
+	      Vd_inc = 0;
+	      Vl_inc = 0;
+	      pwm_start ();
+	      regulation_on = true;
+	      positioning_done = true;
+	      if (blue_side_selected ())
+		{
+		  if (tactic_1_selected ())		// plava sigurna
+		    {
+		      set_starting_position (50 + 80, 2000 - 50 - 160, 180);
+		      turn_to_pos (plant_blue1.x, plant_blue1.y, MECHANISM);
+		      selected_tactic = 1;
+		    }
+		  else				// plava rizicna
+		    {
+		      set_starting_position (3000 - 50 - 80, 1000 - 225 + 50,
+					     0);
+		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
+		      selected_tactic = 2;
+		    }
+		}
+	      else
+		{
+		  if (tactic_1_selected ())		// zuta sigurna
+		    {
+		      set_starting_position (3000 - 50 - 80, 2000 - 50 - 160,
+					     0);
+		      turn_to_pos (plant_yellow1.x, plant_yellow1.y, MECHANISM);
+		      selected_tactic = 3;
+		    }
+		  else				// zuta rizicna
+		    {
+		      set_starting_position (50 + 80, 1000 - 225 + 50, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+		      selected_tactic = 4;
+		    }
+		}
+	    }
+	  mechanism_open ();
+	  solar_in_l ();
+	  solar_in_r ();
+	  if (movement_finished() && timer_delay_nonblocking(20))
+	    state_main = RESET_BEFORE_START;
+	  break;
+	case RESET_BEFORE_START:
+	  reset_and_stop_timer();
+	  regulation_on = false;
+	  state_main = START;
+	  break;
+
 	case START:
 	  if (io_cinc ())
 	    {
@@ -148,46 +203,31 @@ main (void)
 	      Vl_sum = 0;
 	      Vd_inc = 0;
 	      Vl_inc = 0;
-	      state_main = 0;
+	      state_main = selected_tactic;
 	      pwm_start ();
-//	      set_starting_position (3000 - 450 + 80, 2000 - 450 + 160 + 5, 0);	pussy smoke yellow
-	      set_starting_position (450-80, 1000 - 225 + 160 + 5, 180);
 	      regulation_on = true;
 	      set_rotation_speed_limit (1.0);
 	      set_translation_speed_limit (1.0);
-//	    set_rotation_speed_limit(1.0);
-//	    move_to_angle(-179);
-//	    move_on_direction(1500, WALL);
-	    }
-	  mechanism_open ();
-	  solar_in_l ();
-	  solar_in_r ();
-	  break;
-
-	case 0:
-//	  set_translation_speed_limit(1.0);
-//	  move_to_xy_offset (2000, 0, WALL, 100);
-//	  set_rotation_speed_limit(1.0);
-//	  move_to_angle(180);
-//	  if (movement_finished () && timer_delay_nonblocking (20))
-//	    state_main++;
-
-	  transition_factor = 2.5;
-	  turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
-
-	  state_main++;
-	  break;
-
-	case 1:
-	  if (movement_finished () && timer_delay_nonblocking (20))
-	    {
-	      reset_movement ();
 	      transition_factor = 1.0;
-	      state_main++;
 	    }
 	  break;
 
-	case 2:
+//	case 1:
+//	  if (safe_blue ())
+//	    state_main = END;
+//	  break;
+//
+//	case 2:
+//	  if (risky_blue ())
+//	    state_main = END;
+//	  break;
+
+	case 3:
+	  if (safe_yellow ())
+	    state_main = END;
+	  break;
+
+	case 4:
 	  if (risky_yellow ())
 	    state_main = END;
 	  break;

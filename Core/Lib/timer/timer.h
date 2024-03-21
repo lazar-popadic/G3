@@ -25,6 +25,8 @@ void
 timer_start_sys_time ();
 void
 timer_stop_sys_time ();
+void
+reset_and_stop_timer ();
 bool
 timer_end ();
 

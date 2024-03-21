@@ -80,7 +80,7 @@ target homes[2];
 target plants[6];
 
 bool
-pussy_smoke_yellow ()
+safe_yellow ()
 {
   switch (tactic_state)
     {
@@ -172,36 +172,36 @@ pussy_smoke_yellow ()
 	  tactic_state_init = false;
 	}
       break;
-    case 6:
-      current_task_status = reserved_solar (YELLOW);
-      if (current_task_status == 1)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  tactic_state_init = false;
-	}
-      break;
-//    case 7:
-//      current_task_status = task_go_home (homes[home_counter], home_side,
-//      SENSORS_BACK);
+//    case 6:
+//      current_task_status = reserved_solar (YELLOW);
 //      if (current_task_status == 1)
 //	{
-//	  tactic_state = RETURN;
-//	  tactic_state_init = false;
-//	}
-//      if (current_task_status == -1)
-//	{
-//	  if (home_counter == 0)
-//	    {
-//	      home_counter++;
-//	      reset_task();
-//	      reset_movement ();
-//	      home_side++;
-//	      home_side %= 2;
-//	    }
+//	  reset_task ();
+//	  tactic_state++;
 //	  tactic_state_init = false;
 //	}
 //      break;
+    case 5:
+      current_task_status = task_go_home (homes[home_counter], home_side,
+      SENSORS_BACK);
+      if (current_task_status == 1)
+	{
+	  tactic_state = RETURN;
+	  tactic_state_init = false;
+	}
+      if (current_task_status == -1)
+	{
+	  if (home_counter == 0)
+	    {
+	      home_counter++;
+	      reset_task();
+	      reset_movement ();
+	      home_side++;
+	      home_side %= 2;
+	    }
+	  tactic_state_init = false;
+	}
+      break;
     case RETURN:
       tactic_finished = true;
       break;

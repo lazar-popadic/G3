@@ -40,14 +40,6 @@ task_central_solar_long (uint8_t side, uint8_t first_dir);
 int8_t
 task_central_solar_short (uint8_t side, uint8_t first_dir);
 int8_t
-positioning_solar_blue ();
-int8_t
-positioning_solar_yellow ();
-int8_t
-positioning_up_blue (target first_plant);
-int8_t
-positioning_up_yellow (target first_plant);
-int8_t
 reserved_solar (uint8_t side);
 
 void
