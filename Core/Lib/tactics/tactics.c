@@ -258,7 +258,6 @@ risky_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1)
 	{
-	  // TODO: if (retries) ovo else tactic_state = go_home
 	  reset_task ();
 	  reset_movement ();
 	  swap_first2_plants ();
@@ -286,7 +285,6 @@ risky_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1)
 	{
-	  // TODO: if (retries) ovo else tactic_state = go_home
 	  reset_task ();
 	  reset_movement ();
 	  swap_first2_plants ();
