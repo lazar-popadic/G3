@@ -9,15 +9,19 @@
 #define LIB_TACTICS_TASK_MODULES_H_
 
 #include "../../Inc/main.h"
-#define INTERRUPTED	200
 #define BLUE		0
 #define YELLOW		1
 #define RESERVED	0
 #define CENTRAL		1
 
+#define RETURN_CASE		100
 #define TASK_IN_PROGRESS	0
 #define TASK_SUCCESS		1
-#define TASK_FAILED		-1
+#define TASK_FAILED_1		-11
+#define TASK_FAILED_2		-12
+#define TASK_FAILED_3		-13
+#define TASK_FAILED_4		-14
+
 
 typedef struct
 {

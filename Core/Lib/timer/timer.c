@@ -127,7 +127,7 @@ timer_delay_nonblocking (uint32_t delay_ms)
 void
 TIM1_UP_TIM10_IRQHandler ()
 {
-  // poziva se svakih 0.5ms
+  // poziva se svake 2ms
   // proveri da li je stvarno TIM10 pozvao rutinu
   if ((TIM10->SR & (0b1 << 0)) == (0b1 << 0))
     {

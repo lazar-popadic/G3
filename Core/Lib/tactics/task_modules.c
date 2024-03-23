@@ -21,7 +21,6 @@ extern volatile target planter_yellow_y;
 extern volatile target planter_yellow_x_close;
 extern volatile target planter_yellow_x_far;
 extern position robot_position;
-volatile uint8_t plant_counter = 0;
 
 int8_t
 task_go_home (target home, uint8_t direction, uint8_t sensors)
@@ -44,7 +43,6 @@ task_go_home (target home, uint8_t direction, uint8_t sensors)
 	  task_case++;
 	  task_init = false;
 	}
-//	}
       break;
     case 1:
       if (!task_init)
@@ -57,20 +55,16 @@ task_go_home (target home, uint8_t direction, uint8_t sensors)
       move_to_xy (home.x, home.y, direction);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
-	  task_case = 100;
+	  task_status = TASK_SUCCESS;
+	  task_case = RETURN_CASE;
 	}
       if (interrupted)
 	{
-	  task_case = 200;
+	  task_status = TASK_FAILED_1;
+	  task_case = RETURN_CASE;
 	}
       break;
-    case 100:
-      reset_task ();
-      task_status = TASK_SUCCESS;
-      break;
-    case 200:
-      reset_task ();
-      task_status = TASK_FAILED;
+    case RETURN_CASE:
       break;
     }
   return task_status;
@@ -113,11 +107,12 @@ task_pickup_plants (target plant_target)
 	  task_case++;
 	  task_init = false;
 	}
-//      if (interrupted)
-//	{
-//	  task_case = 200;
-//	}
       break;
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_1;
+	  task_case = RETURN_CASE;
+	}
     case 2:
       if (!task_init)
 	{
@@ -132,10 +127,11 @@ task_pickup_plants (target plant_target)
 	  task_case++;
 	  task_init = false;
 	}
-//      if (interrupted)
-//	{
-//	  task_case = 200;
-//	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_1;
+	  task_case = RETURN_CASE;
+	}
       break;
     case 3:
       transition_factor = 1.0;
@@ -158,18 +154,13 @@ task_pickup_plants (target plant_target)
       mechanism_up ();
       if (timer_delay_nonblocking (500))
 	{
-	  task_case = 100;
+	  task_status = TASK_SUCCESS;
+	  task_case = RETURN_CASE;
 	  task_init = false;
 	}
       break;
 
-    case 100:
-      task_status = TASK_SUCCESS;
-      plant_counter++;
-      break;
-
-    case 200:
-      task_status = TASK_FAILED;
+    case RETURN_CASE:
       break;
     }
   return task_status;
@@ -304,15 +295,12 @@ task_dropoff_x_close_2 (uint8_t side)
       mechanism_down ();
       if (timer_delay_nonblocking (20))
 	{
-	  task_case = 100;
+	  task_status = TASK_SUCCESS;
+	  task_case = RETURN_CASE;
 	  task_init = false;
 	}
       break;
-    case 100:
-      task_status = TASK_SUCCESS;
-      break;
-    case 200:
-      task_status = TASK_FAILED;
+    case RETURN_CASE:
       break;
     }
   return task_status;
@@ -446,15 +434,12 @@ task_dropoff_x_far_2 (uint8_t side)
       mechanism_down ();
       if (timer_delay_nonblocking (20))
 	{
-	  task_case = 100;
+	  task_status = TASK_SUCCESS;
+	  task_case = RETURN_CASE;
 	  task_init = false;
 	}
       break;
-    case 100:
-      task_status = TASK_SUCCESS;
-      break;
-    case 200:
-      task_status = TASK_FAILED;
+    case RETURN_CASE:
       break;
     }
   return task_status;
@@ -554,15 +539,12 @@ task_dropoff_y_2 (uint8_t side)
       mechanism_down ();
       if (timer_delay_nonblocking (20))
 	{
-	  task_case = 100;
+	  task_status = TASK_SUCCESS;
+	  task_case = RETURN_CASE;
 	  task_init = false;
 	}
       break;
-    case 100:
-      task_status = TASK_SUCCESS;
-      break;
-    case 200:
-      task_status = TASK_FAILED;
+    case RETURN_CASE:
       break;
     }
   return task_status;
@@ -631,17 +613,13 @@ task_solar (uint8_t side, uint8_t solar)
 	solar_in_r ();
       if (timer_delay_nonblocking (1000))
 	{
-	  task_case = 100;
+	  task_status = TASK_SUCCESS;
+	  task_case = RETURN_CASE;
 	  task_init = false;
 	}
       break;
 
-    case 100:
-      task_status = TASK_SUCCESS;
-      break;
-
-    case 200:
-      task_status = TASK_FAILED;
+    case RETURN_CASE:
       break;
     }
   return task_status;
