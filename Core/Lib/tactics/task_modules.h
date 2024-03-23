@@ -9,9 +9,11 @@
 #define LIB_TACTICS_TASK_MODULES_H_
 
 #include "../../Inc/main.h"
-#define INTERRUPTED 200
-#define BLUE 0
-#define YELLOW 1
+#define INTERRUPTED	200
+#define BLUE		0
+#define YELLOW		1
+#define RESERVED	0
+#define CENTRAL		1
 
 #define TASK_IN_PROGRESS	0
 #define TASK_SUCCESS		1
@@ -34,13 +36,7 @@ task_dropoff_x_far_2 (uint8_t side);
 int8_t
 task_dropoff_y_2 (uint8_t side);
 int8_t
-task_solar_from_start (uint8_t side);
-int8_t
-task_central_solar_long (uint8_t side, uint8_t first_dir);
-int8_t
-task_central_solar_short (uint8_t side, uint8_t first_dir);
-int8_t
-reserved_solar (uint8_t side);
+task_solar (uint8_t side, uint8_t solar);
 
 void
 reset_task ();

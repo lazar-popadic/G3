@@ -13,7 +13,7 @@
 
 #define SENSORS_HIGH 		1
 #define SENSORS_LOW 		2
-#define SENSORS_BACK 		3
+#define SENSORS_MECHANISM 	3
 #define SENSORS_HIGH_AND_LOW 	4
 #define SENSORS_OFF 		0
 

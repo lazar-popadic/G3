@@ -183,7 +183,7 @@ safe_yellow ()
 //      break;
     case 5:
       current_task_status = task_go_home (homes[home_counter], home_side,
-      SENSORS_BACK);
+      SENSORS_MECHANISM);
       if (current_task_status == 1)
 	{
 	  tactic_state = RETURN;
@@ -194,7 +194,7 @@ safe_yellow ()
 	  if (home_counter == 0)
 	    {
 	      home_counter++;
-	      reset_task();
+	      reset_task ();
 	      reset_movement ();
 	      home_side++;
 	      home_side %= 2;

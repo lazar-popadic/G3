@@ -185,11 +185,11 @@ main (void)
 	  mechanism_open ();
 	  solar_in_l ();
 	  solar_in_r ();
-	  if (movement_finished() && timer_delay_nonblocking(20))
+	  if (movement_finished () && timer_delay_nonblocking (20))
 	    state_main = RESET_BEFORE_START;
 	  break;
 	case RESET_BEFORE_START:
-	  reset_and_stop_timer();
+	  reset_and_stop_timer ();
 	  regulation_on = false;
 	  state_main = START;
 	  break;

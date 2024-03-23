@@ -168,7 +168,7 @@ TIM1_UP_TIM10_IRQHandler ()
 	case SENSORS_LOW:
 	  interrupted = sensors_low ();
 	  break;
-	case SENSORS_BACK:
+	case SENSORS_MECHANISM:
 	  interrupted = sensors_back ();
 	  break;
 	case SENSORS_HIGH_AND_LOW:
