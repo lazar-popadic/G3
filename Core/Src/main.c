@@ -35,7 +35,7 @@
 /* USER CODE BEGIN PV */
 uint8_t state_main = POSITIONING;
 bool state_main_init = false;
-
+//uint8_t state_main = 10;
 
 uint16_t duty_cycle_test = 100;
 
@@ -58,6 +58,12 @@ extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
 int16_t calib1 = 512;
 int16_t calib2 = 512;
+bool switch1 = false;
+bool switch3 = false;
+bool switch2 = false;
+
+extern volatile uint8_t sensors_case_timer;
+extern volatile bool interrupted;
 
 /* USER CODE END PV */
 
@@ -85,6 +91,7 @@ main (void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+
   HAL_Init ();
 
   /* USER CODE BEGIN Init */
@@ -112,6 +119,15 @@ main (void)
   __enable_irq ();
 
   regulation_on = false;
+
+//  timer_start_sys_time ();
+//  Vd_sum = 0;
+//  Vl_sum = 0;
+//  Vd_inc = 0;
+//  Vl_inc = 0;
+//  pwm_start ();
+//  regulation_on = true;
+//  sensors_case_timer = SENSORS_HIGH;
 //  timer_start_sys_time ();
   /* USER CODE END 2 */
 
@@ -124,7 +140,6 @@ main (void)
 
       /* USER CODE BEGIN 3 */
 //      w_ref = ref_test;
-
 //      if (timer_end ())
 //      state_main = END;
 //      ax_move(9, calib1, 500);
@@ -227,7 +242,14 @@ main (void)
 	  if (risky_yellow ())
 	    state_main = END;
 	  break;
-//
+//	case 10:
+//	  move_to_angle_2 (90);
+////	  if (interrupted)
+////	    reset_movement();
+//	  if (movement_finished () && timer_delay_nonblocking (20))
+//	    state_main = END;
+//	  break;
+////
 	case END:
 	  timer_stop_sys_time ();
 	  stop_right_wheel ();

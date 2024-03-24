@@ -1,7 +1,7 @@
 port A:
-	0 - enc2 A - tim5
+	0 - enc2 A - tim5 - levi
 	1 - enc2 B	
-	5 - enc1 A	- tim2
+	5 - enc1 A	- tim2 - desni
 	6 - cinc
 	8 - M1DIR
 	9 - M2DIR

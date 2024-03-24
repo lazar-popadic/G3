@@ -113,9 +113,8 @@ safe_yellow ()
 	  current_task_retries++;
 	  reset_task ();
 	  reset_movement ();
-	  if (!(current_task_retries % 3))
-	    swap_first2_plants ();
-	  tactic_state = 1;
+//	  if (!(current_task_retries % 3))
+	  swap_first2_plants ();
 	}
       break;
 
@@ -132,6 +131,7 @@ safe_yellow ()
 	{
 	  current_task_retries++;
 	  reset_movement ();
+	  tactic_state = 10;
 	}
       else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
 	{
@@ -166,7 +166,6 @@ safe_yellow ()
 	  reset_movement ();
 	  if (!(current_task_retries % 3))
 	    swap_first2_plants ();
-	  tactic_state = 3;
 	}
       break;
     case 4:
@@ -182,6 +181,7 @@ safe_yellow ()
 	{
 	  current_task_retries++;
 	  reset_movement ();
+	  tactic_state = 20;
 	}
       else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
 	{
@@ -202,6 +202,7 @@ safe_yellow ()
 	{
 	  current_task_retries++;
 	  reset_movement ();
+	  tactic_state = 30;
 	}
       else if (current_task_status == TASK_FAILED_2)	// pri okretanju
 	{
@@ -228,6 +229,156 @@ safe_yellow ()
 	      home_side++;
 	      home_side %= 2;
 	    }
+	}
+      break;
+
+    case 10:
+      current_task_status = task_dropoff_y_2 (YELLOW);
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  tactic_state++;
+	  current_task_time = sys_time_s;
+	  current_task_retries = 0;
+	}
+      else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	  tactic_state = 2;
+	}
+      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      break;
+    case 11:
+      current_task_status = task_pickup_plants (plants[0]);
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  tactic_state++;
+	  pop_plant ();
+	  current_task_time = sys_time_s;
+	  current_task_retries = 0;
+	}
+      else if (current_task_status == TASK_FAILED_1)
+	{
+	  current_task_retries++;
+	  reset_task ();
+	  reset_movement ();
+	  if (!(current_task_retries % 3))
+	    swap_first2_plants ();
+	}
+      break;
+    case 12:
+      current_task_status = task_dropoff_x_close_2 (YELLOW);
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  tactic_state = 5;
+	  current_task_time = sys_time_s;
+	  current_task_retries = 0;
+	}
+      else if (current_task_status == TASK_FAILED_1) // na putu do polja, pre pomeranja saksija
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	  tactic_state = 20;
+	}
+      else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      break;
+
+    case 20:
+      current_task_status = task_solar (YELLOW, CENTRAL);
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  tactic_state++;
+	  current_task_time = sys_time_s;
+	  current_task_retries = 0;
+	}
+      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_2)	// pri okretanju
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      break;
+    case 21:
+      current_task_status = task_dropoff_x_far_2 (YELLOW);
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  current_task_time = sys_time_s;
+	  current_task_retries = 0;
+	  homes[0] = home_yellow3;
+	  homes[1] = home_yellow1;
+	  tactic_state = 6;
+	}
+      else if (current_task_status == TASK_FAILED_1) // na putu do polja, pre pomeranja saksija
+	{
+	  current_task_retries++;
+	  reset_movement ();
+//	  tactic_state = 6; TODO: nece valjda ovde failovati
+
+	}
+      else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      break;
+
+    case 30:
+      current_task_status = task_solar (YELLOW, CENTRAL);
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  homes[0] = home_yellow3;
+	  homes[1] = home_yellow1;
+	  tactic_state = 6;
+	  current_task_time = sys_time_s;
+	  current_task_retries = 0;
+	}
+      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_2)	// pri okretanju
+	{
+	  current_task_retries++;
+	  reset_movement ();
 	}
       break;
 
