@@ -36,8 +36,6 @@
 uint8_t state_main = POSITIONING;
 bool state_main_init = false;
 
-uint16_t sys_time_s = 0;
-extern volatile uint32_t sys_time_half_ms;
 
 uint16_t duty_cycle_test = 100;
 
@@ -125,7 +123,6 @@ main (void)
       /* USER CODE END WHILE */
 
       /* USER CODE BEGIN 3 */
-      sys_time_s = sys_time_half_ms * 0.0005;
 //      w_ref = ref_test;
 
 //      if (timer_end ())

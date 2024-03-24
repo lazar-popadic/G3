@@ -227,7 +227,9 @@ set_transition_factor (float factor)
 void
 reset_movement ()
 {
-  // TODO: mozda ovde stavi da postavi trenutnu poziciju kao target, ali prvo vidi gde se sve poziva ovo
+  target_position.x_mm = robot_position.x_mm;
+  target_position.y_mm = robot_position.y_mm;
+  target_position.theta_rad = robot_position.theta_rad;
   movement_init = false;
 }
 

@@ -24,23 +24,17 @@
 
 static void
 tim10_init ();
-extern volatile position robot_position;
-extern volatile float w_ref;
 
 extern volatile float V_m_s;
 extern volatile float w_rad_s;
 extern volatile float transition_factor;
 
+volatile uint16_t sys_time_s = 0;
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
 int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
 volatile bool interrupted = false;
-//extern uint8_t previous_tactic_state;
-//extern uint8_t tactic_state;
-
-extern volatile int16_t ref_speed_left;
-extern volatile int16_t ref_speed_right;
 
 volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
@@ -96,6 +90,7 @@ reset_and_stop_timer ()
 {
   TIM10->CR1 &= ~(0b1 << 0);
   sys_time_half_ms = 0;
+  sys_time_s = 0;
 }
 
 bool
@@ -134,6 +129,7 @@ TIM1_UP_TIM10_IRQHandler ()
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
       sys_time_half_ms++;
+      sys_time_s = sys_time_half_ms * 0.0005;
 
       if (!(sys_time_half_ms % position_loop_cnt))
 	{
@@ -148,14 +144,14 @@ TIM1_UP_TIM10_IRQHandler ()
 	}
       else
 	{
-	  stop_right_wheel();
-	  stop_left_wheel();
+	  stop_right_wheel ();
+	  stop_left_wheel ();
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	}
 
-      if (fabs(w_rad_s) < W_LIMIT * transition_factor
-          && fabs(V_m_s) < V_LIMIT * transition_factor)
+      if (fabs (w_rad_s) < W_LIMIT * transition_factor
+	  && fabs (V_m_s) < V_LIMIT * transition_factor)
 	robot_moving = false;
       else
 	robot_moving = true;
@@ -172,7 +168,7 @@ TIM1_UP_TIM10_IRQHandler ()
 	  interrupted = sensors_back ();
 	  break;
 	case SENSORS_HIGH_AND_LOW:
-	  interrupted = sensors_high() | sensors_low();
+	  interrupted = sensors_high () | sensors_low ();
 	  break;
 	case SENSORS_OFF:
 	  interrupted = false;

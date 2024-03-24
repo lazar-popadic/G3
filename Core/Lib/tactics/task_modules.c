@@ -672,7 +672,9 @@ task_solar (uint8_t side, uint8_t solar)
       task_case++;
       break;
     case 4:
-      move_on_direction (500, MECHANISM);
+//      move_on_direction (500, MECHANISM);
+      move_to_xy (side * 3000 - (2 * side - 1) * (775 + solar * 1000), 220,
+      MECHANISM);
       task_case++;
       break;
     case 5:
