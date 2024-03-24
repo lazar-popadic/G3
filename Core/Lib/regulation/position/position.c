@@ -52,6 +52,11 @@ regulation_position ()
 	{
 	  regulation_phase = ROT_TO_POS;
 	}
+      //TODO: ako robot ne zabada vise onako (greska izmedju 10 i 20 mm) onda ovo radi posao
+      else if (fabs (distance) > EPSILON_DISTANCE && !robot_moving)
+	{
+	  regulation_phase = TRAN_WITHOUT_ROT;
+	}
       regulation_rotation (theta_to_angle, 1, 1);
       V_ref = 0;
       break;
@@ -59,7 +64,6 @@ regulation_position ()
     case ROT_TO_POS:
       if (fabs (theta_to_pos) < EPSILON_THETA_MEDIUM && !robot_moving)
 	{
-//	  regulation_rotation_finished ();
 	  regulation_phase = TRAN_WITH_ROT;
 	}
       /* (ako se zada mala kretnja)
@@ -67,7 +71,6 @@ regulation_position ()
        */
 //      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
 //	{
-////	  regulation_rotation_finished ();
 //	  regulation_phase = ROT_TO_ANGLE;
 //	}
       regulation_rotation (theta_to_pos, 1, 1);
@@ -77,12 +80,10 @@ regulation_position ()
     case TRAN_WITH_ROT:
       if (fabs (distance) < EPSILON_DISTANCE_ROT)
 	{
-//	  regulation_rotation_finished();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
       if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
 	{
-//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
       regulation_translation (distance, 1);
@@ -93,12 +94,10 @@ regulation_position ()
       if (fabs (distance) < EPSILON_DISTANCE
 	  && !robot_moving)
 	{
-//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       if (fabs (distance) > EPSILON_DISTANCE_ROT * 2.0)
 	{
-//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
       if (fabs (theta_to_pos) > (M_PI / 2))
@@ -110,7 +109,6 @@ regulation_position ()
     }
 
 }
-
 /*
  * TODO: razmisli da li pokriva svaki slucaj!
  */
