@@ -30,7 +30,7 @@ typedef struct
 } target;
 
 int8_t
-task_go_home (target home_target, uint8_t direction, uint8_t sensors);
+task_go_home (target home_target, uint8_t direction);
 int8_t
 task_pickup_plants (target plant_target);
 int8_t

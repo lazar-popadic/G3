@@ -143,6 +143,11 @@ safe_yellow ()
 	  current_task_retries++;
 	  reset_movement ();
 	}
+      else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
       break;
     case 3:
       current_task_status = task_pickup_plants (plants[0]);
@@ -178,6 +183,11 @@ safe_yellow ()
 	  current_task_retries++;
 	  reset_movement ();
 	}
+      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
       break;
     case 5:
       current_task_status = task_solar (YELLOW, RESERVED);
@@ -200,8 +210,7 @@ safe_yellow ()
 	}
       break;
     case 6:
-      current_task_status = task_go_home (homes[home_counter], home_side,
-      SENSORS_MECHANISM);
+      current_task_status = task_go_home (homes[home_counter], home_side);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  tactic_state = RETURN;
@@ -339,8 +348,7 @@ risky_yellow ()
 	}
       break;
     case 7:
-      current_task_status = task_go_home (homes[home_counter], home_side,
-      SENSORS_MECHANISM);
+      current_task_status = task_go_home (homes[home_counter], home_side);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  tactic_state = RETURN;

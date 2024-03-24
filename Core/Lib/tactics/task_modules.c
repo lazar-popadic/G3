@@ -10,6 +10,7 @@
 volatile int8_t task_status = TASK_IN_PROGRESS;
 volatile bool task_init = false;
 volatile uint8_t task_case = 0;
+
 extern volatile bool interrupted;
 extern volatile uint8_t sensors_case_timer;
 extern volatile float transition_factor;
@@ -23,14 +24,17 @@ extern volatile target planter_yellow_x_far;
 extern position robot_position;
 
 int8_t
-task_go_home (target home, uint8_t direction, uint8_t sensors)
+task_go_home (target home, uint8_t direction)
 {
   switch (task_case)
     {
     case 0:
       if (!task_init)
 	{
-	  sensors_case_timer = sensors;
+	  if (direction == WALL)
+	    sensors_case_timer = SENSORS_HIGH;
+	  else
+	    sensors_case_timer = SENSORS_MECHANISM;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (1.0);
@@ -173,7 +177,7 @@ task_dropoff_x_close_2 (uint8_t side)
     {
     case 0:
       {
-	sensors_case_timer = SENSORS_MECHANISM;
+	sensors_case_timer = SENSORS_HIGH;
 	task_init = true;
 	task_status = TASK_IN_PROGRESS;
 	set_rotation_speed_limit (1.0);
@@ -228,6 +232,7 @@ task_dropoff_x_close_2 (uint8_t side)
 	{
 	  task_case++;
 	  task_init = false;
+	  sensors_case_timer = SENSORS_MECHANISM;
 	}
       if (interrupted)
 	{
@@ -289,6 +294,7 @@ task_dropoff_x_close_2 (uint8_t side)
       mechanism_half_open ();
       if (timer_delay_nonblocking (500))
 	{
+	  sensors_case_timer = SENSORS_HIGH;
 	  task_case++;
 	  task_init = false;
 	}
@@ -312,6 +318,11 @@ task_dropoff_x_close_2 (uint8_t side)
 	  mechanism_open ();
 	  mechanism_open ();
 	  task_init = false;
+	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_4;
+	  task_case = RETURN_CASE;
 	}
       break;
     case 8:
@@ -341,7 +352,7 @@ task_dropoff_x_far_2 (uint8_t side)
     {
     case 0:
       {
-	sensors_case_timer = SENSORS_MECHANISM;
+	sensors_case_timer = SENSORS_HIGH;
 	task_init = true;
 	task_status = TASK_IN_PROGRESS;
 	set_rotation_speed_limit (1.0);
@@ -395,6 +406,7 @@ task_dropoff_x_far_2 (uint8_t side)
 	{
 	  task_case++;
 	  task_init = false;
+	  sensors_case_timer = SENSORS_MECHANISM;
 	}
       if (interrupted)
 	{
@@ -456,6 +468,7 @@ task_dropoff_x_far_2 (uint8_t side)
       mechanism_half_open ();
       if (timer_delay_nonblocking (500))
 	{
+	  sensors_case_timer = SENSORS_HIGH;
 	  task_case++;
 	  task_init = false;
 	}
@@ -479,6 +492,11 @@ task_dropoff_x_far_2 (uint8_t side)
 	  mechanism_open ();
 	  mechanism_open ();
 	  task_init = false;
+	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_4;
+	  task_case = RETURN_CASE;
 	}
       break;
     case 8:
@@ -508,7 +526,7 @@ task_dropoff_y_2 (uint8_t side)
     {
     case 0:
       {
-	sensors_case_timer = SENSORS_MECHANISM;
+	sensors_case_timer = SENSORS_HIGH;
 	task_init = true;
 	task_status = TASK_IN_PROGRESS;
 	set_rotation_speed_limit (0.25);
@@ -600,6 +618,11 @@ task_dropoff_y_2 (uint8_t side)
 	  mechanism_open ();
 	  task_init = false;
 	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_2;
+	  task_case = RETURN_CASE;
+	}
       break;
     case 7:
       if (!task_init)
@@ -636,6 +659,15 @@ task_solar (uint8_t side, uint8_t solar)
 	  set_translation_speed_limit (1.0);
 	}
       mechanism_up ();
+      turn_to_pos (side * 3000 - (2 * side - 1) * (275 + solar * 1000), 220,
+      WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  task_case++;
+	  task_init = false;
+	}
+      break;
+    case 1:
       move_to_xy (side * 3000 - (2 * side - 1) * (275 + solar * 1000), 220,
       WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
@@ -649,14 +681,15 @@ task_solar (uint8_t side, uint8_t solar)
 	  task_status = TASK_FAILED_1;
 	  task_case = RETURN_CASE;
 	}
-    case 1:
+      break;
+    case 2:
       move_to_angle ((1 - side) * 180);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
 	}
       break;
-    case 2:
+    case 3:
       if (side == BLUE)
 	solar_out_l ();
       else
@@ -666,18 +699,18 @@ task_solar (uint8_t side, uint8_t solar)
 	  task_case++;
 	}
       break;
-    case 3:
+    case 4:
       sensors_case_timer = SENSORS_MECHANISM;
       set_translation_speed_limit (0.2);
       task_case++;
       break;
-    case 4:
+    case 5:
 //      move_on_direction (500, MECHANISM);
       move_to_xy (side * 3000 - (2 * side - 1) * (775 + solar * 1000), 220,
       MECHANISM);
       task_case++;
       break;
-    case 5:
+    case 6:
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
@@ -688,7 +721,7 @@ task_solar (uint8_t side, uint8_t solar)
 	  task_case = RETURN_CASE;
 	}
       break;
-    case 6:
+    case 7:
       mechanism_down ();
       if (side == BLUE)
 	solar_in_l ();
