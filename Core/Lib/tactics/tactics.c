@@ -86,7 +86,7 @@ safe_yellow ()
 	  plants[4] = plant_blue2;
 	  plants[5] = plant_blue1;
 
-	  homes[0] = home_yellow1;
+	  homes[0] = home_yellow2;
 	  homes[1] = home_yellow3;
 	  home_side = MECHANISM;
 
@@ -111,10 +111,10 @@ safe_yellow ()
       else if (current_task_status == TASK_FAILED_1)
 	{
 	  current_task_retries++;
-	  reset_task ();
 	  reset_movement ();
-//	  if (!(current_task_retries % 3))
-	  swap_first2_plants ();
+	  reset_task ();
+	  if (!(current_task_retries % 3))
+	    swap_first2_plants ();
 	}
       break;
 
@@ -130,22 +130,26 @@ safe_yellow ()
       else if (current_task_status == TASK_FAILED_1) // na putu do polja, pre pomeranja saksija
 	{
 	  current_task_retries++;
+	  reset_task ();
 	  reset_movement ();
-	  tactic_state = 10;
+//	  tactic_state = 10;
 	}
       else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
 	{
-	  current_task_retries++;
+	  set_task_case (2);
 	  reset_movement ();
+	  current_task_retries++;
 	}
       else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
 	{
 	  current_task_retries++;
+	  set_task_case (4);
 	  reset_movement ();
 	}
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
+	  set_task_case (8);
 	  reset_movement ();
 	}
       break;
@@ -180,12 +184,14 @@ safe_yellow ()
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
 	  current_task_retries++;
+	  reset_task ();
 	  reset_movement ();
-	  tactic_state = 20;
+//	  tactic_state = 20;
 	}
       else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
+	  set_task_case (6);
 	  reset_movement ();
 	}
       break;
@@ -201,12 +207,14 @@ safe_yellow ()
       else if (current_task_status == TASK_FAILED_1)	// na putu do solara
 	{
 	  current_task_retries++;
+	  reset_task ();
 	  reset_movement ();
-	  tactic_state = 30;
+//	  tactic_state = 30;
 	}
-      else if (current_task_status == TASK_FAILED_2)	// pri okretanju
+      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
 	{
 	  current_task_retries++;
+	  set_task_case (5);
 	  reset_movement ();
 	}
       break;

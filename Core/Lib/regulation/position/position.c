@@ -86,13 +86,15 @@ regulation_position ()
 	{
 	  regulation_phase = ROT_TO_POS;
 	}
-      regulation_translation (distance, 1);
+      if (fabs (theta_to_pos) > (M_PI / 2))
+	regulation_translation (-distance, 1);
+      else
+	regulation_translation (distance, 1);
       regulation_rotation (theta_to_pos, 1.0, 0.25);
       break;
 
     case TRAN_WITHOUT_ROT:
-      if (fabs (distance) < EPSILON_DISTANCE
-	  && !robot_moving)
+      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
 	{
 	  regulation_phase = ROT_TO_ANGLE;
 	}

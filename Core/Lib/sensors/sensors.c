@@ -74,8 +74,8 @@ bool
 tactic_1_selected ()
 {
   if (GPIOC->IDR & (0b1 << tactic_switch))
-    return true;
-  return false;
+    return false;
+  return true;
 }
 
 bool
@@ -89,7 +89,7 @@ sensors_low ()
 bool
 sensors_high ()
 {
-  if (GPIOC->IDR & ((0b1 << infra0) | (0b1 << infra1)))
+  if (GPIOC->IDR & ((0b1 << infra0) | (0b1 << infra2)))
     return true;
   return false;
 }
@@ -97,7 +97,7 @@ sensors_high ()
 bool
 sensors_back ()
 {
-  if (GPIOC->IDR & ((0b1 << infra2) | (0b1 << infra3)))
+  if (GPIOC->IDR & ((0b1 << infra1) | (0b1 << infra3)))
     return true;
   return false;
 }

@@ -198,13 +198,6 @@ set_starting_position (float starting_x, float starting_y,
 //  hold_position_state = 0;
 //}
 
-//void
-//hold_position_with_reg ()
-//{
-//  target_position.x_mm = robot_position.x_mm;
-//  target_position.y_mm = robot_position.y_mm;
-//  target_position.theta_rad = robot_position.theta_rad;
-//}
 
 void
 set_translation_speed_limit (float perc)
@@ -230,6 +223,7 @@ reset_movement ()
   target_position.x_mm = robot_position.x_mm;
   target_position.y_mm = robot_position.y_mm;
   target_position.theta_rad = robot_position.theta_rad;
+  regulation_phase = ROT_TO_ANGLE;
   movement_init = false;
 }
 

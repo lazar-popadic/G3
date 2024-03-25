@@ -22,7 +22,6 @@
 #define TASK_FAILED_3		-13
 #define TASK_FAILED_4		-14
 
-
 typedef struct
 {
   float x;
@@ -44,5 +43,7 @@ task_solar (uint8_t side, uint8_t solar);
 
 void
 reset_task ();
+void
+set_task_case (uint8_t number);
 
 #endif /* LIB_TACTICS_TASK_MODULES_H_ */

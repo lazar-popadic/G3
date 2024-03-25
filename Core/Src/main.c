@@ -35,7 +35,7 @@
 /* USER CODE BEGIN PV */
 uint8_t state_main = POSITIONING;
 bool state_main_init = false;
-//uint8_t state_main = 10;
+//uint8_t state_main = 5;
 
 uint16_t duty_cycle_test = 100;
 
@@ -58,9 +58,10 @@ extern volatile position target_position, robot_position;
 extern volatile bool regulation_on;
 int16_t calib1 = 512;
 int16_t calib2 = 512;
-bool switch1 = false;
-bool switch3 = false;
-bool switch2 = false;
+bool s1 = false;
+bool s2 = false;
+bool s3 = false;
+
 
 extern volatile uint8_t sensors_case_timer;
 extern volatile bool interrupted;
@@ -142,7 +143,6 @@ main (void)
 //      w_ref = ref_test;
 //      if (timer_end ())
 //      state_main = END;
-//      ax_move(9, calib1, 500);
 
       switch (state_main)
 	{
@@ -165,8 +165,8 @@ main (void)
 		{
 		  if (tactic_1_selected ())		// plava sigurna
 		    {
-		      set_starting_position (50 + 80, 2000 - 50 - 160, 180);
-		      turn_to_pos (plant_blue1.x, plant_blue1.y, MECHANISM);
+		      set_starting_position (100 + 80, 2000 - 30 - 160, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 1;
 		    }
 		  else				// plava rizicna
@@ -181,9 +181,9 @@ main (void)
 		{
 		  if (tactic_1_selected ())		// zuta sigurna
 		    {
-		      set_starting_position (3000 - 50 - 80, 2000 - 50 - 160,
+		      set_starting_position (3000 - 100 - 80, 2000 - 30 - 160,
 					     0);
-		      turn_to_pos (plant_yellow1.x, plant_yellow1.y, MECHANISM);
+		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 3;
 		    }
 		  else				// zuta rizicna
@@ -241,6 +241,17 @@ main (void)
 	case 4:
 	  if (risky_yellow ())
 	    state_main = END;
+	  break;
+
+	case 5:
+//	  mechanism_up();
+	  mechanism_open();
+	  break;
+	case 6:
+	  mechanism_down();
+	  break;
+	case 7:
+	  mechanism_half_up();
 	  break;
 //	case 10:
 //	  move_to_angle_2 (90);

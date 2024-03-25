@@ -111,12 +111,12 @@ task_pickup_plants (target plant_target)
 	  task_case++;
 	  task_init = false;
 	}
-      break;
       if (interrupted)
 	{
 	  task_status = TASK_FAILED_1;
 	  task_case = RETURN_CASE;
 	}
+      break;
     case 2:
       if (!task_init)
 	{
@@ -217,7 +217,9 @@ task_dropoff_x_close_2 (uint8_t side)
     case 2:
       if (!task_init)
 	{
+	  sensors_case_timer = SENSORS_HIGH;
 	  task_init = true;
+	  task_status = TASK_IN_PROGRESS;
 	  set_translation_speed_limit (0.3);
 	  set_rotation_speed_limit (0.25);
 	}
@@ -241,6 +243,12 @@ task_dropoff_x_close_2 (uint8_t side)
 	}
       break;
     case 3:
+      if (!task_init)
+	{
+	  sensors_case_timer = SENSORS_HIGH;
+	  task_init = true;
+	  task_status = TASK_IN_PROGRESS;
+	}
       if (side == BLUE)
 	move_to_xy (planter_blue_x_close.x + 110, planter_blue_x_close.y,
 	MECHANISM);
@@ -302,7 +310,9 @@ task_dropoff_x_close_2 (uint8_t side)
     case 7:
       if (!task_init)
 	{
+	  sensors_case_timer = SENSORS_HIGH;
 	  task_init = true;
+	  task_status = TASK_IN_PROGRESS;
 	  set_translation_speed_limit (0.25);
 	}
       if (side == BLUE)
@@ -392,6 +402,7 @@ task_dropoff_x_far_2 (uint8_t side)
     case 2:
       if (!task_init)
 	{
+	  task_status = TASK_IN_PROGRESS;
 	  task_init = true;
 	  set_translation_speed_limit (0.3);
 	  set_rotation_speed_limit (0.25);
@@ -415,6 +426,12 @@ task_dropoff_x_far_2 (uint8_t side)
 	}
       break;
     case 3:
+      if (!task_init)
+	{
+	  sensors_case_timer = SENSORS_HIGH;
+	  task_init = true;
+	  task_status = TASK_IN_PROGRESS;
+	}
       if (side == BLUE)
 	move_to_xy (planter_blue_x_far.x - 110, planter_blue_x_far.y,
 	MECHANISM);
@@ -477,7 +494,9 @@ task_dropoff_x_far_2 (uint8_t side)
       if (!task_init)
 	{
 	  task_init = true;
+	  sensors_case_timer = SENSORS_HIGH;
 	  set_translation_speed_limit (0.25);
+	  task_status = TASK_IN_PROGRESS;
 	}
       if (side == BLUE)
 	move_to_xy (planter_blue_x_far.x - 300, robot_position.y_mm, WALL);
@@ -609,6 +628,11 @@ task_dropoff_y_2 (uint8_t side)
 	  set_rotation_speed_limit (1.0);
 	}
       move_to_xy (robot_position.x_mm, 2000 - 300, WALL);
+      task_case++;
+      break;
+    case 7:
+      task_status = TASK_IN_PROGRESS;
+      move_to_xy (robot_position.x_mm, 2000 - 300, WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
@@ -624,7 +648,7 @@ task_dropoff_y_2 (uint8_t side)
 	  task_case = RETURN_CASE;
 	}
       break;
-    case 7:
+    case 8:
       if (!task_init)
 	{
 	  task_init = true;
@@ -659,7 +683,7 @@ task_solar (uint8_t side, uint8_t solar)
 	  set_translation_speed_limit (1.0);
 	}
       mechanism_up ();
-      turn_to_pos (side * 3000 - (2 * side - 1) * (275 + solar * 1000), 220,
+      turn_to_pos (side * 3000 - (2 * side - 1) * (275 + solar * 1000), 240,
       WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -668,14 +692,13 @@ task_solar (uint8_t side, uint8_t solar)
 	}
       break;
     case 1:
-      move_to_xy (side * 3000 - (2 * side - 1) * (275 + solar * 1000), 220,
+      move_to_xy (side * 3000 - (2 * side - 1) * (275 + solar * 1000), 240,
       WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
 	  task_init = false;
 	}
-      break;
       if (interrupted)
 	{
 	  task_status = TASK_FAILED_1;
@@ -700,13 +723,18 @@ task_solar (uint8_t side, uint8_t solar)
 	}
       break;
     case 4:
-      sensors_case_timer = SENSORS_MECHANISM;
       set_translation_speed_limit (0.2);
       task_case++;
       break;
     case 5:
+      if (!task_init)
+	{
+	  sensors_case_timer = SENSORS_MECHANISM;
+	  task_init = true;
+	  task_status = TASK_IN_PROGRESS;
+	}
 //      move_on_direction (500, MECHANISM);
-      move_to_xy (side * 3000 - (2 * side - 1) * (775 + solar * 1000), 220,
+      move_to_xy (side * 3000 - (2 * side - 1) * (775 + solar * 1000), 240,
       MECHANISM);
       task_case++;
       break;
@@ -746,4 +774,11 @@ reset_task ()
 {
   task_init = false;
   task_case = 0;
+}
+
+void
+set_task_case (uint8_t number)
+{
+  task_init = false;
+  task_case = number;
 }
