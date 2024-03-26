@@ -34,17 +34,17 @@ volatile target plant_yellow2 =
   { 2000, 700 };
 
 volatile target planter_blue_y =
-  { 600 + (325 / 2), 2000 - 70 };
+  { 600 + (325 / 2), 2000 - 60 };
 volatile target planter_blue_x_close =
-  { 70, 2000 - 450 - (325 / 2) };
+  { 0, 2000 - 450 - (325 / 2) };
 volatile target planter_blue_x_far =
-  { 3000 - 70, 450 + (325 / 2) };
+  { 3000 - 0, 450 + (325 / 2) };
 volatile target planter_yellow_y =
-  { 3000 - 600 - (325 / 2), 2000 - 70 };
+  { 3000 - 600 - (325 / 2), 2000 - 60 };
 volatile target planter_yellow_x_close =
-  { 3000 - 70, 2000 - 450 - (325 / 2) };
+  { 3000 - 0, 2000 - 450 - (325 / 2) };
 volatile target planter_yellow_x_far =
-  { 70, 450 + (325 / 2) };
+  { 0, 450 + (325 / 2) };
 
 volatile target home_blue1 =
   { 450, 2000 - 450 };
@@ -88,7 +88,7 @@ safe_yellow ()
 
 	  homes[0] = home_yellow2;
 	  homes[1] = home_yellow3;
-	  home_side = MECHANISM;
+	  home_side = WALL;
 
 	  tactic_finished = false;
 	}
@@ -143,7 +143,7 @@ safe_yellow ()
       else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
 	{
 	  current_task_retries++;
-	  set_task_case (4);
+	  set_task_case (3);
 	  reset_movement ();
 	}
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera

@@ -198,7 +198,6 @@ set_starting_position (float starting_x, float starting_y,
 //  hold_position_state = 0;
 //}
 
-
 void
 set_translation_speed_limit (float perc)
 {

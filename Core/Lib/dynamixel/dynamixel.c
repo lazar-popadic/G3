@@ -47,7 +47,7 @@ ax_move (uint8_t id, uint16_t angle, uint16_t speed)
 void
 solar_out_l ()
 {
-  ax_move (10, 100, 1023);
+  ax_move (10, 100, 520);
 }
 
 void
@@ -113,6 +113,6 @@ mechanism_half_open ()
 void
 mechanism_close ()
 {
-  ax_move (4, 913, 400);
+  ax_move (4, 950, 400);
 }
 

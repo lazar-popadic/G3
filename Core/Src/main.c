@@ -165,13 +165,13 @@ main (void)
 		{
 		  if (tactic_1_selected ())		// plava sigurna
 		    {
-		      set_starting_position (100 + 80, 2000 - 30 - 160, 180);
+		      set_starting_position (100 + 85, 2000 - 30 - 170, 180);
 		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 1;
 		    }
 		  else				// plava rizicna
 		    {
-		      set_starting_position (3000 - 50 - 80, 1000 - 225 + 50,
+		      set_starting_position (3000 - 50 - 85, 1000 - 225 + 50,
 					     0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 2;
@@ -181,14 +181,14 @@ main (void)
 		{
 		  if (tactic_1_selected ())		// zuta sigurna
 		    {
-		      set_starting_position (3000 - 100 - 80, 2000 - 30 - 160,
+		      set_starting_position (3000 - 100 - 85, 2000 - 30 - 170,
 					     0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 3;
 		    }
 		  else				// zuta rizicna
 		    {
-		      set_starting_position (50 + 80, 1000 - 225 + 50, 180);
+		      set_starting_position (50 + 85, 1000 - 225 + 50, 180);
 		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 4;
 		    }
