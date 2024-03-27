@@ -86,6 +86,14 @@ float_ramp_acc (float signal, float desired_value, float slope_acceleration)
   return desired_value;
 }
 
+float
+float_ramp_brake (float signal, float deceleration)
+{
+  if (fabs (signal) > deceleration)
+    return signal - sign (signal) * deceleration;
+  return 0;
+}
+
 int8_t
 sign (float signal)
 {

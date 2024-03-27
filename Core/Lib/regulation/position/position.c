@@ -17,13 +17,13 @@
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
 #define THETA_I_LIMIT		0.24
-#define DISTANCE_I_LIMIT	3.2
+#define DISTANCE_I_LIMIT	2.4
 
 static const float KP_ROT = 60.0;
 static const float KI_ROT = 20.0;
 
 static const float KP_TRAN = 0.042;
-static const float KI_TRAN = 0.56;
+static const float KI_TRAN = 0.64;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -90,7 +90,7 @@ regulation_position ()
 	regulation_translation (-distance, 1);
       else
 	regulation_translation (distance, 1);
-      regulation_rotation (theta_to_pos, 1.0, 0.25);
+      regulation_rotation (theta_to_pos, 0.5, 0.5);
       break;
 
     case TRAN_WITHOUT_ROT:

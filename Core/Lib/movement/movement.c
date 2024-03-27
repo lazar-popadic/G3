@@ -45,6 +45,7 @@ volatile float transition_factor = 1.0;
 target offset;
 uint8_t hold_position_state = 0;
 extern volatile bool robot_moving;
+extern volatile uint8_t brake;
 
 void
 calculate_movement ()
@@ -178,6 +179,17 @@ move_on_direction (float distance, int8_t direction)
 }
 
 void
+move_on_direction_2 (float distance, int8_t direction)
+{
+  move_full (
+      robot_position.x_mm
+	  + (direction * (-2) + 1) * distance * cos (robot_position.theta_rad),
+      robot_position.y_mm
+	  + (direction * (-2) + 1) * distance * sin (robot_position.theta_rad),
+      robot_position.theta_rad * 180.0 / M_PI, direction);
+}
+
+void
 set_starting_position (float starting_x, float starting_y,
 		       float starting_theta_degrees)
 {
@@ -219,11 +231,12 @@ set_transition_factor (float factor)
 void
 reset_movement ()
 {
-  target_position.x_mm = robot_position.x_mm;
-  target_position.y_mm = robot_position.y_mm;
-  target_position.theta_rad = robot_position.theta_rad;
-  regulation_phase = ROT_TO_ANGLE;
-  movement_init = false;
+//  target_position.x_mm = robot_position.x_mm;
+//  target_position.y_mm = robot_position.y_mm;
+//  target_position.theta_rad = robot_position.theta_rad;
+//  regulation_phase = ROT_TO_ANGLE;
+//  movement_init = false;
+  brake = 1;
 }
 
 void

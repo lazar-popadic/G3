@@ -62,7 +62,6 @@ bool s1 = false;
 bool s2 = false;
 bool s3 = false;
 
-
 extern volatile uint8_t sensors_case_timer;
 extern volatile bool interrupted;
 
@@ -143,15 +142,15 @@ main (void)
 //      w_ref = ref_test;
 //      if (timer_end ())
 //      state_main = END;
-
       switch (state_main)
 	{
 	default:
 	  break;
 
 	case POSITIONING:
-	  if (position_switch_on () && !positioning_done)
+	  if (!positioning_done)
 	    {
+	      set_rotation_speed_limit (0.2);
 	      transition_factor = 2.5;
 	      timer_start_sys_time ();
 	      Vd_sum = 0;
@@ -201,6 +200,7 @@ main (void)
 	    state_main = RESET_BEFORE_START;
 	  break;
 	case RESET_BEFORE_START:
+	  set_rotation_speed_limit (1.0);
 	  reset_and_stop_timer ();
 	  regulation_on = false;
 	  state_main = START;
@@ -245,22 +245,22 @@ main (void)
 
 	case 5:
 //	  mechanism_up();
-	  mechanism_open();
+	  mechanism_open ();
 	  break;
 	case 6:
-	  mechanism_down();
+	  mechanism_down ();
 	  break;
 	case 7:
-	  mechanism_half_up();
+	  mechanism_half_up ();
 	  break;
 //	case 10:
-//	  move_to_angle_2 (90);
+//	  move_on_direction_2 (200,MECHANISM);
 ////	  if (interrupted)
 ////	    reset_movement();
 //	  if (movement_finished () && timer_delay_nonblocking (20))
 //	    state_main = END;
 //	  break;
-////
+//
 	case END:
 	  timer_stop_sys_time ();
 	  stop_right_wheel ();

@@ -45,6 +45,8 @@ move_to_angle_2 (float theta_degrees);
 void
 move_on_direction (float distance, int8_t direction);
 void
+move_on_direction_2 (float distance, int8_t direction);
+void
 hold_position ();
 void
 continue_movement ();

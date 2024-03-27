@@ -27,6 +27,8 @@ tim10_init ();
 
 extern volatile float V_m_s;
 extern volatile float w_rad_s;
+extern volatile float V_ref;
+extern volatile float w_ref;
 extern volatile float transition_factor;
 
 volatile uint16_t sys_time_s = 0;
@@ -40,6 +42,12 @@ volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
 volatile bool robot_moving = false;
+
+volatile uint8_t brake = 0;
+extern volatile bool movement_init;
+extern position robot_position;
+extern position target_position;
+extern uint8_t regulation_phase;
 
 void
 timer_init ()
@@ -134,7 +142,27 @@ TIM1_UP_TIM10_IRQHandler ()
       if (!(sys_time_half_ms % position_loop_cnt))
 	{
 	  odometry_robot ();
-	  regulation_position ();
+	  switch (brake)
+	    {
+	    case 0:
+	      regulation_position ();
+	      break;
+	    case 1:
+//	      V_ref = float_ramp_brake (V_ref, 100);
+//	      w_ref = float_ramp_brake (w_ref, 200);
+	      V_ref = 0;
+	      w_ref = 0;
+	      if (!robot_moving)
+		{
+		  brake = 0;
+		  target_position.x_mm = robot_position.x_mm;
+		  target_position.y_mm = robot_position.y_mm;
+		  target_position.theta_rad = robot_position.theta_rad;
+		  regulation_phase = ROT_TO_ANGLE;
+		  movement_init = false;
+		}
+	      break;
+	    }
 	}
 
       if (regulation_on)

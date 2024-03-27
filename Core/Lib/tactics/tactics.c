@@ -34,13 +34,13 @@ volatile target plant_yellow2 =
   { 2000, 700 };
 
 volatile target planter_blue_y =
-  { 600 + (325 / 2), 2000 - 60 };
+  { 600 + (325 / 2) - 30, 2000 - 60 };
 volatile target planter_blue_x_close =
   { 0, 2000 - 450 - (325 / 2) };
 volatile target planter_blue_x_far =
   { 3000 - 0, 450 + (325 / 2) };
 volatile target planter_yellow_y =
-  { 3000 - 600 - (325 / 2), 2000 - 60 };
+  { 3000 - 600 - (325 / 2) + 30, 2000 - 60 };
 volatile target planter_yellow_x_close =
   { 3000 - 0, 2000 - 450 - (325 / 2) };
 volatile target planter_yellow_x_far =
@@ -129,10 +129,12 @@ safe_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1) // na putu do polja, pre pomeranja saksija
 	{
+	  reset_movement ();
+	  move_on_direction_2 (200, MECHANISM);
+	  HAL_Delay (3000);
 	  current_task_retries++;
 	  reset_task ();
-	  reset_movement ();
-//	  tactic_state = 10;
+	  tactic_state = 10;
 	}
       else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
 	{
@@ -183,10 +185,12 @@ safe_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
+	  reset_movement ();
+	  move_on_direction_2 (200, MECHANISM);
+	  HAL_Delay (3000);
 	  current_task_retries++;
 	  reset_task ();
-	  reset_movement ();
-//	  tactic_state = 20;
+	  tactic_state = 20;
 	}
       else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
 	{
@@ -209,7 +213,7 @@ safe_yellow ()
 	  current_task_retries++;
 	  reset_task ();
 	  reset_movement ();
-//	  tactic_state = 30;
+	  tactic_state = 30;
 	}
       else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
 	{
@@ -251,13 +255,17 @@ safe_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
-	  current_task_retries++;
 	  reset_movement ();
+	  move_on_direction_2 (200, MECHANISM);
+	  HAL_Delay (3000);
+	  current_task_retries++;
+	  reset_task ();
 	  tactic_state = 2;
 	}
       else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
+	  set_task_case (6);
 	  reset_movement ();
 	}
       break;
@@ -291,23 +299,29 @@ safe_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1) // na putu do polja, pre pomeranja saksija
 	{
-	  current_task_retries++;
 	  reset_movement ();
+	  move_on_direction_2 (200, MECHANISM);
+	  HAL_Delay (3000);
+	  current_task_retries++;
+	  reset_task ();
 	  tactic_state = 20;
 	}
       else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
 	{
-	  current_task_retries++;
+	  set_task_case (2);
 	  reset_movement ();
+	  current_task_retries++;
 	}
       else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
 	{
 	  current_task_retries++;
+	  set_task_case (3);
 	  reset_movement ();
 	}
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
+	  set_task_case (8);
 	  reset_movement ();
 	}
       break;
@@ -345,6 +359,7 @@ safe_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1) // na putu do polja, pre pomeranja saksija
 	{
+	  reset_task ();
 	  current_task_retries++;
 	  reset_movement ();
 //	  tactic_state = 6; TODO: nece valjda ovde failovati
@@ -380,10 +395,11 @@ safe_yellow ()
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do solara
 	{
+	  reset_task ();
 	  current_task_retries++;
 	  reset_movement ();
 	}
-      else if (current_task_status == TASK_FAILED_2)	// pri okretanju
+      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
 	{
 	  current_task_retries++;
 	  reset_movement ();
