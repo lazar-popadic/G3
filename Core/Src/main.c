@@ -140,8 +140,7 @@ main (void)
 
       /* USER CODE BEGIN 3 */
 //      w_ref = ref_test;
-//      if (timer_end ())
-//      state_main = END;
+
       switch (state_main)
 	{
 	default:
@@ -187,9 +186,10 @@ main (void)
 		    }
 		  else				// zuta rizicna
 		    {
-		      set_starting_position (50 + 85, 1000 - 225 + 50, 180);
-		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
-		      selected_tactic = 4;
+		      set_starting_position (3000 - 100 - 85, 2000 - 30 - 170,
+					     0);
+		      turn_to_pos (plant_central1.x, plant_central1.y, MECHANISM);
+		      selected_tactic = 6;
 		    }
 		}
 	    }
@@ -243,16 +243,11 @@ main (void)
 	    state_main = END;
 	  break;
 
-	case 5:
-//	  mechanism_up();
-	  mechanism_open ();
-	  break;
 	case 6:
-	  mechanism_down ();
+	  if (yellow_3 ())
+	    state_main = END;
 	  break;
-	case 7:
-	  mechanism_half_up ();
-	  break;
+
 //	case 10:
 //	  move_on_direction_2 (200,MECHANISM);
 ////	  if (interrupted)

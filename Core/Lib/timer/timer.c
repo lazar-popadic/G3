@@ -18,6 +18,7 @@
 #include <math.h>
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
+#define HOME_TIME 90*2*1000
 
 #define W_LIMIT		0.0001*0.0001
 #define V_LIMIT		0.00005*0.0001
@@ -48,6 +49,8 @@ extern volatile bool movement_init;
 extern position robot_position;
 extern position target_position;
 extern uint8_t regulation_phase;
+extern uint8_t state_main;
+extern uint8_t tactic_state;
 
 void
 timer_init ()
@@ -105,6 +108,14 @@ bool
 timer_end ()
 {
   if (sys_time_half_ms == END_TIME)
+    return true;
+  return false;
+}
+
+bool
+timer_home ()
+{
+  if (sys_time_half_ms == HOME_TIME)
     return true;
   return false;
 }
@@ -186,25 +197,30 @@ TIM1_UP_TIM10_IRQHandler ()
 
       switch (sensors_case_timer)
 	{
-	case SENSORS_HIGH:
-	  interrupted = sensors_high ();
-	  break;
-	case SENSORS_LOW:
-	  interrupted = sensors_low ();
-	  break;
-	case SENSORS_MECHANISM:
-	  interrupted = sensors_back ();
-	  break;
-	case SENSORS_HIGH_AND_LOW:
-	  interrupted = sensors_high () | sensors_low ();
-	  break;
-	case SENSORS_OFF:
-	  interrupted = false;
-	  break;
+//	case SENSORS_HIGH:
+//	  interrupted = sensors_high ();
+//	  break;
+//	case SENSORS_LOW:
+//	  interrupted = sensors_low ();
+//	  break;
+//	case SENSORS_MECHANISM:
+//	  interrupted = sensors_back ();
+//	  break;
+//	case SENSORS_HIGH_AND_LOW:
+//	  interrupted = sensors_high () | sensors_low ();
+//	  break;
+//	case SENSORS_OFF:
+//	  interrupted = false;
+//	  break;
 	default:
 	  interrupted = false;
 	  break;
 	}
+      if (timer_end ())
+	state_main = END;
+
+      if (timer_home ())
+	tactic_state = HOME;
 
     }
 }

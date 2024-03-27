@@ -19,9 +19,13 @@ bool
 safe_yellow ();
 bool
 risky_yellow ();
+bool
+yellow_3 ();
 void
 pop_plant ();
 void
 swap_first2_plants ();
+void
+swap_plant_alt (uint8_t i);
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

@@ -13,6 +13,8 @@
 #define YELLOW		1
 #define RESERVED	0
 #define CENTRAL		1
+#define CLOSE		0
+#define FAR		1
 
 #define RETURN_CASE		100
 #define TASK_IN_PROGRESS	0
@@ -35,11 +37,15 @@ task_pickup_plants (target plant_target);
 int8_t
 task_dropoff_x_close_2 (uint8_t side);
 int8_t
+task_dropoff_x (uint8_t side, uint8_t planter);
+int8_t
 task_dropoff_x_far_2 (uint8_t side);
 int8_t
 task_dropoff_y_2 (uint8_t side);
 int8_t
 task_solar (uint8_t side, uint8_t solar);
+int8_t
+task_pot_reserved (uint8_t side);
 
 void
 reset_task ();
