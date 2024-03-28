@@ -146,11 +146,6 @@ task_pickup_plants (target plant_target)
 	  task_case++;
 	  task_init = false;
 	}
-      if (interrupted)
-	{
-	  task_status = TASK_FAILED_1;
-	  task_case = RETURN_CASE;
-	}
       break;
     case 4:
       mechanism_close ();
@@ -158,11 +153,6 @@ task_pickup_plants (target plant_target)
 	{
 	  task_case++;
 	  task_init = false;
-	}
-      if (interrupted)
-	{
-	  task_status = TASK_FAILED_1;
-	  task_case = RETURN_CASE;
 	}
       break;
     case 5:
@@ -726,6 +716,7 @@ task_dropoff_y_2 (uint8_t side)
     case 6:
       if (!task_init)
 	{
+	  sensors_case_timer = SENSORS_HIGH;
 	  task_status = TASK_IN_PROGRESS;
 	  task_init = true;
 	  set_translation_speed_limit (0.25);
@@ -956,6 +947,7 @@ task_pot_reserved (uint8_t side)
     case 6:
       if (!task_init)
 	{
+	  sensors_case_timer = SENSORS_HIGH;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (1.0);
@@ -977,6 +969,11 @@ task_pot_reserved (uint8_t side)
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
+	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_2;
+	  task_case = RETURN_CASE;
 	}
       break;
 

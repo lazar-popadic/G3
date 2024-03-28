@@ -197,21 +197,21 @@ TIM1_UP_TIM10_IRQHandler ()
 
       switch (sensors_case_timer)
 	{
-//	case SENSORS_HIGH:
-//	  interrupted = sensors_high ();
-//	  break;
-//	case SENSORS_LOW:
-//	  interrupted = sensors_low ();
-//	  break;
-//	case SENSORS_MECHANISM:
-//	  interrupted = sensors_back ();
-//	  break;
-//	case SENSORS_HIGH_AND_LOW:
-//	  interrupted = sensors_high () | sensors_low ();
-//	  break;
-//	case SENSORS_OFF:
-//	  interrupted = false;
-//	  break;
+	case SENSORS_HIGH:
+	  interrupted = sensors_high ();
+	  break;
+	case SENSORS_LOW:
+	  interrupted = sensors_low ();
+	  break;
+	case SENSORS_MECHANISM:
+	  interrupted = sensors_back ();
+	  break;
+	case SENSORS_HIGH_AND_LOW:
+	  interrupted = sensors_high () | sensors_low ();
+	  break;
+	case SENSORS_OFF:
+	  interrupted = false;
+	  break;
 	default:
 	  interrupted = false;
 	  break;

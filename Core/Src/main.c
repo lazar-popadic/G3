@@ -140,7 +140,6 @@ main (void)
 
       /* USER CODE BEGIN 3 */
 //      w_ref = ref_test;
-
       switch (state_main)
 	{
 	default:
@@ -186,9 +185,9 @@ main (void)
 		    }
 		  else				// zuta rizicna
 		    {
-		      set_starting_position (3000 - 100 - 85, 30 + 170,
-					     0);
-		      turn_to_pos (plant_central2.x, plant_central2.y, MECHANISM);
+		      set_starting_position (3000 - 100 - 85, 30 + 170, 0);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+				   MECHANISM);
 		      selected_tactic = 8;
 		    }
 		}
@@ -200,6 +199,8 @@ main (void)
 	    state_main = RESET_BEFORE_START;
 	  break;
 	case RESET_BEFORE_START:
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
 	  set_rotation_speed_limit (1.0);
 	  reset_and_stop_timer ();
 	  regulation_on = false;

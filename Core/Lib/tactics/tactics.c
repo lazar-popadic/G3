@@ -744,13 +744,9 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (2000);
 	  current_task_retries++;
 	  reset_task ();
-	  // TODO: ovde stavi alt biljku
-//	  if (!(current_task_retries % 3))
-//	  swap_first2_plants ();
+	  // TODO: ovde stavi alt biljku, i zameni i drugi target ako to radis
 	}
       break;
 
@@ -779,11 +775,17 @@ yellow_4 ()
       break;
 
     case 3:
+      sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (1.0);
       move_to_xy (home_yellow2.x, home_yellow2.y, WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  tactic_state++;
+	}
+      if (interrupted)
+	{
+	  current_task_retries++;
+	  reset_movement ();
 	}
       break;
 
@@ -799,6 +801,12 @@ yellow_4 ()
 	  current_task_retries = 0;
 	}
       else if (current_task_status == TASK_FAILED_1)
+	{
+	  reset_movement ();
+	  reset_task ();
+	  tactic_state++;
+	}
+      else if (current_task_status == TASK_FAILED_2)
 	{
 	  reset_movement ();
 	  reset_task ();
@@ -821,13 +829,9 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (2000);
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
-//	  if (!(current_task_retries % 3))
-//	  swap_first2_plants ();
 	}
       break;
 
@@ -843,16 +847,26 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (2000);
 	  current_task_retries++;
 	  reset_task ();
 //	  tactic_state = 20;
 	}
-      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
+      else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
+	{
+	  set_task_case (2);
+	  reset_movement ();
+	  current_task_retries++;
+	}
+      else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
 	{
 	  current_task_retries++;
-	  set_task_case (6);
+	  set_task_case (3);
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  set_task_case (8);
 	  reset_movement ();
 	}
       break;
@@ -871,13 +885,9 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (2000);
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
-//	  if (!(current_task_retries % 3))
-//	  swap_first2_plants ();
 	}
       break;
 
@@ -917,8 +927,6 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (3000);
 	  current_task_retries++;
 	  reset_task ();
 //	  tactic_state = 2;
@@ -945,13 +953,9 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (2000);
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
-//	  if (!(current_task_retries % 3))
-//	  swap_first2_plants ();
 	}
       break;
 
@@ -967,16 +971,26 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
 	  reset_movement ();
-//	  move_on_direction_2 (200, MECHANISM);
-//	  HAL_Delay (2000);
 	  current_task_retries++;
 	  reset_task ();
 //	  tactic_state = 20;
 	}
-      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
+      else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
+	{
+	  set_task_case (2);
+	  reset_movement ();
+	  current_task_retries++;
+	}
+      else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
 	{
 	  current_task_retries++;
-	  set_task_case (6);
+	  set_task_case (3);
+	  reset_movement ();
+	}
+      else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+	  current_task_retries++;
+	  set_task_case (8);
 	  reset_movement ();
 	}
       break;
