@@ -60,6 +60,8 @@ volatile target home_yellow2 =
   { 3000 - 450, 450 };
 volatile target home_yellow3 =
   { 450, 1000 };
+volatile target home_yellow3_close =
+  { 200, 1000 };
 
 volatile target solar_blue =
   { 500, 190 };
@@ -717,9 +719,11 @@ yellow_4 ()
 //	  plants[4] = plant_central2;
 //	  plants[5] = plant_blue1;
 
-	  alt_plants[2] = plant_blue1;
+	  alt_plants[0] = plant_yellow2;
+	  alt_plants[2] = plant_central1;
+	  alt_plants[3] = plant_blue1;
 
-	  homes[0] = home_yellow3;
+	  homes[0] = home_yellow3_close;
 	  homes[1] = home_yellow1;
 	  home_side = WALL;
 
@@ -746,7 +750,9 @@ yellow_4 ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
-	  // TODO: ovde stavi alt biljku, i zameni i drugi target ako to radis
+	  swap_plant_alt (0);
+	  swap_plant_alt (2);
+	  swap_plant_alt (3);
 	}
       break;
 

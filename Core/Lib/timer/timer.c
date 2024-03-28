@@ -16,6 +16,8 @@
 #include "../pwm/pwm.h"
 #include "../h-bridge/h-bridge.h"
 #include <math.h>
+#include "../tactics/task_modules.h"
+#include "../movement/movement.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 #define HOME_TIME 90*2*1000
@@ -217,10 +219,18 @@ TIM1_UP_TIM10_IRQHandler ()
 	  break;
 	}
       if (timer_end ())
-	state_main = END;
+	{
+	  reset_movement ();
+	  reset_task ();
+	  state_main = END;
+	}
 
       if (timer_home ())
-	tactic_state = HOME;
+	{
+	  reset_movement ();
+	  reset_task ();
+	  tactic_state = HOME;
+	}
 
     }
 }
