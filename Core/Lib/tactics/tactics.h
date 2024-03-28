@@ -21,6 +21,8 @@ bool
 risky_yellow ();
 bool
 yellow_3 ();
+bool
+yellow_4 ();
 void
 pop_plant ();
 void

@@ -186,10 +186,10 @@ main (void)
 		    }
 		  else				// zuta rizicna
 		    {
-		      set_starting_position (3000 - 100 - 85, 2000 - 30 - 170,
+		      set_starting_position (3000 - 100 - 85, 30 + 170,
 					     0);
-		      turn_to_pos (plant_central1.x, plant_central1.y, MECHANISM);
-		      selected_tactic = 6;
+		      turn_to_pos (plant_central2.x, plant_central2.y, MECHANISM);
+		      selected_tactic = 8;
 		    }
 		}
 	    }
@@ -245,6 +245,11 @@ main (void)
 
 	case 6:
 	  if (yellow_3 ())
+	    state_main = END;
+	  break;
+
+	case 8:
+	  if (yellow_4 ())
 	    state_main = END;
 	  break;
 

@@ -43,7 +43,7 @@ task_dropoff_x_far_2 (uint8_t side);
 int8_t
 task_dropoff_y_2 (uint8_t side);
 int8_t
-task_solar (uint8_t side, uint8_t solar);
+task_solar (uint8_t side, uint8_t solar, float speed_limit);
 int8_t
 task_pot_reserved (uint8_t side);
 

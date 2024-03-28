@@ -90,7 +90,7 @@ regulation_position ()
 	regulation_translation (-distance, 1);
       else
 	regulation_translation (distance, 1);
-      regulation_rotation (theta_to_pos, 1.0, 0.2);
+      regulation_rotation (theta_to_pos, 1.0, 1.0);
       break;
 
     case TRAN_WITHOUT_ROT:
@@ -142,7 +142,7 @@ regulation_translation (float distance_er, float factor)
 //  V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
   V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 0.32, 0.16);
   V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.4);
-  V_ref *= factor;
+  V_ref *= factor; // TODO: ovo izbaci gore iznad saturacije
 }
 
 void
