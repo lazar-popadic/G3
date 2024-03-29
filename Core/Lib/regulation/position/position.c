@@ -90,7 +90,7 @@ regulation_position ()
 	regulation_translation (-distance, 1);
       else
 	regulation_translation (distance, 1);
-      regulation_rotation (theta_to_pos, 1.0, 1.0);
+      regulation_rotation (theta_to_pos, 0.5, 1.0);
       break;
 
     case TRAN_WITHOUT_ROT:

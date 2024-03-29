@@ -8,6 +8,18 @@
 #include "main.h"
 
 #define AX_MAX_SPEED 528
+#define PLANT_1		10
+#define PLANT_2		11
+#define PLANT_3		12
+#define PLANT_4		13
+#define PLANT_5		14
+#define PLANT_6		15
+#define SOLAR_R		20
+#define SOLAR_C		21
+#define DROP_X_C	30
+#define DROP_X_F	31
+#define DROP_Y		32
+#define POT		40
 
 extern volatile bool interrupted;
 extern volatile uint8_t sensors_case_timer;
@@ -21,6 +33,8 @@ volatile int8_t current_task_status;
 volatile uint16_t current_task_time = 0;
 extern uint16_t sys_time_s;
 volatile uint8_t current_task_retries = 0;
+extern volatile float distance;
+uint8_t alt = 0;
 
 volatile target plant_blue1 =
   { 1000, 1300 };
@@ -36,13 +50,13 @@ volatile target plant_yellow2 =
   { 2000, 700 };
 
 volatile target planter_blue_y =
-  { 600 + (325 / 2) - 30, 2000 - 60 };
+  { 600 + (325 / 2), 2000 - 60 };
 volatile target planter_blue_x_close =
   { 0, 2000 - 450 - (325 / 2) };
 volatile target planter_blue_x_far =
   { 3000 - 0, 450 + (325 / 2) };
 volatile target planter_yellow_y =
-  { 3000 - 600 - (325 / 2) + 30, 2000 - 60 };
+  { 3000 - 600 - (325 / 2), 2000 - 60 };
 volatile target planter_yellow_x_close =
   { 3000 - 0, 2000 - 450 - (325 / 2) };
 volatile target planter_yellow_x_far =
@@ -101,7 +115,7 @@ safe_yellow ()
       tactic_state_init = false;
       break;
     case 1:
-      current_task_status = task_pickup_plants (plants[0]);
+      current_task_status = task_pickup_plants (plants[0], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
@@ -123,7 +137,7 @@ safe_yellow ()
       break;
 
     case 2:
-      current_task_status = task_dropoff_x_close_2 (YELLOW);
+//      current_task_status = task_dropoff_x_close_2 (YELLOW);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
@@ -160,7 +174,7 @@ safe_yellow ()
 	}
       break;
     case 3:
-      current_task_status = task_pickup_plants (plants[0]);
+      current_task_status = task_pickup_plants (plants[0], 1);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
@@ -274,7 +288,8 @@ safe_yellow ()
 	}
       break;
     case 11:
-      current_task_status = task_pickup_plants (plants[0]);
+      current_task_status = task_pickup_plants (plants[0], 1);
+
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
@@ -293,7 +308,7 @@ safe_yellow ()
 	}
       break;
     case 12:
-      current_task_status = task_dropoff_x_close_2 (YELLOW);
+//      current_task_status = task_dropoff_x_close_2 (YELLOW);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
@@ -419,291 +434,6 @@ safe_yellow ()
 }
 
 bool
-yellow_3 ()
-{
-  switch (tactic_state)
-    {
-    case 0:
-      if (!tactic_state_init)
-	{
-	  tactic_state_init = true;
-	  plants[0] = plant_central1;
-	  plants[1] = plant_yellow1;
-	  plants[2] = plant_blue2;
-	  plants[3] = plant_yellow2;
-	  plants[4] = plant_central2;
-	  plants[5] = plant_blue1;
-
-	  alt_plants[2] = plant_blue1;
-
-	  homes[0] = home_yellow2;
-	  homes[1] = home_yellow3;
-	  home_side = WALL;
-
-	  tactic_finished = false;
-	}
-      current_task_time = sys_time_s;
-      tactic_state++;
-      tactic_state_init = false;
-      break;
-    case 1:
-      current_task_status = task_pickup_plants (plants[0]);
-
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  pop_plant ();
-	  set_translation_speed_limit (1.0);
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)
-	{
-	  reset_movement ();
-	  move_on_direction_2 (200, MECHANISM);
-	  HAL_Delay (2000);
-	  current_task_retries++;
-	  reset_task ();
-//	  if (!(current_task_retries % 3))
-//	  swap_first2_plants ();
-	}
-      break;
-
-    case 2:
-      current_task_status = task_dropoff_y_2 (YELLOW);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
-	{
-	  reset_movement ();
-	  move_on_direction_2 (200, MECHANISM);
-	  HAL_Delay (3000);
-	  current_task_retries++;
-	  reset_task ();
-//	  tactic_state = 2;
-	}
-      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
-	{
-	  current_task_retries++;
-	  set_task_case (6);
-	  reset_movement ();
-	}
-      break;
-    case 3:
-      current_task_status = task_pickup_plants (plants[0]);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  pop_plant ();
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)
-	{
-	  reset_movement ();
-	  move_on_direction_2 (200, MECHANISM);
-	  HAL_Delay (2000);
-	  current_task_retries++;
-	  reset_task ();
-//	  if (!(current_task_retries % 3))
-//	  swap_first2_plants ();
-	}
-      break;
-    case 4:
-      current_task_status = task_dropoff_x (YELLOW, CLOSE);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
-	{
-	  reset_movement ();
-	  move_on_direction_2 (200, MECHANISM);
-	  HAL_Delay (2000);
-	  current_task_retries++;
-	  reset_task ();
-//	  tactic_state = 20;
-	}
-      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
-	{
-	  current_task_retries++;
-	  set_task_case (6);
-	  reset_movement ();
-	}
-      break;
-    case 5:
-      current_task_status = task_pickup_plants (plants[0]);
-
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  pop_plant ();
-	  set_translation_speed_limit (1.0);
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)
-	{
-	  reset_movement ();
-	  move_on_direction_2 (200, MECHANISM);
-	  HAL_Delay (2000);
-	  current_task_retries++;
-	  reset_task ();
-//	  if (!(current_task_retries % 3))
-	  swap_plant_alt (2);
-	}
-      break;
-    case 6:
-      current_task_status = task_dropoff_x (YELLOW, FAR);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
-	{
-	  reset_movement ();
-	  move_on_direction_2 (200, MECHANISM);
-	  HAL_Delay (2000);
-	  current_task_retries++;
-	  reset_task ();
-//	  tactic_state = 20;
-	}
-      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
-	{
-	  current_task_retries++;
-	  set_task_case (6);
-	  reset_movement ();
-	}
-      break;
-    case 7:
-      current_task_status = task_solar (YELLOW, CENTRAL, 1);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
-	{
-	  current_task_retries++;
-	  reset_task ();
-	  reset_movement ();
-//	  tactic_state = 30;
-	}
-      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
-	{
-	  current_task_retries++;
-	  set_task_case (5);
-	  reset_movement ();
-	}
-      break;
-    case 8:
-      current_task_status = task_pickup_plants (plants[0]);
-
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  pop_plant ();
-	  set_translation_speed_limit (1.0);
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)
-	{
-	  reset_movement ();
-	  reset_task ();
-	  tactic_state++;
-	}
-      break;
-    case 9:
-      current_task_status = task_solar (YELLOW, RESERVED, 1);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
-	{
-	  current_task_retries++;
-	  reset_task ();
-	  reset_movement ();
-	  //	  tactic_state = 30;
-	}
-      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
-	{
-	  current_task_retries++;
-	  set_task_case (5);
-	  reset_movement ();
-	}
-      break;
-    case 10:
-      current_task_status = task_pot_reserved (YELLOW);
-
-      if (current_task_status == TASK_SUCCESS
-	  || current_task_status == TASK_FAILED_2)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)
-	{
-	  reset_movement ();
-	  reset_task ();
-	  tactic_state++;
-	}
-      break;
-
-    case HOME:
-      current_task_status = task_go_home (homes[home_counter], home_side);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  tactic_state = RETURN;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      if (current_task_status == TASK_FAILED_1)
-	{
-	  current_task_retries++;
-	  reset_movement ();
-	  reset_task ();
-//	  if (home_counter == 0)
-//	    {
-//	      home_counter++;
-//	      home_side++;
-//	      home_side %= 2;
-//	    }
-	}
-      break;
-
-    case RETURN:
-      tactic_finished = true;
-      break;
-
-    }
-  return tactic_finished;
-}
-
-bool
 yellow_4 ()
 {
   switch (tactic_state)
@@ -715,31 +445,31 @@ yellow_4 ()
 	  plants[0] = plant_central2;
 	  plants[1] = plant_yellow1;
 	  plants[2] = plant_yellow2;
-	  plants[3] = plant_central1;
+	  plants[3] = plant_blue2;
 //	  plants[4] = plant_central2;
 //	  plants[5] = plant_blue1;
 
 	  alt_plants[0] = plant_yellow2;
-	  alt_plants[2] = plant_central1;
+	  alt_plants[2] = plant_central2;
 	  alt_plants[3] = plant_blue1;
 
-	  homes[0] = home_yellow3_close;
-	  homes[1] = home_yellow1;
+	  homes[0] = home_yellow1;
+	  homes[1] = home_yellow3_close;
 	  home_side = WALL;
 
 	  tactic_finished = false;
 	}
       current_task_time = sys_time_s;
-      tactic_state++;
+      tactic_state = PLANT_1;
       tactic_state_init = false;
       break;
-    case 1:
-      current_task_status = task_pickup_plants (plants[0]);
+    case PLANT_1:
+      current_task_status = task_pickup_plants (plants[0], 1 - alt * 0.25);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = 1;
 	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_time = sys_time_s;
@@ -749,44 +479,25 @@ yellow_4 ()
 	{
 	  reset_movement ();
 	  current_task_retries++;
+	  current_task_retries %= 2;
+	  alt = current_task_retries;
 	  reset_task ();
 	  swap_plant_alt (0);
 	  swap_plant_alt (2);
-	  swap_plant_alt (3);
+	  tactic_state = 1;
 	}
       break;
 
-    case 2:
-      current_task_status = task_solar (YELLOW, CENTRAL, 1);
-      if (current_task_status == TASK_SUCCESS)
-	{
-	  reset_task ();
-	  tactic_state++;
-	  current_task_time = sys_time_s;
-	  current_task_retries = 0;
-	}
-      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
-	{
-	  current_task_retries++;
-	  reset_task ();
-	  reset_movement ();
-	  //	  tactic_state = 30;
-	}
-      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
-	{
-	  current_task_retries++;
-	  set_task_case (5);
-	  reset_movement ();
-	}
-      break;
-
-    case 3:
+    case 1:
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (1.0);
-      move_to_xy (home_yellow2.x, home_yellow2.y, WALL);
+      move_to_xy (home_yellow2.x, 250, WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
-	  tactic_state++;
+	  if (alt == 0)
+	    tactic_state = POT;
+	  else if (alt == 1)
+	    tactic_state = PLANT_1;
 	}
       if (interrupted)
 	{
@@ -795,14 +506,14 @@ yellow_4 ()
 	}
       break;
 
-    case 4:
+    case POT:
       current_task_status = task_pot_reserved (YELLOW);
 
-      if (current_task_status == TASK_SUCCESS
-	  || current_task_status == TASK_FAILED_2)
+      if (current_task_status == TASK_SUCCESS)
+//	  || current_task_status == TASK_FAILED_2)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = PLANT_2;
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
 	}
@@ -810,23 +521,21 @@ yellow_4 ()
 	{
 	  reset_movement ();
 	  reset_task ();
-	  tactic_state++;
 	}
       else if (current_task_status == TASK_FAILED_2)
 	{
 	  reset_movement ();
-	  reset_task ();
-	  tactic_state++;
+	  set_task_case (6);
 	}
       break;
 
-    case 5:
-      current_task_status = task_pickup_plants (plants[0]);
+    case PLANT_2:
+      current_task_status = task_pickup_plants (plants[0], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = DROP_X_C;
 	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_time = sys_time_s;
@@ -841,12 +550,12 @@ yellow_4 ()
 	}
       break;
 
-    case 6:
+    case DROP_X_C:
       current_task_status = task_dropoff_x (YELLOW, CLOSE);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = PLANT_3;
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
 	}
@@ -876,13 +585,14 @@ yellow_4 ()
 	  reset_movement ();
 	}
       break;
-    case 7:
-      current_task_status = task_pickup_plants (plants[0]);
+
+    case PLANT_3:
+      current_task_status = task_pickup_plants (plants[0], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = SOLAR_R;
 	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_time = sys_time_s;
@@ -897,12 +607,12 @@ yellow_4 ()
 	}
       break;
 
-    case 8:
+    case SOLAR_R:
       current_task_status = task_solar (YELLOW, RESERVED, 1.0);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = DROP_Y;
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
 	}
@@ -916,17 +626,41 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
 	{
 	  current_task_retries++;
-	  set_task_case (5);
+	  set_task_case (4);
 	  reset_movement ();
 	}
       break;
 
-    case 9:
+    case SOLAR_C:
+          current_task_status = task_solar (YELLOW, CENTRAL, 1);
+          if (current_task_status == TASK_SUCCESS)
+    	{
+    	  reset_task ();
+    	  tactic_state = PLANT_4;
+    	  current_task_time = sys_time_s;
+    	  current_task_retries = 0;
+    	}
+          else if (current_task_status == TASK_FAILED_1)	// na putu do solara
+    	{
+    	  current_task_retries++;
+    	  reset_task ();
+    	  reset_movement ();
+    	  //	  tactic_state = 30;
+    	}
+          else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
+    	{
+    	  current_task_retries++;
+    	  set_task_case (4);
+    	  reset_movement ();
+    	}
+          break;
+
+    case DROP_Y:
       current_task_status = task_dropoff_y_2 (YELLOW);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = SOLAR_C;
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
 	}
@@ -944,17 +678,19 @@ yellow_4 ()
 	  reset_movement ();
 	}
       break;
-    case 10:
-      current_task_status = task_pickup_plants (plants[0]);
+    case PLANT_4:
+      current_task_status = task_pickup_plants (plants[0], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = DROP_X_F;
 	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
+	  homes[0] = home_yellow3_close;
+	  homes[1] = home_yellow1;
 	}
       else if (current_task_status == TASK_FAILED_1)
 	{
@@ -965,12 +701,12 @@ yellow_4 ()
 	}
       break;
 
-    case 11:
+    case DROP_X_F:
       current_task_status = task_dropoff_x (YELLOW, FAR);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state++;
+	  tactic_state = HOME;
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
 	}
@@ -1005,6 +741,10 @@ yellow_4 ()
       current_task_status = task_go_home (homes[home_counter], home_side);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  mechanism_down();
+	  mechanism_down();
+	  mechanism_down();
+	  mechanism_down();
 	  tactic_state = RETURN;
 	  current_task_time = sys_time_s;
 	  current_task_retries = 0;
@@ -1014,12 +754,12 @@ yellow_4 ()
 	  current_task_retries++;
 	  reset_movement ();
 	  reset_task ();
-//	  if (home_counter == 0)
-//	    {
-//	      home_counter++;
-//	      home_side++;
-//	      home_side %= 2;
-//	    }
+	  if (home_counter == 0 && distance > 200)
+	    {
+	      home_counter++;
+	      home_side++;
+	      home_side %= 2;
+	    }
 	}
       break;
 
@@ -1057,7 +797,7 @@ risky_yellow ()
       tactic_state_init = false;
       break;
     case 1:
-      current_task_status = task_pickup_plants (plants[0]);
+      current_task_status = task_pickup_plants (plants[0], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
@@ -1090,7 +830,8 @@ risky_yellow ()
 	}
       break;
     case 3:
-      current_task_status = task_pickup_plants (plants[0]);
+      current_task_status = task_pickup_plants (plants[0], 1);
+
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
@@ -1120,7 +861,8 @@ risky_yellow ()
 	}
       break;
     case 5:
-      current_task_status = task_pickup_plants (plants[0]);
+      current_task_status = task_pickup_plants (plants[0], 1);
+
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();

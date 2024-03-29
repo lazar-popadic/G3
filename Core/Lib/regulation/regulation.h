@@ -13,7 +13,7 @@
 #include "speed/speed.h"
 
 #define V_REF_LIMIT_DEFAULT		15.0*1.3
-#define W_REF_LIMIT_DEFAULT		120.0*0.9
+#define W_REF_LIMIT_DEFAULT		70.0
 
 void
 regulation_init ();

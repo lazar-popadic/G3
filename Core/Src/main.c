@@ -92,6 +92,7 @@ main (void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
+
   HAL_Init ();
 
   /* USER CODE BEGIN Init */
@@ -245,7 +246,7 @@ main (void)
 	  break;
 
 	case 6:
-	  if (yellow_3 ())
+//	  if (yellow_3 ())
 	    state_main = END;
 	  break;
 

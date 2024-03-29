@@ -33,7 +33,7 @@ typedef struct
 int8_t
 task_go_home (target home_target, uint8_t direction);
 int8_t
-task_pickup_plants (target plant_target);
+task_pickup_plants (target plant_target, float offset_perc);
 int8_t
 task_dropoff_x_close_2 (uint8_t side);
 int8_t
