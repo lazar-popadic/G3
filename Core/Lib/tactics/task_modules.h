@@ -37,6 +37,8 @@ task_pickup_plants (target plant_target, float offset_perc);
 int8_t
 task_dropoff_x_close_2 (uint8_t side);
 int8_t
+task_dropoff_x_alt (uint8_t side, uint8_t planter);
+int8_t
 task_dropoff_x (uint8_t side, uint8_t planter);
 int8_t
 task_dropoff_x_far_2 (uint8_t side);
@@ -46,6 +48,8 @@ int8_t
 task_solar (uint8_t side, uint8_t solar, float speed_limit);
 int8_t
 task_pot_reserved (uint8_t side);
+int8_t
+task_push_pots (uint8_t side);
 
 void
 reset_task ();

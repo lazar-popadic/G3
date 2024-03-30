@@ -92,7 +92,6 @@ main (void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-
   HAL_Init ();
 
   /* USER CODE BEGIN Init */
@@ -163,7 +162,7 @@ main (void)
 		{
 		  if (tactic_1_selected ())		// plava sigurna
 		    {
-		      set_starting_position (100 + 85, 2000 - 30 - 170, 180);
+		      set_starting_position (100 + 85, 2000 - 35 - 170, 180);
 		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 1;
 		    }
@@ -179,16 +178,16 @@ main (void)
 		{
 		  if (tactic_1_selected ())		// zuta sigurna
 		    {
-		      set_starting_position (3000 - 100 - 85, 2000 - 30 - 170,
+		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
 					     0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 3;
 		    }
 		  else				// zuta rizicna
 		    {
-		      set_starting_position (3000 - 100 - 85, 30 + 170, 0);
+		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
-				   MECHANISM);
+		      MECHANISM);
 		      selected_tactic = 8;
 		    }
 		}
@@ -236,17 +235,7 @@ main (void)
 //	  break;
 
 	case 3:
-	  if (safe_yellow ())
-	    state_main = END;
-	  break;
-
-	case 4:
-	  if (risky_yellow ())
-	    state_main = END;
-	  break;
-
-	case 6:
-//	  if (yellow_3 ())
+//	  if (safe_yellow ())
 	    state_main = END;
 	  break;
 

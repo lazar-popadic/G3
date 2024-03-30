@@ -119,14 +119,7 @@ move_to_xy (float x, float y, int8_t translation_direction)
 void
 move_to_angle (float theta_degrees)
 {
-  if (!movement_init)
-    {
-      movement_init = true;
-      pos_init.x_mm = robot_position.x_mm;
-      pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = theta_degrees;
-    }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
+  move_full (robot_position.x_mm, robot_position.y_mm, theta_degrees, 0);
 }
 
 void

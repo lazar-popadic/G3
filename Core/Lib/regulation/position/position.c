@@ -22,7 +22,7 @@
 static const float KP_ROT = 60.0;
 static const float KI_ROT = 20.0;
 
-static const float KP_TRAN = 0.042;
+static const float KP_TRAN = 0.036;
 static const float KI_TRAN = 0.64;
 
 extern volatile float theta_to_pos;
@@ -139,9 +139,9 @@ regulation_translation (float distance_er, float factor)
 				    -DISTANCE_I_LIMIT);
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i;
-//  V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 0.32, 0.16);
-  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.4);
+  V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
+//  V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 0.24, 0.5);
+  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.36);
   V_ref *= factor; // TODO: ovo izbaci gore iznad saturacije
 }
 

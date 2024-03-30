@@ -12,7 +12,7 @@
 #include "position/position.h"
 #include "speed/speed.h"
 
-#define V_REF_LIMIT_DEFAULT		15.0*1.3
+#define V_REF_LIMIT_DEFAULT		18.0
 #define W_REF_LIMIT_DEFAULT		70.0
 
 void
