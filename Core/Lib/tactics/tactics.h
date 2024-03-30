@@ -16,11 +16,7 @@
 #define RESET_BEFORE_START 254
 
 bool
-safe_yellow ();
-bool
-risky_yellow ();
-bool
-yellow_3 ();
+yellow_matija ();
 bool
 yellow_4 ();
 void

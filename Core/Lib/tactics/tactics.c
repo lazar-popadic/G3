@@ -144,7 +144,7 @@ yellow_matija ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	    tactic_state = /*gde ide*/;
+	    tactic_state = 1/*gde ide*/;
 	  current_task_retries = 0;
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
@@ -162,9 +162,15 @@ yellow_matija ()
 	}
       break;
 
-    case /*gde ide*/:
+    case /*gde ide*/1:
       // copy paste
+
+    case RETURN:
+      tactic_finished = true;
+      break;
+
     }
+  return tactic_finished;
 }
 
 bool
@@ -196,6 +202,7 @@ yellow_4 ()
       tactic_state = PLANT_1;
       tactic_state_init = false;
       break;
+
     case PLANT_1:
       current_task_status = task_pickup_plants (plants[0], 1);
 
