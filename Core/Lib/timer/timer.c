@@ -16,36 +16,43 @@
 #include "../pwm/pwm.h"
 #include "../h-bridge/h-bridge.h"
 #include <math.h>
+#include "../tactics/task_modules.h"
+#include "../movement/movement.h"
 
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
+#define HOME_TIME 95*2*1000
 
 #define W_LIMIT		0.0001*0.0001
 #define V_LIMIT		0.00005*0.0001
 
 static void
 tim10_init ();
-extern volatile position robot_position;
-extern volatile float w_ref;
 
 extern volatile float V_m_s;
 extern volatile float w_rad_s;
+extern volatile float V_ref;
+extern volatile float w_ref;
 extern volatile float transition_factor;
 
+volatile uint16_t sys_time_s = 0;
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
 int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
 volatile bool interrupted = false;
-//extern uint8_t previous_tactic_state;
-//extern uint8_t tactic_state;
-
-extern volatile int16_t ref_speed_left;
-extern volatile int16_t ref_speed_right;
 
 volatile bool regulation_on;
 const static uint8_t position_loop_freq = 20, speed_loop_freq = 2;	// [ms]
 static uint8_t position_loop_cnt = 0, speed_loop_cnt = 0;
 volatile bool robot_moving = false;
+
+volatile uint8_t brake = 0;
+extern volatile bool movement_init;
+extern position robot_position;
+extern position target_position;
+extern uint8_t regulation_phase;
+extern uint8_t state_main;
+extern uint8_t tactic_state;
 
 void
 timer_init ()
@@ -91,10 +98,26 @@ timer_stop_sys_time ()
   TIM10->CR1 &= ~(0b1 << 0);
 }
 
+void
+reset_and_stop_timer ()
+{
+  TIM10->CR1 &= ~(0b1 << 0);
+  sys_time_half_ms = 0;
+  sys_time_s = 0;
+}
+
 bool
 timer_end ()
 {
   if (sys_time_half_ms == END_TIME)
+    return true;
+  return false;
+}
+
+bool
+timer_home ()
+{
+  if (sys_time_half_ms == HOME_TIME)
     return true;
   return false;
 }
@@ -120,18 +143,39 @@ timer_delay_nonblocking (uint32_t delay_ms)
 void
 TIM1_UP_TIM10_IRQHandler ()
 {
-  // poziva se svakih 0.5ms
+  // poziva se svake 2ms
   // proveri da li je stvarno TIM10 pozvao rutinu
   if ((TIM10->SR & (0b1 << 0)) == (0b1 << 0))
     {
       TIM10->SR &= ~(0b1 << 0);	// da bi sledeci put mogli da detektujemo prekid
 
       sys_time_half_ms++;
+      sys_time_s = sys_time_half_ms * 0.0005;
 
       if (!(sys_time_half_ms % position_loop_cnt))
 	{
 	  odometry_robot ();
-	  regulation_position ();
+	  switch (brake)
+	    {
+	    case 0:
+	      regulation_position ();
+	      break;
+	    case 1:
+//	      V_ref = float_ramp_brake (V_ref, 100);
+//	      w_ref = float_ramp_brake (w_ref, 200);
+	      V_ref = 0;
+	      w_ref = 0;
+	      if (!robot_moving)
+		{
+		  brake = 0;
+		  target_position.x_mm = robot_position.x_mm;
+		  target_position.y_mm = robot_position.y_mm;
+		  target_position.theta_rad = robot_position.theta_rad;
+		  regulation_phase = ROT_TO_ANGLE;
+		  movement_init = false;
+		}
+	      break;
+	    }
 	}
 
       if (regulation_on)
@@ -141,14 +185,14 @@ TIM1_UP_TIM10_IRQHandler ()
 	}
       else
 	{
-	  stop_right_wheel();
-	  stop_left_wheel();
+	  stop_right_wheel ();
+	  stop_left_wheel ();
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	}
 
-      if (fabs(w_rad_s) < W_LIMIT * transition_factor
-          && fabs(V_m_s) < V_LIMIT * transition_factor)
+      if (fabs (w_rad_s) < W_LIMIT * transition_factor
+	  && fabs (V_m_s) < V_LIMIT * transition_factor)
 	robot_moving = false;
       else
 	robot_moving = true;
@@ -161,11 +205,11 @@ TIM1_UP_TIM10_IRQHandler ()
 	case SENSORS_LOW:
 	  interrupted = sensors_low ();
 	  break;
-	case SENSORS_BACK:
+	case SENSORS_MECHANISM:
 	  interrupted = sensors_back ();
 	  break;
 	case SENSORS_HIGH_AND_LOW:
-	  interrupted = sensors_high() | sensors_low();
+	  interrupted = sensors_high () | sensors_low ();
 	  break;
 	case SENSORS_OFF:
 	  interrupted = false;
@@ -173,6 +217,19 @@ TIM1_UP_TIM10_IRQHandler ()
 	default:
 	  interrupted = false;
 	  break;
+	}
+      if (timer_end ())
+	{
+	  reset_movement ();
+	  reset_task ();
+	  state_main = END;
+	}
+
+      if (timer_home ())
+	{
+	  reset_movement ();
+	  reset_task ();
+	  tactic_state = HOME;
 	}
 
     }

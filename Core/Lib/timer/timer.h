@@ -13,9 +13,10 @@
 
 #define SENSORS_HIGH 		1
 #define SENSORS_LOW 		2
-#define SENSORS_BACK 		3
+#define SENSORS_MECHANISM 	3
 #define SENSORS_HIGH_AND_LOW 	4
 #define SENSORS_OFF 		0
+#define HOME			199
 
 void
 timer_init ();
@@ -25,7 +26,11 @@ void
 timer_start_sys_time ();
 void
 timer_stop_sys_time ();
+void
+reset_and_stop_timer ();
 bool
 timer_end ();
+bool
+timer_home ();
 
 #endif /* LIB_PERIPHERY_TIMER_TIMER_H_ */

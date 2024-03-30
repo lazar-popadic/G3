@@ -27,6 +27,8 @@ mechanism_half_up ();
 void
 mechanism_half_down ();
 void
+mechanism_down_pot ();
+void
 mechanism_down ();
 void
 mechanism_open ();

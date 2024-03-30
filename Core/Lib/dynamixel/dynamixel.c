@@ -47,7 +47,7 @@ ax_move (uint8_t id, uint16_t angle, uint16_t speed)
 void
 solar_out_l ()
 {
-  ax_move (10, 100, 1023);
+  ax_move (10, 40, 520);
 }
 
 void
@@ -59,7 +59,7 @@ solar_in_l ()
 void
 solar_out_r ()
 {
-  ax_move (9, 940, 520);
+  ax_move (9, 1000, 520);
 }
 
 void
@@ -71,19 +71,25 @@ solar_in_r ()
 void
 mechanism_up ()
 {
-  ax_move (7, 768, 250);
+  ax_move (7, 784, 250);
 }
 
 void
 mechanism_half_up ()
 {
-  ax_move (7, 650, 100);
+  ax_move (7, 675, 100);
 }
 
 void
 mechanism_half_down ()
 {
-  ax_move (7, 650, 50);
+  ax_move (7, 675, 200);
+}
+
+void
+mechanism_down_pot ()
+{
+  ax_move (7, 750, 200);
 }
 
 void
@@ -95,24 +101,24 @@ mechanism_down ()
 void
 mechanism_open ()
 {
-  ax_move (4, 472, 500);
+  ax_move (4, 485, 500);
 }
 
 void
 mechanism_open_slow ()
 {
-  ax_move (4, 472, 125);
+  ax_move (4, 485, 100);
 }
 
 void
 mechanism_half_open ()
 {
-  ax_move (4, 650, 125);
+  ax_move (4, 730, 500);
 }
 
 void
 mechanism_close ()
 {
-  ax_move (4, 900, 200);
+  ax_move (4, 950, 400);
 }
 

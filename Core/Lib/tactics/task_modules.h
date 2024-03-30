@@ -9,13 +9,20 @@
 #define LIB_TACTICS_TASK_MODULES_H_
 
 #include "../../Inc/main.h"
-#define INTERRUPTED 200
-#define BLUE 0
-#define YELLOW 1
+#define BLUE		0
+#define YELLOW		1
+#define RESERVED	0
+#define CENTRAL		1
+#define CLOSE		0
+#define FAR		1
 
+#define RETURN_CASE		100
 #define TASK_IN_PROGRESS	0
 #define TASK_SUCCESS		1
-#define TASK_FAILED		-1
+#define TASK_FAILED_1		-11
+#define TASK_FAILED_2		-12
+#define TASK_FAILED_3		-13
+#define TASK_FAILED_4		-14
 
 typedef struct
 {
@@ -24,31 +31,29 @@ typedef struct
 } target;
 
 int8_t
-task_go_home (target *home_array_pointer);
+task_go_home (target home_target, uint8_t direction);
 int8_t
-task_pickup_plants (target plant_target);
+task_pickup_plants (target plant_target, float offset_perc);
 int8_t
-task_dropoff_plants_x_close (uint8_t side);
+task_dropoff_x_close_2 (uint8_t side);
 int8_t
-task_dropoff_plants_x_far (uint8_t side);
+task_dropoff_x_alt (uint8_t side, uint8_t planter);
 int8_t
-task_dropoff_plants_y (uint8_t side);
+task_dropoff_x (uint8_t side, uint8_t planter);
 int8_t
-task_solar_from_start (uint8_t side);
+task_dropoff_x_far_2 (uint8_t side);
 int8_t
-task_central_solar_without (uint8_t side);
+task_dropoff_y_2 (uint8_t side);
 int8_t
-positioning_solar_blue ();
+task_solar (uint8_t side, uint8_t solar, float speed_limit);
 int8_t
-positioning_solar_yellow ();
+task_pot_reserved (uint8_t side);
 int8_t
-positioning_up_blue (target first_plant);
-int8_t
-positioning_up_yellow (target first_plant);
-int8_t
-reserved_solar (uint8_t side);
+task_push_pots (uint8_t side);
 
 void
 reset_task ();
+void
+set_task_case (uint8_t number);
 
 #endif /* LIB_TACTICS_TASK_MODULES_H_ */

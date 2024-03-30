@@ -46,7 +46,6 @@ extern "C" {
 #include "../Lib/encoder/encoder.h"
 #include "../Lib/sensors/sensors.h"
 #include "../Lib/h-bridge/h-bridge.h"
-#include "../Lib/adc_dma_ioc/adc_dma.h"
 #include "../Lib/movement/movement.h"
 #include "../Lib/tactics/task_modules.h"
 /* USER CODE END Includes */

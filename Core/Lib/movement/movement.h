@@ -41,7 +41,11 @@ move_to_xy (float x, float y, int8_t translation_direction);
 void
 move_to_angle (float theta);
 void
+move_to_angle_2 (float theta_degrees);
+void
 move_on_direction (float distance, int8_t direction);
+void
+move_on_direction_2 (float distance, int8_t direction);
 void
 hold_position ();
 void

@@ -11,19 +11,21 @@
 
 static void
 sensors_io_init ();
-static void
-interrupt_init ();
 
 //PortB
 
 //PortC
-uint8_t infra0 = 0;
-uint8_t infra1 = 1;
-uint8_t infra2 = 2;
-uint8_t infra3 = 3;
-uint8_t infra4 = 4;
-uint8_t infra5 = 5;
-uint8_t button = 13;
+static uint8_t infra0 = 0;
+static uint8_t infra1 = 1;
+static uint8_t infra2 = 2;
+static uint8_t infra3 = 3;
+static uint8_t infra4 = 4;
+static uint8_t infra5 = 5;
+static uint8_t pos_switch = 10;
+static uint8_t side_switch = 11;
+static uint8_t tactic_switch = 12;
+
+static uint8_t button = 13;
 
 void
 sensors_init ()
@@ -45,7 +47,35 @@ sensors_io_init ()
   GPIOC->MODER &= ~(0b11 << 2 * infra4);
   GPIOC->MODER &= ~(0b11 << 2 * infra5);
 
+  GPIOC->MODER &= ~(0b11 << 2 * pos_switch);
+  GPIOC->MODER &= ~(0b11 << 2 * side_switch);
+  GPIOC->MODER &= ~(0b11 << 2 * tactic_switch);
+
   GPIOC->MODER &= ~(0b11 << 2 * button);
+}
+
+bool
+position_switch_on ()
+{
+  if (GPIOC->IDR & (0b1 << pos_switch))
+    return true;
+  return false;
+}
+
+bool
+blue_side_selected ()
+{
+  if (GPIOC->IDR & (0b1 << side_switch))
+    return true;
+  return false;
+}
+
+bool
+tactic_1_selected ()
+{
+  if (GPIOC->IDR & (0b1 << tactic_switch))
+    return false;
+  return true;
 }
 
 bool
@@ -59,7 +89,7 @@ sensors_low ()
 bool
 sensors_high ()
 {
-  if (GPIOC->IDR & ((0b1 << infra0) | (0b1 << infra1)))
+  if (GPIOC->IDR & ((0b1 << infra0) | (0b1 << infra2)))
     return true;
   return false;
 }
@@ -67,7 +97,7 @@ sensors_high ()
 bool
 sensors_back ()
 {
-  if (GPIOC->IDR & ((0b1 << infra2) | (0b1 << infra3)))
+  if (GPIOC->IDR & ((0b1 << infra1) | (0b1 << infra3)))
     return true;
   return false;
 }
