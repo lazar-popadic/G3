@@ -59,6 +59,7 @@ int16_t calib1 = 512;
 int16_t calib2 = 512;
 volatile float ref_test;
 extern volatile float V_ref, w_ref;
+unsigned char brojac = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,7 +121,7 @@ int main(void)
  HD44780_Clear();
  HD44780_SetCursor(0, 0);
  HD44780_PrintStr("G3 Robotics");
- HAL_Delay(500);
+
 //  timer_start_sys_time ();
   /* USER CODE END 2 */
 
@@ -138,8 +139,11 @@ int main(void)
 //      if (timer_end ())
 //      state_main = END;
 //      ax_move(9, calib1, 500);
-      ispis_displej(100);
-      switch (state_main)
+	  if (timer_delay_nonblocking(200))
+		  brojac ++;
+      ispis_displej(brojac);
+
+	  switch (state_main)
 	{
 	default:
 	  break;
@@ -152,7 +156,6 @@ int main(void)
 	      pwm_start ();
 	      set_starting_position (0, 0, 0);
 	      regulation_on = true;
-	      ispis_displej(100);
 //	    set_rotation_speed_limit(1.0);
 //	    move_to_angle(-179);
 //	    move_on_direction(1500, WALL);
@@ -344,7 +347,6 @@ void ispis_displej(uint8_t brojac) {
 	a = brojac;
 
 	itoa(a, snum, 10);
-	HAL_Delay(10);
 	HD44780_Init(2);
 	HD44780_Backlight();
 	HD44780_Clear();
@@ -354,7 +356,6 @@ void ispis_displej(uint8_t brojac) {
 	HD44780_PrintStr("POINTS:  ");
 	HD44780_SetCursor(9, 1);
 	HD44780_PrintStr(snum);
-	HAL_Delay(500);
 }
 /* USER CODE END 4 */
 
