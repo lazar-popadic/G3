@@ -26,6 +26,8 @@
 #define POT		140
 #define POT_2		141
 
+volatile uint8_t points = 0;
+
 extern position robot_position;
 extern volatile bool interrupted;
 extern volatile uint8_t sensors_case_timer;
@@ -114,6 +116,7 @@ yellow_matija ()
 	  home_side = WALL;
 
 	  tactic_finished = false;
+	  points = 0;
 	}
       tactic_state = PLANT_1;
       tactic_state_init = false;
@@ -126,7 +129,7 @@ yellow_matija ()
 	{
 	  reset_task ();
 	    tactic_state = DROP_Y;
-	  pop_plant ();
+//	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
 	}
@@ -143,6 +146,7 @@ yellow_matija ()
       current_task_status = task_dropoff_y_2 (YELLOW);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	    tactic_state = 1/*gde ide*/;
 	  current_task_retries = 0;
@@ -198,6 +202,7 @@ yellow_4 ()
 	  home_side = WALL;
 
 	  tactic_finished = false;
+	  points = 0;
 	}
       tactic_state = PLANT_1;
       tactic_state_init = false;
@@ -213,7 +218,7 @@ yellow_4 ()
 	    tactic_state = 1;
 	  else if (alt == 1)
 	    tactic_state = POT;
-	  pop_plant ();
+//	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
 	}
@@ -309,6 +314,7 @@ yellow_4 ()
       if (current_task_status == TASK_SUCCESS)
 //	  || current_task_status == TASK_FAILED_2)
 	{
+	  points += get_and_reset_task_points ();
 	  current_task_retries = 0;
 	  reset_task ();
 	  tactic_state = PLANT_2;
@@ -337,13 +343,13 @@ yellow_4 ()
       break;
 
     case PLANT_2:
-      current_task_status = task_pickup_plants (plants[0], 1);
+      current_task_status = task_pickup_plants (plants[1], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
 	  tactic_state = DROP_X_C;
-	  pop_plant ();
+//	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
 	}
@@ -360,6 +366,7 @@ yellow_4 ()
       current_task_status = task_dropoff_x (YELLOW, CLOSE);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  tactic_state = PLANT_3;
 	  current_task_retries = 0;
@@ -395,13 +402,13 @@ yellow_4 ()
       break;
 
     case PLANT_3:
-      current_task_status = task_pickup_plants (plants[0], 1);
+      current_task_status = task_pickup_plants (plants[2], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
 	  tactic_state = SOLAR_R;
-	  pop_plant ();
+//	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
 	}
@@ -418,6 +425,7 @@ yellow_4 ()
       current_task_status = task_solar (YELLOW, RESERVED, 1.0);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  if (alt == 0 || alt == 1)
 	    tactic_state = DROP_Y;
@@ -444,6 +452,7 @@ yellow_4 ()
       current_task_status = task_dropoff_x_alt (YELLOW, CLOSE);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  tactic_state = SOLAR_C;
 	  current_task_retries = 0;
@@ -466,6 +475,7 @@ yellow_4 ()
       current_task_status = task_solar (YELLOW, CENTRAL, 1);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  tactic_state = PLANT_4;
 	  current_task_retries = 0;
@@ -489,6 +499,7 @@ yellow_4 ()
       current_task_status = task_dropoff_y_2 (YELLOW);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  if (alt == 0 || alt == 1)
 	    tactic_state = SOLAR_C;
@@ -517,6 +528,7 @@ yellow_4 ()
       if (current_task_status == TASK_SUCCESS)
 //	  || current_task_status == TASK_FAILED_2)
 	{
+	  points += get_and_reset_task_points ();
 	  current_task_retries = 0;
 	  reset_task ();
 	  tactic_state = PLANT_3;
@@ -531,13 +543,13 @@ yellow_4 ()
       break;
 
     case PLANT_4:
-      current_task_status = task_pickup_plants (plants[0], 1);
+      current_task_status = task_pickup_plants (plants[3], 1);
 
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
 	  tactic_state = DROP_X_F;
-	  pop_plant ();
+//	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
 	  homes[0] = home_yellow3_close;
@@ -556,6 +568,7 @@ yellow_4 ()
       current_task_status = task_dropoff_x (YELLOW, FAR);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  tactic_state = HOME;
 	  current_task_retries = 0;
@@ -591,6 +604,7 @@ yellow_4 ()
       current_task_status = task_go_home (homes[home_counter], home_side);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += get_and_reset_task_points ();
 	  mechanism_down ();
 	  mechanism_down ();
 	  mechanism_down ();
@@ -645,4 +659,10 @@ swap_plant_alt (uint8_t i)
   target temp = plants[i];
   plants[i] = alt_plants[i];
   alt_plants[i] = temp;
+}
+
+uint8_t
+get_points ()
+{
+  return points;
 }

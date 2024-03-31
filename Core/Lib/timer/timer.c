@@ -37,6 +37,7 @@ extern volatile float transition_factor;
 volatile uint16_t sys_time_s = 0;
 volatile uint32_t sys_time_half_ms = 0;
 bool flag_delay = true;
+bool flag_timeout = true;
 int16_t speed_right = 0, speed_left = 0;
 volatile uint8_t sensors_case_timer = 0;
 volatile bool interrupted = false;
@@ -135,6 +136,40 @@ timer_delay_nonblocking (uint32_t delay_ms)
     }
 
   if (sys_time_half_ms <= start_sys_time_half_ms + delay_half_ms)
+    return false;
+  flag_delay = true;
+  return true;
+}
+
+bool
+task_timeout (uint32_t delay_ms)
+{
+  static uint32_t start_sys_time_half_ms;
+  static uint32_t delay_half_ms;
+  if (flag_timeout == true)				//da samo jednom udje
+    {
+      start_sys_time_half_ms = sys_time_half_ms;
+      delay_half_ms = delay_ms * 2;
+      flag_timeout = false;
+    }
+
+  if (sys_time_half_ms <= start_sys_time_half_ms + delay_half_ms)
+    return false;
+  flag_timeout = true;
+  return true;
+}
+
+bool
+display_timeout_500ms ()
+{
+  static uint32_t start_sys_time_half_ms;
+  if (flag_delay == true)
+    {
+      start_sys_time_half_ms = sys_time_half_ms;
+      flag_delay = false;
+    }
+
+  if (sys_time_half_ms <= start_sys_time_half_ms + 1000)
     return false;
   flag_delay = true;
   return true;

@@ -10,7 +10,9 @@
 volatile int8_t task_status = TASK_IN_PROGRESS;
 volatile bool task_init = false;
 volatile uint8_t task_case = 0;
+volatile uint8_t task_points = 0;
 
+extern float distance;
 extern volatile bool interrupted;
 extern volatile uint8_t sensors_case_timer;
 extern volatile float transition_factor;
@@ -59,14 +61,15 @@ task_go_home (target home, uint8_t direction)
       move_to_xy (home.x, home.y, direction);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
-	  mechanism_open ();
-	  mechanism_open ();
-	  mechanism_open ();
-	  mechanism_open ();
+	  task_points = 10;
 	  mechanism_down ();
 	  mechanism_down ();
 	  mechanism_down ();
 	  mechanism_down ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	}
@@ -356,6 +359,7 @@ task_dropoff_x_alt (uint8_t side, uint8_t planter)
       mechanism_down ();
       if (timer_delay_nonblocking (20))
 	{
+	  task_points = 4 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
@@ -623,6 +627,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
       mechanism_down ();
       if (timer_delay_nonblocking (20))
 	{
+	  task_points = 4 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
@@ -751,6 +756,7 @@ task_dropoff_y_2 (uint8_t side)
       mechanism_down ();
       if (timer_delay_nonblocking (20))
 	{
+	  task_points = 4 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
@@ -846,6 +852,10 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit)
 	}
       if (interrupted)
 	{
+	  if (distance < 200)
+	    task_points = 2 * 5;
+	  else
+	    task_points = 5;
 	  task_status = TASK_FAILED_2;
 //	  task_case = RETURN_CASE;
 	}
@@ -858,6 +868,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit)
 	solar_in_r ();
       if (timer_delay_nonblocking (1000))
 	{
+	  task_points = 3 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
@@ -972,6 +983,7 @@ task_pot_reserved (uint8_t side)
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  set_translation_speed_limit (1.0);
+	  task_points = 2 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
@@ -1080,6 +1092,7 @@ task_push_pots (uint8_t side)
 	{
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (1.0);
+	  task_points = 2 * 5;
 	  task_case = RETURN;
 	  task_status = TASK_SUCCESS;
 	  task_init = false;
@@ -1101,4 +1114,12 @@ set_task_case (uint8_t number)
 {
   task_init = false;
   task_case = number;
+}
+
+uint8_t
+get_and_reset_task_points ()
+{
+  uint8_t score = task_points;
+  task_points = 0;
+  return score;
 }

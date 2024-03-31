@@ -22,6 +22,10 @@ void
 timer_init ();
 bool
 timer_delay_nonblocking (uint32_t delay_ms);
+bool
+task_timeout (uint32_t delay_ms);
+bool
+display_timeout_500ms ();
 void
 timer_start_sys_time ();
 void
