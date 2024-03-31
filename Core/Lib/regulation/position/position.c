@@ -16,14 +16,14 @@
 #include "../../pwm/pwm.h"
 
 // narednih 10 do 100 iteracija vrednosti, ei ne sme preko toga ???
-#define THETA_I_LIMIT		5.0
-#define DISTANCE_I_LIMIT	0.008*2.0
+#define THETA_I_LIMIT		0.24
+#define DISTANCE_I_LIMIT	2.4
 
-static const float KP_ROT = 36.0;
-static const float KI_ROT = 0.6;
+static const float KP_ROT = 60.0;
+static const float KI_ROT = 20.0;
 
-static const float KP_TRAN = 0.044;
-static const float KI_TRAN = 0.0008*2.0;
+static const float KP_TRAN = 0.036;
+static const float KI_TRAN = 0.64;
 
 extern volatile float theta_to_pos;
 extern volatile float theta_to_angle;
@@ -52,6 +52,11 @@ regulation_position ()
 	{
 	  regulation_phase = ROT_TO_POS;
 	}
+      //TODO: ako robot ne zabada vise onako (greska izmedju 10 i 20 mm) onda ovo radi posao
+      else if (fabs (distance) > EPSILON_DISTANCE && !robot_moving)
+	{
+	  regulation_phase = TRAN_WITHOUT_ROT;
+	}
       regulation_rotation (theta_to_angle, 1, 1);
       V_ref = 0;
       break;
@@ -59,7 +64,6 @@ regulation_position ()
     case ROT_TO_POS:
       if (fabs (theta_to_pos) < EPSILON_THETA_MEDIUM && !robot_moving)
 	{
-//	  regulation_rotation_finished ();
 	  regulation_phase = TRAN_WITH_ROT;
 	}
       /* (ako se zada mala kretnja)
@@ -67,7 +71,6 @@ regulation_position ()
        */
 //      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
 //	{
-////	  regulation_rotation_finished ();
 //	  regulation_phase = ROT_TO_ANGLE;
 //	}
       regulation_rotation (theta_to_pos, 1, 1);
@@ -77,28 +80,26 @@ regulation_position ()
     case TRAN_WITH_ROT:
       if (fabs (distance) < EPSILON_DISTANCE_ROT)
 	{
-//	  regulation_rotation_finished();
 	  regulation_phase = TRAN_WITHOUT_ROT;
 	}
       if (fabs (theta_to_pos) > EPSILON_THETA_BIG)
 	{
-//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
-      regulation_translation (distance, 1);
-      regulation_rotation (theta_to_pos, 1.2, 1);
+      if (fabs (theta_to_pos) > (M_PI / 2))
+	regulation_translation (-distance, 1);
+      else
+	regulation_translation (distance, 1);
+      regulation_rotation (theta_to_pos, 0.5, 1.0);
       break;
 
     case TRAN_WITHOUT_ROT:
-      if (fabs (distance) < EPSILON_DISTANCE
-	  && !robot_moving)
+      if (fabs (distance) < EPSILON_DISTANCE && !robot_moving)
 	{
-//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_ANGLE;
 	}
       if (fabs (distance) > EPSILON_DISTANCE_ROT * 2.0)
 	{
-//	  regulation_translation_finished ();
 	  regulation_phase = ROT_TO_POS;
 	}
       if (fabs (theta_to_pos) > (M_PI / 2))
@@ -110,7 +111,6 @@ regulation_position ()
     }
 
 }
-
 /*
  * TODO: razmisli da li pokriva svaki slucaj!
  */
@@ -125,8 +125,8 @@ regulation_rotation (float theta_er, float factor, float limit_factor)
   w_ref_pid = KP_ROT * theta_er + KI_ROT * theta_er_i;
   w_ref_pid = float_saturation (w_ref_pid, w_limit * limit_factor,
 				-w_limit * limit_factor);
-//  w_ref_pid = float_saturation2 (w_ref_pid, w_limit * limit_factor, 3.0, 0.4);
-  w_ref = float_ramp_acc (w_ref, w_ref_pid, 1.6);
+//  w_ref_pid = float_saturation2 (w_ref_pid, w_limit * limit_factor, 1.5, 0.15);
+  w_ref = float_ramp_acc (w_ref, w_ref_pid, 3.2);
   w_ref *= factor;
 }
 
@@ -140,9 +140,9 @@ regulation_translation (float distance_er, float factor)
 
   V_ref_pid = KP_TRAN * distance_er + KI_TRAN * distance_er_i;
   V_ref_pid = float_saturation (V_ref_pid, V_limit, -V_limit);
-  V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 1.6, 0.4);
-  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.24);
-  V_ref *= factor;
+//  V_ref_pid = float_saturation2 (V_ref_pid, V_limit, 0.24, 0.5);
+  V_ref = float_ramp_acc (V_ref, V_ref_pid, 0.36);
+  V_ref *= factor; // TODO: ovo izbaci gore iznad saturacije
 }
 
 void

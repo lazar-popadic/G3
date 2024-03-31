@@ -1,7 +1,7 @@
 port A:
-	0 - enc2 A - tim5
+	0 - enc2 A - tim5 - levi
 	1 - enc2 B	
-	5 - enc1 A	- tim2
+	5 - enc1 A	- tim2 - desni
 	6 - cinc
 	8 - M1DIR
 	9 - M2DIR
@@ -15,11 +15,14 @@ port B:
 	6 - M2PWM
 
 port C:
-	0 - infra senzor0 - visoki
+	0 - infra senzor0
 	1 - infra senzor1
-	2 - infra senzor2 - grabulja
+	2 - infra senzor2
 	3 - infra senzor3
-	4 - infra senzor4 - niski
+	4 - infra senzor4
 	5 - infra senzor5
 	7 - M1PWM
+	10 - prekidac - pozicioniranje
+	11 - prekidac - izbor strane
+	12 - prekidac - izbor taktike
  	13 - button

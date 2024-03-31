@@ -12,9 +12,9 @@
 #include "../../h-bridge/h-bridge.h"
 #include <math.h>
 
-#define V_LIMIT		1150
-#define W_LIMIT		1150
-#define U_LIMIT		1200
+#define V_LIMIT		1175
+#define W_LIMIT		1175
+#define U_LIMIT		1250
 
 static const float KP_TRAN = 64.0;
 

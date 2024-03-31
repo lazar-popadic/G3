@@ -12,14 +12,18 @@
 #define RETURN 249
 #define START 255
 #define END 250
+#define POSITIONING 253
+#define RESET_BEFORE_START 254
 
 bool
-test_tactic_blue ();
+yellow_matija ();
 bool
-test_tactic_yellow ();
+yellow_4 ();
 void
 pop_plant ();
 void
 swap_first2_plants ();
+void
+swap_plant_alt (uint8_t i);
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

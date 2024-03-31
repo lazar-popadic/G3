@@ -45,31 +45,32 @@ volatile float transition_factor = 1.0;
 target offset;
 uint8_t hold_position_state = 0;
 extern volatile bool robot_moving;
+extern volatile uint8_t brake;
 
 void
 calculate_movement ()
 {
-  switch (hold_position_state)
-    {
-    case 0:
-      error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
-      error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
-      theta_to_pos_target = atan2 (error.y_mm, error.x_mm) + tran_dir * M_PI;
+//  switch (hold_position_state)
+//    {
+//    case 0:
+  error.x_mm = target_position.x_mm - robot_position.x_mm;		// [mm]
+  error.y_mm = target_position.y_mm - robot_position.y_mm;		// [mm]
+  theta_to_pos_target = atan2 (error.y_mm, error.x_mm) + tran_dir * M_PI;
 
-      error.theta_rad = target_position.theta_rad - robot_position.theta_rad; // [rad]
+  error.theta_rad = target_position.theta_rad - robot_position.theta_rad; // [rad]
 
-      theta_to_pos = simple_normalize (
-	  theta_to_pos_target - robot_position.theta_rad);	// [rad]
-      distance = (tran_dir * (-2) + 1)
-	  * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
-      theta_to_angle = simple_normalize (error.theta_rad);		// [rad]
-      break;
-    case 1:
-      theta_to_pos = 0;
-      distance = 0;
-      theta_to_angle = 0;
-      break;
-    }
+  theta_to_pos = simple_normalize (
+      theta_to_pos_target - robot_position.theta_rad);	// [rad]
+  distance = (tran_dir * (-2) + 1)
+      * sqrt (error.x_mm * error.x_mm + error.y_mm * error.y_mm);	// [mm]
+  theta_to_angle = simple_normalize (error.theta_rad);		// [rad]
+//      break;
+//    case 1:
+//      theta_to_pos = 0;
+//      distance = 0;
+//      theta_to_angle = 0;
+//      break;
+//    }
 }
 
 bool
@@ -118,28 +119,24 @@ move_to_xy (float x, float y, int8_t translation_direction)
 void
 move_to_angle (float theta_degrees)
 {
-  if (!movement_init)
-    {
-      movement_init = true;
-      pos_init.x_mm = robot_position.x_mm;
-      pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = theta_degrees;
-    }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
+  move_full (robot_position.x_mm, robot_position.y_mm, theta_degrees, 0);
+}
+
+void
+move_to_angle_2 (float theta_degrees)
+{
+  move_full (robot_position.x_mm, robot_position.y_mm, theta_degrees, 0);
 }
 
 void
 turn_to_pos (float x, float y, int8_t translation_direction)
 {
-  if (!movement_init)
-    {
-      movement_init = true;
-      pos_init.x_mm = robot_position.x_mm;
-      pos_init.y_mm = robot_position.y_mm;
-      pos_init.theta_rad = (atan2 (y - pos_init.y_mm, x - pos_init.x_mm)
-	  + translation_direction * M_PI) * 180.0 / M_PI;
-    }
-  move_full (pos_init.x_mm, pos_init.y_mm, pos_init.theta_rad, 0);
+  move_full (
+      robot_position.x_mm,
+      robot_position.y_mm,
+      (atan2 (y - robot_position.y_mm, x - robot_position.x_mm)
+	  + translation_direction * M_PI) * 180.0 / M_PI,
+      0);
 }
 
 void
@@ -175,6 +172,17 @@ move_on_direction (float distance, int8_t direction)
 }
 
 void
+move_on_direction_2 (float distance, int8_t direction)
+{
+  move_full (
+      robot_position.x_mm
+	  + (direction * (-2) + 1) * distance * cos (robot_position.theta_rad),
+      robot_position.y_mm
+	  + (direction * (-2) + 1) * distance * sin (robot_position.theta_rad),
+      robot_position.theta_rad * 180.0 / M_PI, direction);
+}
+
+void
 set_starting_position (float starting_x, float starting_y,
 		       float starting_theta_degrees)
 {
@@ -183,25 +191,17 @@ set_starting_position (float starting_x, float starting_y,
   robot_position.theta_rad = starting_theta_degrees * M_PI / 180;
 }
 
-void
-hold_position ()
-{
-  hold_position_state = 1;
-}
-
-void
-continue_movement ()
-{
-  hold_position_state = 0;
-}
-
-void
-hold_position_with_reg ()
-{
-  target_position.x_mm = robot_position.x_mm;
-  target_position.y_mm = robot_position.y_mm;
-  target_position.theta_rad = robot_position.theta_rad;
-}
+//void
+//hold_position ()
+//{
+//  hold_position_state = 1;
+//}
+//
+//void
+//continue_movement ()
+//{
+//  hold_position_state = 0;
+//}
 
 void
 set_translation_speed_limit (float perc)
@@ -224,7 +224,12 @@ set_transition_factor (float factor)
 void
 reset_movement ()
 {
-  movement_init = false;
+//  target_position.x_mm = robot_position.x_mm;
+//  target_position.y_mm = robot_position.y_mm;
+//  target_position.theta_rad = robot_position.theta_rad;
+//  regulation_phase = ROT_TO_ANGLE;
+//  movement_init = false;
+  brake = 1;
 }
 
 void
