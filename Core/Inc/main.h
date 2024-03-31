@@ -46,6 +46,7 @@ extern "C" {
 #include "../Lib/encoder/encoder.h"
 #include "../Lib/sensors/sensors.h"
 #include "../Lib/h-bridge/h-bridge.h"
+#include "../Lib/display/liquidcrystal_i2c.h"
 #include "../Lib/movement/movement.h"
 #include "../Lib/tactics/task_modules.h"
 /* USER CODE END Includes */
