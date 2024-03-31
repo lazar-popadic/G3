@@ -71,8 +71,6 @@ extern volatile bool interrupted;
 
 /* Private function prototypes -----------------------------------------------*/
 void
-write_to_display (uint8_t number);
-void
 SystemClock_Config (void);
 static void
 MX_GPIO_Init (void);
@@ -134,6 +132,7 @@ main (void)
   HD44780_Clear ();
   HD44780_SetCursor (0, 0);
   HD44780_PrintStr ("G3 Robotics");
+  HD44780_Backlight ();
 
 //  timer_start_sys_time ();
   /* USER CODE END 2 */
@@ -144,8 +143,6 @@ main (void)
     {
 
       /* USER CODE END WHILE */
-      if (display_timeout_500ms ())
-	write_to_display (get_points ());
 
       /* USER CODE BEGIN 3 */
       switch (state_main)
@@ -168,30 +165,31 @@ main (void)
 	      positioning_done = true;
 	      if (blue_side_selected ())
 		{
-		  if (tactic_1_selected ())		// plava sigurna
+		  if (tactic_1_selected ())
 		    {
 		      set_starting_position (100 + 85, 2000 - 35 - 170, 180);
 		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 1;
 		    }
-		  else				// plava rizicna
+		  else				// blue_4
 		    {
-		      set_starting_position (3000 - 50 - 85, 1000 - 225 + 50,
-					     0);
-		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-		      selected_tactic = 2;
+		      set_starting_position (100 + 85, 32.5 + 170,
+					     180);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+		      MECHANISM);
+		      selected_tactic = 7;
 		    }
 		}
 	      else
 		{
-		  if (tactic_1_selected ())		// zuta sigurna
+		  if (tactic_1_selected ())
 		    {
 		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
 					     0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 3;
 		    }
-		  else				// zuta rizicna
+		  else				// yellow_4
 		    {
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
@@ -232,19 +230,9 @@ main (void)
 	    }
 	  break;
 
-//	case 1:
-//	  if (safe_blue ())
-//	    state_main = END;
-//	  break;
-//
-//	case 2:
-//	  if (risky_blue ())
-//	    state_main = END;
-//	  break;
-
-	case 3:
-//	  if (safe_yellow ())
-	  state_main = END;
+	case 7:
+	  if (blue_4())
+	    state_main = END;
 	  break;
 
 	case 8:
@@ -261,6 +249,7 @@ main (void)
 //	  break;
 //
 	case END:
+	  write_to_display (get_points ());
 	  timer_stop_sys_time ();
 	  stop_right_wheel ();
 	  stop_left_wheel ();

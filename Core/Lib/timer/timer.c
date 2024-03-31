@@ -159,22 +159,6 @@ task_timeout (uint32_t delay_ms)
   return true;
 }
 
-bool
-display_timeout_500ms ()
-{
-  static uint32_t start_sys_time_half_ms;
-  if (flag_delay == true)
-    {
-      start_sys_time_half_ms = sys_time_half_ms;
-      flag_delay = false;
-    }
-
-  if (sys_time_half_ms <= start_sys_time_half_ms + 1000)
-    return false;
-  flag_delay = true;
-  return true;
-}
-
 void
 TIM1_UP_TIM10_IRQHandler ()
 {

@@ -19,6 +19,8 @@ bool
 yellow_matija ();
 bool
 yellow_4 ();
+bool
+blue_4 ();
 void
 pop_plant ();
 void

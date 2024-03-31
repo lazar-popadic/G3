@@ -71,6 +71,9 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+void
+write_to_display (uint8_t number);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
