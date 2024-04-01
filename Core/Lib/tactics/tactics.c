@@ -24,6 +24,9 @@
 #define DROP_Y		134		// ostavi u planter kod sime
 #define POT		140		// samo ostavi u saksije kod rezervisanog polja
 #define POT_2		141		// ostavi u saksije kod rezervisanog polja i gurni ih u polje
+#define POT_3     142 // saksije kod najudaljenijeg polja
+#define POT_4     143  // gurni saksije kod najudaljenijeg polja
+#define POT_5     144  // saksije izmedju retyerbisanih i sredisnjih solara
 
 volatile uint8_t points = 0;
 
@@ -871,6 +874,371 @@ yellow_4 ()
 
     }
   return tactic_finished;
+}
+
+bool yellow_risky() {
+	switch (tactic_state) {
+	case 0:
+		if (!tactic_state_init) {
+			tactic_state_init = true;
+			plants[0] = plant_blue2;
+			plants[1] = plant_blue1;
+			plants[2] = plant_central2;
+			plants[3] = plant_yellow1;
+			//plants[4] = plant_yellow2;
+			//plants[5] = plant_central1;
+
+			homes[0] = home_yellow1;
+			homes[1] = home_yellow2;
+			home_side = WALL;
+
+			tactic_finished = false;
+		}
+
+		tactic_state = PLANT_1;
+		tactic_state_init = false;
+		break;
+
+	case PLANT_1:
+	current_task_status = task_pickup_plants(plants[0], 1);
+
+	if (current_task_status == TASK_SUCCESS) {
+		reset_task();
+		if (alt == 0)
+			tactic_state = 1;
+		else if (alt == 1)
+//			tactic_state = POT_3;
+//		pop_plant();
+		set_translation_speed_limit(1.0);
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1) {
+		/*reset_movement ();
+		 current_task_retries++;
+		 current_task_retries %= 2;
+		 alt = current_task_retries;
+		 reset_task ();
+		 swap_plant_alt (0);
+		 swap_plant_alt (2);*/
+		tactic_state = 1;
+	}
+	break;
+
+	case 1:
+	sensors_case_timer = SENSORS_HIGH;
+	set_translation_speed_limit(1.0);
+	turn_to_pos(700, robot_position.y_mm, WALL);
+	if (movement_finished() && timer_delay_nonblocking(20)) {
+		tactic_state = 2;
+	}
+	if (interrupted) {
+		current_task_retries++;
+		reset_movement();
+	}
+	break;
+	case 2:
+	sensors_case_timer = SENSORS_HIGH;
+	set_translation_speed_limit(1.0);
+	move_to_xy(700, robot_position.y_mm, WALL);
+	if (movement_finished() && timer_delay_nonblocking(20)) {
+		tactic_state = 3;
+	}
+	if (interrupted) {
+		current_task_retries++;
+		reset_movement();
+	}
+	break;
+	case 3:
+	sensors_case_timer = SENSORS_MECHANISM;
+	set_translation_speed_limit(1.0);
+	turn_to_pos(700, 640, MECHANISM);
+	if (movement_finished() && timer_delay_nonblocking(20)) {
+		tactic_state = 4;
+	}
+	break;
+	case 4:
+	sensors_case_timer = SENSORS_MECHANISM;
+	set_translation_speed_limit(1.0);
+	move_to_xy(700, 640, MECHANISM);
+	if (movement_finished() && timer_delay_nonblocking(20)) {
+		tactic_state = POT_3;
+	}
+	if (interrupted) {
+		current_task_retries++;
+		reset_movement();
+	}
+	break;
+
+	case POT_3:
+	current_task_retries = task_pot_far(YELLOW);
+	if (current_task_status == TASK_SUCCESS) {
+		points += get_and_reset_task_points();
+		current_task_retries = 0;
+		reset_task();
+		tactic_state = PLANT_2;
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1) {
+//		 	  reset_movement ();
+//		 	  reset_task ();
+//		 	  current_task_retries++;
+//		 	  if (current_task_retries == 1)
+//		 	    {
+//		 	      if (alt == 0)
+//		 		tactic_state = 2;
+//		 	      else if (alt == 1)
+//		 		tactic_state = 4;
+//		 	    }
+//		 	  else
+//		 	    tactic_state = POT;
+	}
+//		       else if (current_task_status == TASK_FAILED_2)
+//		 	{
+//		 	  reset_movement ();
+//		 	  set_task_case (4);
+//		 	}
+
+	break;
+	case PLANT_2:
+	current_task_status = task_pickup_plants(plants[1], 1);
+
+	if (current_task_status == TASK_SUCCESS) {
+		reset_task();
+		tactic_state = POT_4;
+		//	  pop_plant ();
+		set_translation_speed_limit(1.0);
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1) {
+//	 	  reset_movement ();
+//	 	  current_task_retries++;
+//	 	  reset_task ();
+//	 	  swap_first2_plants ();
+	}
+	break;
+	case POT_4:
+	current_task_status = task_push_pots_far(YELLOW);
+
+	if (current_task_status == TASK_SUCCESS)
+	//	  || current_task_status == TASK_FAILED_2)
+	{
+		points += get_and_reset_task_points();
+		current_task_retries = 0;
+		reset_task();
+		tactic_state = DROP_X_F;
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1) {
+//		 	  reset_movement ();
+//		 	  reset_task ();
+//		 	  current_task_retries++;
+	}
+	break;
+	case DROP_X_F:
+	current_task_status = task_dropoff_x(YELLOW, FAR);
+	if (current_task_status == TASK_SUCCESS) {
+		points += get_and_reset_task_points();
+		reset_task();
+		tactic_state = PLANT_3;
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
+	{
+//	 	  reset_movement ();
+//	 	  current_task_retries++;
+//	 	  reset_task ();
+//	 //	  tactic_state = 20;
+	} else if (current_task_status == TASK_FAILED_2)	// pri pomeranju saksija
+	{
+//	 	  set_task_case (2);
+//	 	  reset_movement ();
+//	 	  current_task_retries++;
+	} else if (current_task_status == TASK_FAILED_3)// dok se vraca do plantera
+	{
+//	 	  current_task_retries++;
+//	 	  set_task_case (3);
+//	 	  reset_movement ();
+	} else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
+	{
+//	 	  current_task_retries++;
+//	 	  set_task_case (8);
+//	 	  reset_movement ();
+	}
+	break;
+	case PLANT_3:
+	current_task_status = task_pickup_plants(plants[2], 1);
+
+	if (current_task_status == TASK_SUCCESS) {
+		reset_task();
+		tactic_state = POT_5;
+		//	  pop_plant ();
+		set_translation_speed_limit(1.0);
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1) {
+//	 	  reset_movement ();
+//	 	  current_task_retries++;
+//	 	  reset_task ();
+
+	}
+	break;
+
+	case POT_5:
+	current_task_retries = task_pot_far(YELLOW);
+	if (current_task_status == TASK_SUCCESS) {
+		points += get_and_reset_task_points();
+		current_task_retries = 0;
+		reset_task();
+		tactic_state = 5;
+		current_task_retries = 0;
+	} else if (current_task_status == TASK_FAILED_1) {
+
+	}
+	break;
+	case 5:
+	sensors_case_timer = SENSORS_MECHANISM;
+	set_translation_speed_limit(1.0);
+	turn_to_pos(1500-(2*side-1)*225, 220, MECHANISM);
+	if (movement_finished() && timer_delay_nonblocking(20)) {
+		tactic_state = 6;
+	}
+	break;
+	case 6:
+	sensors_case_timer = SENSORS_MECHANISM;
+	set_translation_speed_limit(1.0);
+	move_to_xy(1500-(2*side-1)*225, 220, MECHANISM);
+	if (movement_finished() && timer_delay_nonblocking(20)) {
+		tactic_state = SOLAR_R;
+	}
+	if (interrupted) {
+		current_task_retries++;
+		reset_movement();
+	}
+	break;
+
+	case SOLAR_R:
+	      current_task_status = task_solar (YELLOW, RESERVED, 1.0);
+	      if (current_task_status == TASK_SUCCESS)
+		{
+		  points += get_and_reset_task_points ();
+		  reset_task ();
+		  if (alt == 0 || alt == 1)
+		    tactic_state = SOLAR_C;
+		  else if (alt == 2)
+//		    tactic_state = DROP_X_C_ALT;
+		  current_task_retries = 0;
+		}
+	      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
+		{
+//		  current_task_retries++;
+//		  reset_task ();
+//		  reset_movement ();
+		  //	  tactic_state = 30;
+		}
+	      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
+		{
+//		  current_task_retries++;
+//		  set_task_case (4);
+//		  reset_movement ();
+		}
+	      break;
+
+	case SOLAR_C:
+	      current_task_status = task_solar (YELLOW, CENTRAL, 1);
+	      if (current_task_status == TASK_SUCCESS)
+		{
+		  points += get_and_reset_task_points ();
+		  reset_task ();
+		  tactic_state = PLANT_4;
+		  current_task_retries = 0;
+		}
+	      else if (current_task_status == TASK_FAILED_1)	// na putu do solara
+		{
+//		  current_task_retries++;
+//		  reset_task ();
+//		  reset_movement ();
+//		  //	  tactic_state = 30;
+		}
+	      else if (current_task_status == TASK_FAILED_2)	// pri okretanju solara
+		{
+//		  current_task_retries++;
+//		  set_task_case (4);
+//		  reset_movement ();
+		}
+	      break;
+
+	case PLANT_4:
+	      current_task_status = task_pickup_plants (plants[3], 1);
+
+	      if (current_task_status == TASK_SUCCESS)
+		{
+		  reset_task ();
+		  tactic_state = DROP_Y;
+	//	  pop_plant ();
+		  set_translation_speed_limit (1.0);
+		  current_task_retries = 0;
+		  homes[0] = home_yellow1;
+		  homes[1] = home_yellow2;
+		}
+	      else if (current_task_status == TASK_FAILED_1)
+		{
+//		  reset_movement ();
+//		  current_task_retries++;
+//		  reset_task ();
+		}
+	      break;
+
+	case DROP_Y:
+	      current_task_status = task_dropoff_y_2 (YELLOW);
+	      if (current_task_status == TASK_SUCCESS)
+		{
+		  points += get_and_reset_task_points ();
+		  reset_task ();
+		  if (alt == 0 || alt == 1)
+		    tactic_state = HOME;
+		  else if (alt == 2)
+//		    tactic_state = POT_2;
+		  current_task_retries = 0;
+		}
+	      else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
+		{
+//		  reset_movement ();
+//		  current_task_retries++;
+//		  reset_task ();
+	//	  tactic_state = 2;
+		}
+	      else if (current_task_status == TASK_FAILED_2)// nakon sto je ostavio, dok se udaljava od plantera
+		{
+//		  current_task_retries++;
+//		  set_task_case (5);
+//		  reset_movement ();
+		}
+	      break;
+	case HOME:
+	      current_task_status = task_go_home (homes[home_counter], home_side);
+	      if (current_task_status == TASK_SUCCESS)
+		{
+		  points += get_and_reset_task_points ();
+		  mechanism_down ();
+		  mechanism_down ();
+		  mechanism_down ();
+		  mechanism_down ();
+		  tactic_state = RETURN;
+		  current_task_retries = 0;
+		}
+	      if (current_task_status == TASK_FAILED_1)
+		{
+		  current_task_retries++;
+		  reset_movement ();
+		  reset_task ();
+		  if (home_counter == 0 && distance > 200)
+		    {
+		      home_counter++;
+		      home_side++;
+		      home_side %= 2;
+		    }
+		}
+	      break;
+
+	    case RETURN:
+	      tactic_finished = true;
+	      break;
+	}
+return tactic_finished;
 }
 
 bool

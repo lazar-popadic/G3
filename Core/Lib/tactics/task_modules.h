@@ -49,7 +49,13 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit);
 int8_t
 task_pot_reserved (uint8_t side);
 int8_t
+task_pot_solar (uint8_t side);
+int8_t
+task_pot_far (uint8_t side);
+int8_t
 task_push_pots (uint8_t side);
+int8_t
+task_push_pots_far (uint8_t side);
 
 uint8_t
 get_and_reset_task_points ();
