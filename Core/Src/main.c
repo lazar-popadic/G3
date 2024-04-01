@@ -191,7 +191,10 @@ main (void)
 		    {
 		    case 0:
 		      break;
-		    case 1:
+		    case 1:	// yellow_NSD
+		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
+		      selected_tactic = 12;
 		      break;
 		    case 2:	// yellow_matija
 		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
@@ -253,6 +256,11 @@ main (void)
 
 	case 10:
 	  if (yellow_matija ())
+	    state_main = END;
+	  break;
+
+	case 12:
+	  if (yellow_NSD ())
 	    state_main = END;
 	  break;
 

@@ -18,6 +18,8 @@
 bool
 yellow_matija ();
 bool
+yellow_NSD ();
+bool
 yellow_4 ();
 bool
 yellow_risky();
