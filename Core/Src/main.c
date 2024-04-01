@@ -71,11 +71,11 @@ extern volatile bool interrupted;
 
 /* Private function prototypes -----------------------------------------------*/
 void
-SystemClock_Config(void);
+SystemClock_Config (void);
 static void
-MX_GPIO_Init(void);
+MX_GPIO_Init (void);
 static void
-MX_I2C1_Init(void);
+MX_I2C1_Init (void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -88,148 +88,162 @@ char snum[5];
  * @brief  The application entry point.
  * @retval int
  */
-int main(void) {
+int
+main (void)
+{
 
-	/* USER CODE BEGIN 1 */
-	/* USER CODE END 1 */
+  /* USER CODE BEGIN 1 */
+  /* USER CODE END 1 */
 
-	/* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-	HAL_Init();
+  HAL_Init ();
 
-	/* USER CODE BEGIN Init */
-	/* USER CODE END Init */
+  /* USER CODE BEGIN Init */
+  /* USER CODE END Init */
 
-	/* Configure the system clock */
-	SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config ();
 
-	/* USER CODE BEGIN SysInit */
-	/* USER CODE END SysInit */
+  /* USER CODE BEGIN SysInit */
+  /* USER CODE END SysInit */
 
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
-	MX_I2C1_Init();
-	/* USER CODE BEGIN 2 */
-	io_init();
-	timer_init();
-	encoder_init();
-	odometry_init();
-	uart_init();
-	pwm_init();
-	sensors_init();
-	h_bridge_init();
-	regulation_init();
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init ();
+  MX_I2C1_Init ();
+  /* USER CODE BEGIN 2 */
+  io_init ();
+  timer_init ();
+  encoder_init ();
+  odometry_init ();
+  uart_init ();
+  pwm_init ();
+  sensors_init ();
+  h_bridge_init ();
+  regulation_init ();
 
-	__enable_irq();
+  __enable_irq ();
 
-	regulation_on = false;
-	HD44780_Init(2);
-	HD44780_NoBacklight();
-	HD44780_Clear();
-	HD44780_SetCursor(0, 0);
-	HD44780_PrintStr("G3 Robotics");
-	HD44780_Backlight();
+  regulation_on = false;
+  HD44780_Init (2);
+  HD44780_NoBacklight ();
+  HD44780_Clear ();
+  HD44780_SetCursor (0, 0);
+  HD44780_PrintStr ("G3 Robotics");
+  HD44780_Backlight ();
 
 //  timer_start_sys_time ();
-	/* USER CODE END 2 */
+  /* USER CODE END 2 */
 
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
-	while (1) {
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+    {
 
-		/* USER CODE END WHILE */
+      /* USER CODE END WHILE */
 
-		/* USER CODE BEGIN 3 */
-		switch (state_main) {
-		default:
-			break;
+      /* USER CODE BEGIN 3 */
+      switch (state_main)
+	{
+	default:
+	  break;
 
-		case POSITIONING:
-			if (!positioning_done) {
-				set_rotation_speed_limit(0.2);
-				transition_factor = 2.5;
-				timer_start_sys_time();
-				Vd_sum = 0;
-				Vl_sum = 0;
-				Vd_inc = 0;
-				Vl_inc = 0;
-				pwm_start();
-				regulation_on = true;
-				positioning_done = true;
-				if (blue_side_selected()) {
-					if (tactic_1_selected()) {
-						set_starting_position(100 + 85, 2000 - 35 - 170, 180);
-						turn_to_pos(plant_blue2.x, plant_blue2.y, MECHANISM);
-						selected_tactic = 1;
-					} else				// blue_4
-					{
-						set_starting_position(100 + 85, 32.5 + 170, 180);
-						turn_to_pos(plant_central2.x, plant_central2.y,
-						MECHANISM);
-						selected_tactic = 7;
-					}
-				} else {
-					if (tactic_1_selected()) {		// yellow_matija
-						set_starting_position(3000 - 100 - 85, 2000-32.5 - 170, 0);
-						turn_to_pos(plant_central1.x, plant_central1.y,
-								MECHANISM);
-						selected_tactic = 10;
-					} else				// yellow_4
-					{
-						set_starting_position(3000 - 100 - 85, 32.5 + 170, 0);
-						turn_to_pos(plant_central2.x, plant_central2.y,
-						MECHANISM);
-						selected_tactic = 8;
-					}
-				}
-			}
-			mechanism_open();
-			solar_in_l();
-			solar_in_r();
-			if (movement_finished() && timer_delay_nonblocking(20))
-				state_main = RESET_BEFORE_START;
-			break;
-		case RESET_BEFORE_START:
-			pwm_duty_cycle_left(0);
-			pwm_duty_cycle_right(0);
-			set_rotation_speed_limit(1.0);
-			reset_and_stop_timer();
-			regulation_on = false;
-			state_main = START;
-			break;
+	case POSITIONING:
+	  if (!positioning_done)
+	    {
+	      set_rotation_speed_limit (0.2);
+	      transition_factor = 2.5;
+	      timer_start_sys_time ();
+	      Vd_sum = 0;
+	      Vl_sum = 0;
+	      Vd_inc = 0;
+	      Vl_inc = 0;
+	      pwm_start ();
+	      regulation_on = true;
+	      positioning_done = true;
+	      if (blue_side_selected ())
+		{
+		  if (tactic_1_selected ())
+		    {
+		      set_starting_position (100 + 85, 2000 - 35 - 170, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+		      selected_tactic = 1;
+		    }
+		  else				// blue_4
+		    {
+		      set_starting_position (100 + 85, 32.5 + 170, 180);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+		      MECHANISM);
+		      selected_tactic = 7;
+		    }
+		}
+	      else
+		{
+		  if (tactic_1_selected ())
+		    {		// yellow_matija
+		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
+					     0);
+		      turn_to_pos (plant_central1.x, plant_central1.y,
+		      MECHANISM);
+		      selected_tactic = 10;
+		    }
+		  else				// yellow_4
+		    {
+		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+		      MECHANISM);
+		      selected_tactic = 8;
+		    }
+		}
+	    }
+	  mechanism_open ();
+	  solar_in_l ();
+	  solar_in_r ();
+	  if (movement_finished () && timer_delay_nonblocking (20))
+	    state_main = RESET_BEFORE_START;
+	  break;
+	case RESET_BEFORE_START:
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
+	  set_rotation_speed_limit (1.0);
+	  reset_and_stop_timer ();
+	  regulation_on = false;
+	  state_main = START;
+	  break;
 
-		case START:
-			if (io_cinc()) {
-				timer_start_sys_time();
-				Vd_sum = 0;
-				Vl_sum = 0;
-				Vd_inc = 0;
-				Vl_inc = 0;
-				state_main = selected_tactic;
-				set_rotation_speed_limit(1.0);
-				set_translation_speed_limit(1.0);
-				pwm_start();
-				regulation_on = true;
-				transition_factor = 1.0;
-			}
-			break;
+	case START:
+	  if (io_cinc ())
+	    {
+	      timer_start_sys_time ();
+	      Vd_sum = 0;
+	      Vl_sum = 0;
+	      Vd_inc = 0;
+	      Vl_inc = 0;
+	      state_main = selected_tactic;
+	      set_rotation_speed_limit (1.0);
+	      set_translation_speed_limit (1.0);
+	      pwm_start ();
+	      regulation_on = true;
+	      transition_factor = 1.0;
+	    }
+	  break;
 
-		case 7:
-			if (blue_4())
-				state_main = END;
-			break;
+	case 7:
+	  if (blue_4 ())
+	    state_main = END;
+	  break;
 
-		case 8:
-			if (yellow_4())
-				state_main = END;
-			break;
+	case 8:
+	  if (yellow_4 ())
+	    state_main = END;
+	  break;
 
-		case 10:
-			if (yellow_matija())
-				state_main = END;
-			break;
+	case 10:
+	  if (yellow_matija ())
+	    state_main = END;
+	  break;
 
 //	case 10:
 //	  move_on_direction_2 (200,MECHANISM);
@@ -239,61 +253,67 @@ int main(void) {
 //	    state_main = END;
 //	  break;
 //
-		case END:
-			write_to_display(get_points());
-			timer_stop_sys_time();
-			stop_right_wheel();
-			stop_left_wheel();
-			pwm_duty_cycle_left(0);
-			pwm_duty_cycle_right(0);
-			regulation_on = false;
-			break;
-		}
-	} // while
-	/* USER CODE END 3 */
+	case END:
+	  write_to_display (get_points ());
+	  timer_stop_sys_time ();
+	  stop_right_wheel ();
+	  stop_left_wheel ();
+	  pwm_duty_cycle_left (0);
+	  pwm_duty_cycle_right (0);
+	  regulation_on = false;
+	  break;
+	}
+    } // while
+  /* USER CODE END 3 */
 }
 
 /**
  * @brief System Clock Configuration
  * @retval None
  */
-void SystemClock_Config(void) {
-	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
-	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
+void
+SystemClock_Config (void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct =
+    { 0 };
+  RCC_ClkInitTypeDef RCC_ClkInitStruct =
+    { 0 };
 
-	/** Configure the main internal regulator output voltage
-	 */
-	__HAL_RCC_PWR_CLK_ENABLE();
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+  /** Configure the main internal regulator output voltage
+   */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
 
-	/** Initializes the RCC Oscillators according to the specified parameters
-	 * in the RCC_OscInitTypeDef structure.
-	 */
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-	RCC_OscInitStruct.PLL.PLLM = 8;
-	RCC_OscInitStruct.PLL.PLLN = 84;
-	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-	RCC_OscInitStruct.PLL.PLLQ = 4;
-	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
-		Error_Handler();
-	}
+  /** Initializes the RCC Oscillators according to the specified parameters
+   * in the RCC_OscInitTypeDef structure.
+   */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 84;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
+  if (HAL_RCC_OscConfig (&RCC_OscInitStruct) != HAL_OK)
+    {
+      Error_Handler ();
+    }
 
-	/** Initializes the CPU, AHB and APB buses clocks
-	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  /** Initializes the CPU, AHB and APB buses clocks
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+      | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
-		Error_Handler();
-	}
+  if (HAL_RCC_ClockConfig (&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+    {
+      Error_Handler ();
+    }
 }
 
 /**
@@ -301,30 +321,33 @@ void SystemClock_Config(void) {
  * @param None
  * @retval None
  */
-static void MX_I2C1_Init(void) {
+static void
+MX_I2C1_Init (void)
+{
 
-	/* USER CODE BEGIN I2C1_Init 0 */
+  /* USER CODE BEGIN I2C1_Init 0 */
 
-	/* USER CODE END I2C1_Init 0 */
+  /* USER CODE END I2C1_Init 0 */
 
-	/* USER CODE BEGIN I2C1_Init 1 */
+  /* USER CODE BEGIN I2C1_Init 1 */
 
-	/* USER CODE END I2C1_Init 1 */
-	hi2c1.Instance = I2C1;
-	hi2c1.Init.ClockSpeed = 100000;
-	hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-	hi2c1.Init.OwnAddress1 = 0;
-	hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-	hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-	hi2c1.Init.OwnAddress2 = 0;
-	hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-	hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-	if (HAL_I2C_Init(&hi2c1) != HAL_OK) {
-		Error_Handler();
-	}
-	/* USER CODE BEGIN I2C1_Init 2 */
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init (&hi2c1) != HAL_OK)
+    {
+      Error_Handler ();
+    }
+  /* USER CODE BEGIN I2C1_Init 2 */
 
-	/* USER CODE END I2C1_Init 2 */
+  /* USER CODE END I2C1_Init 2 */
 
 }
 
@@ -333,33 +356,37 @@ static void MX_I2C1_Init(void) {
  * @param None
  * @retval None
  */
-static void MX_GPIO_Init(void) {
-	/* USER CODE BEGIN MX_GPIO_Init_1 */
-	/* USER CODE END MX_GPIO_Init_1 */
+static void
+MX_GPIO_Init (void)
+{
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
-	/* GPIO Ports Clock Enable */
-	__HAL_RCC_GPIOB_CLK_ENABLE();
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
-	/* USER CODE BEGIN MX_GPIO_Init_2 */
-	/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
-void write_to_display(uint8_t number) {
+void
+write_to_display (uint8_t number)
+{
 //  uint8_t a;
 //  a = number;
 //  itoa (a, snum, 10);
 
-	itoa(number, snum, 10);
-	HD44780_Init(2);
-	HD44780_Backlight();
-	HD44780_Clear();
-	HD44780_SetCursor(0, 0);
-	HD44780_PrintStr("G3 ROBOTICS");
-	HD44780_SetCursor(0, 1);
-	HD44780_PrintStr("POINTS:  ");
-	HD44780_SetCursor(9, 1);
-	HD44780_PrintStr(snum);
+  itoa (number, snum, 10);
+  HD44780_Init (2);
+  HD44780_Backlight ();
+  HD44780_Clear ();
+  HD44780_SetCursor (0, 0);
+  HD44780_PrintStr ("G3 ROBOTICS");
+  HD44780_SetCursor (0, 1);
+  HD44780_PrintStr ("POINTS:  ");
+  HD44780_SetCursor (9, 1);
+  HD44780_PrintStr (snum);
 }
 /* USER CODE END 4 */
 
@@ -367,13 +394,16 @@ void write_to_display(uint8_t number) {
  * @brief  This function is executed in case of error occurrence.
  * @retval None
  */
-void Error_Handler(void) {
-	/* USER CODE BEGIN Error_Handler_Debug */
-	/* User can add his own implementation to report the HAL error return state */
-	__disable_irq();
-	while (1) {
-	}
-	/* USER CODE END Error_Handler_Debug */
+void
+Error_Handler (void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq ();
+  while (1)
+    {
+    }
+  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT

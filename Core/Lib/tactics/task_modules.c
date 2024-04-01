@@ -454,7 +454,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	  sensors_case_timer = SENSORS_HIGH;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
-	  set_translation_speed_limit (0.42);
+	  set_translation_speed_limit (0.6);
 	  set_rotation_speed_limit (0.5);
 	}
       if (planter == CLOSE)
@@ -559,7 +559,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	{
 	  task_init = true;
 	  reset_movement ();
-	  set_rotation_speed_limit (1.0);
+	  set_translation_speed_limit (1.0);
 	}
       mechanism_half_down ();
       if (timer_delay_nonblocking (750))
@@ -1077,7 +1077,7 @@ task_push_pots (uint8_t side)
 	}
       break;
     case 5:
-      move_to_xy (robot_position.x_mm, 2000 - 250,
+      move_to_xy (robot_position.x_mm, 2000 - 245,
       MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
