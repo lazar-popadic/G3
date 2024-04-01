@@ -294,7 +294,7 @@ task_dropoff_x_alt (uint8_t side, uint8_t planter)
 	  set_rotation_speed_limit (1.0);
 	}
       mechanism_half_down ();
-      if (timer_delay_nonblocking (1000))
+      if (timer_delay_nonblocking (750))
 	{
 	  task_case++;
 	  task_init = false;
@@ -302,7 +302,7 @@ task_dropoff_x_alt (uint8_t side, uint8_t planter)
       break;
     case 5:
       mechanism_half_open ();
-      if (timer_delay_nonblocking (500))
+      if (timer_delay_nonblocking (400))
 	{
 	  sensors_case_timer = SENSORS_HIGH;
 	  task_case++;
@@ -548,7 +548,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	  transition_factor = 1.0;
 	  move_on_direction (150, MECHANISM);
 	}
-      if (timer_delay_nonblocking (2000))
+      if (timer_delay_nonblocking (1500))
 	{
 	  task_case++;
 	  task_init = false;
@@ -562,7 +562,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	  set_rotation_speed_limit (1.0);
 	}
       mechanism_half_down ();
-      if (timer_delay_nonblocking (1000))
+      if (timer_delay_nonblocking (750))
 	{
 	  task_case++;
 	  task_init = false;
@@ -570,7 +570,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
       break;
     case 7:
       mechanism_half_open ();
-      if (timer_delay_nonblocking (500))
+      if (timer_delay_nonblocking (400))
 	{
 	  sensors_case_timer = SENSORS_HIGH;
 	  task_case++;
@@ -694,7 +694,7 @@ task_dropoff_y_2 (uint8_t side)
 	  set_rotation_speed_limit (0.5);
 	}
       move_to_xy (robot_position.x_mm, 2000 - 60, MECHANISM);
-      if (timer_delay_nonblocking (2000))
+      if (timer_delay_nonblocking (1500))
 	{
 	  task_case++;
 	  task_init = false;
@@ -707,7 +707,7 @@ task_dropoff_y_2 (uint8_t side)
 	  reset_movement ();
 	}
       mechanism_half_down ();
-      if (timer_delay_nonblocking (1000))
+      if (timer_delay_nonblocking (750))
 	{
 	  task_case++;
 	  task_init = false;
@@ -716,7 +716,7 @@ task_dropoff_y_2 (uint8_t side)
     case 5:
       task_status = TASK_IN_PROGRESS;
       mechanism_half_open ();
-      if (timer_delay_nonblocking (500))
+      if (timer_delay_nonblocking (400))
 	{
 	  task_case++;
 	  task_init = false;
@@ -783,7 +783,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit)
 	  set_translation_speed_limit (speed_limit);
 	}
       mechanism_up ();
-      turn_to_pos (side * 3000 - (2 * side - 1) * (325 + solar * 1000), 220,
+      turn_to_pos (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 220,
       WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -792,7 +792,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit)
 	}
       break;
     case 1:
-      move_to_xy (side * 3000 - (2 * side - 1) * (325 + solar * 1000), 220,
+      move_to_xy (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 220,
       WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -843,7 +843,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit)
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	}
-      move_to_xy (side * 3000 - (2 * side - 1) * (325 + 450 + solar * 1000),
+      move_to_xy (side * 3000 - (2 * side - 1) * (333 + 450 + solar * 1000),
 		  220,
 		  MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
@@ -896,10 +896,10 @@ task_pot_reserved (uint8_t side)
 	  set_translation_speed_limit (1.0);
 	}
       if (side == BLUE)
-	turn_to_pos (planter_blue_x_close.x + 550, 2000 - 640,
+	turn_to_pos (planter_blue_x_close.x + 550, 2000 - 642,
 	MECHANISM);
       else
-	turn_to_pos (planter_yellow_x_close.x - 550, 2000 - 640,
+	turn_to_pos (planter_yellow_x_close.x - 550, 2000 - 642,
 	MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -909,10 +909,10 @@ task_pot_reserved (uint8_t side)
       break;
     case 1:
       if (side == BLUE)
-	move_to_xy (planter_blue_x_close.x + 550, 2000 - 640,
+	move_to_xy (planter_blue_x_close.x + 550, 2000 - 642,
 	MECHANISM);
       else
-	move_to_xy (planter_yellow_x_close.x - 550, 2000 - 640,
+	move_to_xy (planter_yellow_x_close.x - 550, 2000 - 642,
 	MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{

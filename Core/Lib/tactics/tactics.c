@@ -397,7 +397,7 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
-	  set_task_case (8);
+	  set_task_case (7);
 	  reset_movement ();
 	}
       break;
@@ -460,6 +460,7 @@ yellow_4 ()
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
+	  reset_task ();
 	  reset_movement ();
 	  current_task_retries++;
 //	  tactic_state = 20;
@@ -596,7 +597,7 @@ yellow_4 ()
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
-	  set_task_case (8);
+	  set_task_case (7);
 	  reset_movement ();
 	}
       break;
@@ -853,7 +854,7 @@ blue_4 ()
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
-	  set_task_case (8);
+	  set_task_case (7);
 	  reset_movement ();
 	}
       break;
@@ -916,6 +917,7 @@ blue_4 ()
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
 	{
+	  reset_task ();
 	  reset_movement ();
 	  current_task_retries++;
 //	  tactic_state = 20;
@@ -1009,8 +1011,8 @@ blue_4 ()
 //	  pop_plant ();
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
-	  homes[0] = home_yellow3_close;
-	  homes[1] = home_yellow1;
+	  homes[0] = home_blue3_close;
+	  homes[1] = home_blue1;
 	}
       else if (current_task_status == TASK_FAILED_1)
 	{
@@ -1052,7 +1054,7 @@ blue_4 ()
       else if (current_task_status == TASK_FAILED_4)// nakon sto je ostavio, dok se udaljava od plantera
 	{
 	  current_task_retries++;
-	  set_task_case (8);
+	  set_task_case (7);
 	  reset_movement ();
 	}
       break;
