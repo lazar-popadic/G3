@@ -54,12 +54,12 @@ sensors_io_init ()
   GPIOC->MODER &= ~(0b11 << 2 * button);
 }
 
-bool
-position_switch_on ()
+uint8_t
+switch_2 ()
 {
   if (GPIOC->IDR & (0b1 << pos_switch))
-    return true;
-  return false;
+    return 2;
+  return 0;
 }
 
 bool
@@ -70,12 +70,12 @@ blue_side_selected ()
   return false;
 }
 
-bool
-tactic_1_selected ()
+uint8_t
+switch_1 ()
 {
   if (GPIOC->IDR & (0b1 << tactic_switch))
-    return false;
-  return true;
+    return 1;
+  return 0;
 }
 
 bool

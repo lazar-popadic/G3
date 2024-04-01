@@ -402,12 +402,6 @@ yellow_matija ()
 	  current_task_retries++;
 	  reset_movement ();
 	  reset_task ();
-	  if (home_counter == 0 && distance > 200)
-	    {
-	      home_counter++;
-	      home_side++;
-	      home_side %= 2;
-	    }
 	}
       break;
 
@@ -1299,8 +1293,8 @@ yellow_4 ()
 	  if (home_counter == 0 && distance > 200)
 	    {
 	      home_counter++;
-	      home_side++;
-	      home_side %= 2;
+//	      home_side++;
+//	      home_side %= 2;
 	    }
 	}
       break;
@@ -2122,8 +2116,8 @@ blue_4 ()
 	  if (home_counter == 0 && distance > 200)
 	    {
 	      home_counter++;
-	      home_side++;
-	      home_side %= 2;
+//	      home_side++;
+//	      home_side %= 2;
 	    }
 	}
       break;

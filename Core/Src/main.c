@@ -64,6 +64,8 @@ bool s1 = false;
 bool s2 = false;
 bool s3 = false;
 
+uint8_t tactic_chooser = 0;
+
 extern volatile uint8_t sensors_case_timer;
 extern volatile bool interrupted;
 
@@ -163,38 +165,47 @@ main (void)
 	      pwm_start ();
 	      regulation_on = true;
 	      positioning_done = true;
+	      tactic_chooser = switch_1 () + switch_2 ();
+
 	      if (blue_side_selected ())
 		{
-		  if (tactic_1_selected ())
+		  switch (tactic_chooser)
 		    {
-		      set_starting_position (100 + 85, 2000 - 35 - 170, 180);
-		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
-		      selected_tactic = 1;
-		    }
-		  else				// blue_4
-		    {
+		    case 0:
+		      break;
+		    case 1:
+		      break;
+		    case 2:
+		      break;
+		    case 3:	// blue_4
 		      set_starting_position (100 + 85, 32.5 + 170, 180);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
 		      selected_tactic = 7;
+		      break;
 		    }
 		}
 	      else
 		{
-		  if (tactic_1_selected ())
-		    {		// yellow_matija
+		  switch (tactic_chooser)
+		    {
+		    case 0:
+		      break;
+		    case 1:
+		      break;
+		    case 2:	// yellow_matija
 		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
 					     0);
 		      turn_to_pos (plant_central1.x, plant_central1.y,
 		      MECHANISM);
 		      selected_tactic = 10;
-		    }
-		  else				// yellow_4
-		    {
+		      break;
+		    case 3:	// yellow_4
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
 		      selected_tactic = 8;
+		      break;
 		    }
 		}
 	    }
