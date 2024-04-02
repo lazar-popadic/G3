@@ -35,5 +35,7 @@ void
 swap_plant_alt (uint8_t i);
 uint8_t
 get_points ();
+void
+add_points (uint8_t number);
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

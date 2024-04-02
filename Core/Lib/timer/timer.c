@@ -246,6 +246,7 @@ TIM1_UP_TIM10_IRQHandler ()
 
       if (timer_home ())
 	{
+	  add_points(get_and_reset_task_points());
 	  reset_movement ();
 	  reset_task ();
 	  tactic_state = HOME;

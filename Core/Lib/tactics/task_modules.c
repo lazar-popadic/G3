@@ -44,6 +44,7 @@ task_go_home (target home, uint8_t direction)
 	  transition_factor = 1.0;
 	}
       turn_to_pos (home.x, home.y, direction);
+      solar_in_r ();
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
@@ -58,18 +59,11 @@ task_go_home (target home, uint8_t direction)
 	  set_translation_speed_limit (1.0);
 	  transition_factor = 1.0;
 	}
+      solar_in_l ();
       move_to_xy (home.x, home.y, direction);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_points = 10;
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_open ();
-	  mechanism_open ();
-	  mechanism_open ();
-	  mechanism_open ();
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	}

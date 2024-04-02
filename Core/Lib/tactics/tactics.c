@@ -126,12 +126,6 @@ yellow_matijaV2 ()
       tactic_state_init = false;
       break;
 
-
-
-
-
-
-
     case PLANT_1:
       current_task_status = task_pickup_plants (plants[0], 1);
 
@@ -153,11 +147,6 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
     case 1:
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (1.0);
@@ -173,10 +162,6 @@ yellow_matijaV2 ()
 	  reset_movement ();
 	}
       break;
-
-
-
-
 
     case POT:
       current_task_status = task_pot_reserved (YELLOW);
@@ -203,14 +188,6 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
-
-
-
     case PLANT_2:
       current_task_status = task_pickup_plants (plants[1], 1);
 
@@ -230,14 +207,6 @@ yellow_matijaV2 ()
 
 	}
       break;
-
-
-
-
-
-
-
-
 
     case DROP_X_C:
       current_task_status = task_dropoff_x (YELLOW, CLOSE);
@@ -274,16 +243,6 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
-
-
-
-
-
     case 2:
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (1.0);
@@ -299,14 +258,6 @@ yellow_matijaV2 ()
 	  reset_movement ();
 	}
       break;
-
-
-
-
-
-
-
-
 
     case 3:
       sensors_case_timer = SENSORS_MECHANISM;
@@ -324,14 +275,6 @@ yellow_matijaV2 ()
 	  reset_movement ();
 	}
       break;
-
-
-
-
-
-
-
-
 
     case PLANT_3:
       current_task_status = task_pickup_plants (plants[2], 1);
@@ -353,42 +296,30 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
     case POT_5:
-          current_task_status = task_pot_solar (YELLOW);
+      current_task_status = task_pot_solar (YELLOW);
 
-          if (current_task_status == TASK_SUCCESS)
-    	{
-    	  points += get_and_reset_task_points ();
-    	  current_task_retries = 0;
-    	  reset_task ();
-    	  tactic_state = PLANT_4;
-    	  current_task_retries = 0;
-    	}
-          else if (current_task_status == TASK_FAILED_1)
-    	{
-    	  reset_movement ();
-    	  reset_task ();
-    	  current_task_retries++;
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  points += get_and_reset_task_points ();
+	  current_task_retries = 0;
+	  reset_task ();
+	  tactic_state = PLANT_4;
+	  current_task_retries = 0;
+	}
+      else if (current_task_status == TASK_FAILED_1)
+	{
+	  reset_movement ();
+	  reset_task ();
+	  current_task_retries++;
 
-    	}
-          else if (current_task_status == TASK_FAILED_2)
-    	{
-    	  reset_movement ();
-    	  set_task_case (4);
-    	}
-          break;
-
-
-
-
-
-
-
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  reset_movement ();
+	  set_task_case (4);
+	}
+      break;
 
     case SOLAR_C:
       current_task_status = task_solar (YELLOW, CENTRAL, 1, WALL);
@@ -414,15 +345,6 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
-
-
-
-
     case 4:
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (1.0);
@@ -439,15 +361,8 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
-
-
     case DROP_Y:
-      current_task_status = task_dropoff_y_2 (YELLOW);
+      current_task_status = task_dropoff_y_2 (YELLOW, MECHANISM);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
@@ -470,15 +385,6 @@ yellow_matijaV2 ()
 	  reset_movement ();
 	}
       break;
-
-
-
-
-
-
-
-
-
 
     case SOLAR_R:
       current_task_status = task_solar (YELLOW, RESERVED, 0.5, WALL);
@@ -504,41 +410,26 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
-
-
     case PLANT_4:
-          current_task_status = task_pickup_plants (plants[3], 1);
+      current_task_status = task_pickup_plants (plants[3], 1);
 
-          if (current_task_status == TASK_SUCCESS)
-    	{
-    	  reset_task ();
-    	  tactic_state = SOLAR_C;
-    	  //	  pop_plant ();
-    	  set_translation_speed_limit (1.0);
-    	  current_task_retries = 0;
+      if (current_task_status == TASK_SUCCESS)
+	{
+	  reset_task ();
+	  tactic_state = SOLAR_C;
+	  //	  pop_plant ();
+	  set_translation_speed_limit (1.0);
+	  current_task_retries = 0;
 
-    	}
-          else if (current_task_status == TASK_FAILED_1)
-    	{
-    	  reset_movement ();
-    	  current_task_retries++;
-    	  reset_task ();
-    	  // TODO: ovde stavi alt biljku
-    	}
-          break;
-
-
-
-
-
-
-
-
+	}
+      else if (current_task_status == TASK_FAILED_1)
+	{
+	  reset_movement ();
+	  current_task_retries++;
+	  reset_task ();
+	  // TODO: ovde stavi alt biljku
+	}
+      break;
 
     case HOME:
       current_task_status = task_go_home (homes[home_counter], home_side);
@@ -560,12 +451,6 @@ yellow_matijaV2 ()
 	}
       break;
 
-
-
-
-
-
-
     case RETURN:
       tactic_finished = true;
       break;
@@ -573,7 +458,6 @@ yellow_matijaV2 ()
     }
   return tactic_finished;
 }
-
 
 bool
 yellow_matija ()
@@ -1681,9 +1565,9 @@ yellow_risky ()
 	  tactic_state_init = true;
 	  plants[0] = plant_blue2;
 	  plants[1] = plant_yellow1;
-	  plants[2] = plant_yellow2;
-	  plants[3] = plant_central1;
-	  //plants[4] = plant_yellow2;
+	  plants[2] = plant_central1;
+	  plants[3] = plant_yellow2;
+	  plants[4] = plant_central2;
 	  //plants[5] = plant_central1;
 
 	  alt_plants[0] = plant_blue1;
@@ -1807,7 +1691,7 @@ yellow_risky ()
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
-	  tactic_state = 1;
+	  tactic_state = PLANT_5;
 	  current_task_retries = 0;
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do solara
@@ -1825,21 +1709,41 @@ yellow_risky ()
 	}
       break;
 
-    case 1:
-      sensors_case_timer = SENSORS_HIGH;
-      set_translation_speed_limit (1.0);
-      move_to_xy (2000, 500, WALL);
-      if (movement_finished () && timer_delay_nonblocking (20))
+    case PLANT_5:
+      current_task_status = task_pickup_plants (plants[4], 1);
+
+      if (current_task_status == TASK_SUCCESS)
 	{
-	  current_task_retries = 0;
+	  reset_task ();
 	  tactic_state = SOLAR_R;
+	  //	  pop_plant ();
+	  set_translation_speed_limit (1.0);
+	  current_task_retries = 0;
 	}
-      if (interrupted)
+      else if (current_task_status == TASK_FAILED_1)
 	{
-	  current_task_retries++;
 	  reset_movement ();
+	  current_task_retries++;
+	  reset_task ();
+//	 	  swap_first2_plants ();
 	}
       break;
+
+//    case 1:
+//      sensors_case_timer = SENSORS_HIGH;
+//      set_translation_speed_limit (1.0);
+//      move_to_xy (2000, 500, WALL);
+//      if (movement_finished () && timer_delay_nonblocking (20))
+//	{
+//	  current_task_retries = 0;
+//	  tactic_state = SOLAR_R;
+//	}
+//      if (interrupted)
+//	{
+//	  current_task_retries++;
+//	  reset_movement ();
+//	}
+//      break;
 
     case SOLAR_R:
       current_task_status = task_solar (YELLOW, RESERVED, 1.0, WALL);
@@ -2001,11 +1905,7 @@ yellow_risky ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  tactic_state = RETURN;
+	  tactic_state = 1;
 	  current_task_retries = 0;
 	}
       if (current_task_status == TASK_FAILED_1)
@@ -2019,6 +1919,25 @@ yellow_risky ()
 	      home_side++;
 	      home_side %= 2;
 	    }
+	}
+      break;
+    case 1:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (0.5);
+      set_rotation_speed_limit (0.5);
+      move_to_xy (3000 - 350, 350, MECHANISM);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = RETURN;
+	  mechanism_down ();
+	  mechanism_down ();
+	  mechanism_down ();
+	  mechanism_down ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
 	}
       break;
 
@@ -2518,4 +2437,10 @@ uint8_t
 get_points ()
 {
   return points;
+}
+
+void
+add_points (uint8_t number)
+{
+  points += number;
 }
