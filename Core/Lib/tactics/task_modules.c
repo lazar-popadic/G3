@@ -787,7 +787,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	  set_translation_speed_limit (speed_limit);
 	}
       mechanism_up ();
-      turn_to_pos (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 220,
+      turn_to_pos (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 215,
 		   first_side);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -796,7 +796,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	}
       break;
     case 1:
-      move_to_xy (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 220,
+      move_to_xy (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 215,
 		  first_side);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -848,7 +848,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	  task_status = TASK_IN_PROGRESS;
 	}
       move_to_xy (side * 3000 - (2 * side - 1) * (333 + 450 + solar * 1000),
-		  220,
+		  215,
 		  MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{

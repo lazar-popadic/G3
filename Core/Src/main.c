@@ -199,7 +199,7 @@ main (void)
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 12;
 		      break;
-		    case 2:	// yellow_matija
+		    case 2:	// yellow_matijaV2
 		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
 					     0);
 		      turn_to_pos (plant_central1.x, plant_central1.y,
@@ -258,7 +258,7 @@ main (void)
 	  break;
 
 	case 10:
-	  if (yellow_matija ())
+	  if (yellow_matijaV2 ())
 	    state_main = END;
 	  break;
 

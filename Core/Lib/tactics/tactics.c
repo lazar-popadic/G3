@@ -214,7 +214,7 @@ yellow_matijaV2 ()
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
-	  tactic_state = 2;
+	  tactic_state = PLANT_3;
 	  current_task_retries = 0;
 	}
       else if (current_task_status == TASK_FAILED_1)	// na putu do plantera
@@ -239,39 +239,6 @@ yellow_matijaV2 ()
 	{
 	  current_task_retries++;
 	  set_task_case (7);
-	  reset_movement ();
-	}
-      break;
-
-    case 2:
-      sensors_case_timer = SENSORS_HIGH;
-      set_translation_speed_limit (1.0);
-      move_to_xy (2500, 900, WALL);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  current_task_retries = 0;
-	  tactic_state = 3;
-	}
-      if (interrupted)
-	{
-	  current_task_retries++;
-	  reset_movement ();
-	}
-      break;
-
-    case 3:
-      sensors_case_timer = SENSORS_MECHANISM;
-      set_translation_speed_limit (0.5);
-      move_to_xy (2000, 700, MECHANISM);
-      if (movement_finished () && timer_delay_nonblocking (20))
-	{
-	  set_translation_speed_limit (1.0);
-	  current_task_retries = 0;
-	  tactic_state = PLANT_3;
-	}
-      if (interrupted)
-	{
-	  current_task_retries++;
 	  reset_movement ();
 	}
       break;
