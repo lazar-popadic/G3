@@ -16,6 +16,8 @@
 #define RESET_BEFORE_START 254
 
 bool
+yellow_matijaV2 ();
+bool
 yellow_matija ();
 bool
 yellow_NSD ();
