@@ -189,7 +189,10 @@ main (void)
 		{
 		  switch (tactic_chooser)
 		    {
-		    case 0:
+		    case 0:	// yellow_risky
+		      set_starting_position (100 + 85, 1225 - 40 - 170, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+		      selected_tactic = 14;
 		      break;
 		    case 1:	// yellow_NSD
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
@@ -261,6 +264,11 @@ main (void)
 
 	case 12:
 	  if (yellow_NSD ())
+	    state_main = END;
+	  break;
+
+	case 14:
+	  if (yellow_risky ())
 	    state_main = END;
 	  break;
 

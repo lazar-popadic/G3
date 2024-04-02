@@ -280,6 +280,7 @@ task_dropoff_x_alt (uint8_t side, uint8_t planter)
 	  transition_factor = 1.0;
 	  move_on_direction (700, MECHANISM);
 	}
+      mechanism_up ();
       if (timer_delay_nonblocking (4000))
 	{
 	  task_case++;
@@ -294,7 +295,7 @@ task_dropoff_x_alt (uint8_t side, uint8_t planter)
 	  set_rotation_speed_limit (1.0);
 	}
       mechanism_half_down ();
-      if (timer_delay_nonblocking (750))
+      if (timer_delay_nonblocking (500))
 	{
 	  task_case++;
 	  task_init = false;
@@ -548,6 +549,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	  transition_factor = 1.0;
 	  move_on_direction (150, MECHANISM);
 	}
+      mechanism_up ();
       if (timer_delay_nonblocking (1500))
 	{
 	  task_case++;
@@ -562,13 +564,14 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	  set_translation_speed_limit (1.0);
 	}
       mechanism_half_down ();
-      if (timer_delay_nonblocking (750))
+      if (timer_delay_nonblocking (500))
 	{
 	  task_case++;
 	  task_init = false;
 	}
       break;
     case 7:
+      task_status = TASK_IN_PROGRESS;
       mechanism_half_open ();
       if (timer_delay_nonblocking (400))
 	{
@@ -640,13 +643,16 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 }
 
 int8_t
-task_dropoff_y_2 (uint8_t side)
+task_dropoff_y_2 (uint8_t side, uint8_t first_side)
 {
   switch (task_case)
     {
     case 0:
       {
-	sensors_case_timer = SENSORS_MECHANISM;
+	if (first_side == WALL)
+	  sensors_case_timer = SENSORS_HIGH;
+	else
+	  sensors_case_timer = SENSORS_MECHANISM;
 	task_init = true;
 	task_status = TASK_IN_PROGRESS;
 	set_rotation_speed_limit (0.5);
@@ -654,9 +660,9 @@ task_dropoff_y_2 (uint8_t side)
 	transition_factor = 1.0;
       }
       if (side == BLUE)
-	turn_to_pos (planter_blue_y.x, 2000 - 200, MECHANISM);
+	turn_to_pos (planter_blue_y.x, 2000 - 200, first_side);
       else
-	turn_to_pos (planter_yellow_y.x, 2000 - 200, MECHANISM);
+	turn_to_pos (planter_yellow_y.x, 2000 - 200, first_side);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
@@ -665,9 +671,9 @@ task_dropoff_y_2 (uint8_t side)
       break;
     case 1:
       if (side == BLUE)
-	move_to_xy (planter_blue_y.x, 2000 - 200, MECHANISM);
+	move_to_xy (planter_blue_y.x, 2000 - 300, first_side);
       else
-	move_to_xy (planter_yellow_y.x, 2000 - 200, MECHANISM);
+	move_to_xy (planter_yellow_y.x, 2000 - 300, first_side);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  task_case++;
@@ -693,8 +699,9 @@ task_dropoff_y_2 (uint8_t side)
 	  set_translation_speed_limit (0.24);
 	  set_rotation_speed_limit (0.5);
 	}
+      mechanism_up ();
       move_to_xy (robot_position.x_mm, 2000 - 60, MECHANISM);
-      if (timer_delay_nonblocking (1500))
+      if (timer_delay_nonblocking (2000))
 	{
 	  task_case++;
 	  task_init = false;
@@ -707,7 +714,7 @@ task_dropoff_y_2 (uint8_t side)
 	  reset_movement ();
 	}
       mechanism_half_down ();
-      if (timer_delay_nonblocking (750))
+      if (timer_delay_nonblocking (500))
 	{
 	  task_case++;
 	  task_init = false;
@@ -1019,10 +1026,10 @@ task_pot_solar (uint8_t side)
 	  set_translation_speed_limit (1.0);
 	}
       if (side == BLUE)
-	turn_to_pos (1000, 550,
+	turn_to_pos (1000, 350,
 	MECHANISM);
       else
-	turn_to_pos (2000, 550,
+	turn_to_pos (2000, 350,
 	MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -1032,10 +1039,10 @@ task_pot_solar (uint8_t side)
       break;
     case 1:
       if (side == BLUE)
-	move_to_xy (1000, 550,
+	move_to_xy (1000, 350,
 	MECHANISM);
       else
-	move_to_xy (2000, 550,
+	move_to_xy (2000, 350,
 	MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -1063,7 +1070,7 @@ task_pot_solar (uint8_t side)
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (0.5);
 	  set_translation_speed_limit (0.5);
-	  move_on_direction_2 (325, MECHANISM);
+	  move_on_direction_2 (325 - 200, MECHANISM);
 	}
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
