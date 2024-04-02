@@ -72,7 +72,9 @@ void Error_Handler(void);
 /* USER CODE BEGIN EFP */
 
 void
-write_to_display (uint8_t number);
+write_to_display (uint8_t points, char tactic[10]);
+void
+write_to_display_time (uint8_t points, uint8_t time);
 
 /* USER CODE END EFP */
 

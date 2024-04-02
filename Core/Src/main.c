@@ -13,6 +13,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,6 +44,7 @@ uint16_t duty_cycle_test = 100;
 bool positioning_done = false;
 uint8_t selected_tactic = 0;
 
+extern volatile uint16_t sys_time_s;
 extern volatile target plant_blue1;
 extern volatile target plant_blue2;
 extern volatile target plant_central1;
@@ -69,6 +71,16 @@ uint8_t tactic_chooser = 0;
 extern volatile uint8_t sensors_case_timer;
 extern volatile bool interrupted;
 
+char tactic_string[10];
+char y_risky[10] = "Y:Risk";
+char y_matijaV2[10] = "Y:MV2";
+char y_4[10] = "Y:4";
+char y_NSD[10] = "Y:NSD";
+char b_risky[10] = "B:Risk";
+char b_matijaV2[10] = "B:MV2";
+char b_4[10] = "B:4";
+char b_NSD[10] = "B:NSD";
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -84,6 +96,7 @@ MX_I2C1_Init (void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 char snum[5];
+char snum_time[5];
 /* USER CODE END 0 */
 
 /**
@@ -133,7 +146,7 @@ main (void)
   HD44780_NoBacklight ();
   HD44780_Clear ();
   HD44780_SetCursor (0, 0);
-  HD44780_PrintStr ("G3 Robotics");
+  HD44780_PrintStr ("G3");
   HD44780_Backlight ();
 
 //  timer_start_sys_time ();
@@ -182,6 +195,7 @@ main (void)
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
 		      selected_tactic = 7;
+		      strcpy (tactic_string, b_4);
 		      break;
 		    }
 		}
@@ -193,11 +207,13 @@ main (void)
 		      set_starting_position (100 + 85, 1225 - 40 - 170, 180);
 		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 14;
+		      strcpy (tactic_string, y_risky);
 		      break;
 		    case 1:	// yellow_NSD
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 12;
+		      strcpy (tactic_string, y_NSD);
 		      break;
 		    case 2:	// yellow_matijaV2
 		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
@@ -205,12 +221,14 @@ main (void)
 		      turn_to_pos (plant_central1.x, plant_central1.y,
 		      MECHANISM);
 		      selected_tactic = 10;
+		      strcpy (tactic_string, y_matijaV2);
 		      break;
 		    case 3:	// yellow_4
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
 		      selected_tactic = 8;
+		      strcpy (tactic_string, y_4);
 		      break;
 		    }
 		}
@@ -227,6 +245,7 @@ main (void)
 	  set_rotation_speed_limit (1.0);
 	  reset_and_stop_timer ();
 	  regulation_on = false;
+	  write_to_display (0, tactic_string);
 	  state_main = START;
 	  break;
 
@@ -281,7 +300,8 @@ main (void)
 //	  break;
 //
 	case END:
-	  write_to_display (get_points ());
+	  write_to_display_time(get_points (), sys_time_s);
+//	  write_to_display (get_points (), tactic_string);
 	  timer_stop_sys_time ();
 	  stop_right_wheel ();
 	  stop_left_wheel ();
@@ -398,18 +418,38 @@ MX_GPIO_Init (void)
 
 /* USER CODE BEGIN 4 */
 void
-write_to_display (uint8_t number)
+write_to_display (uint8_t points, char tactic[10])
 {
 //  uint8_t a;
 //  a = number;
 //  itoa (a, snum, 10);
 
-  itoa (number, snum, 10);
+  itoa (points, snum, 10);
   HD44780_Init (2);
   HD44780_Backlight ();
   HD44780_Clear ();
   HD44780_SetCursor (0, 0);
-  HD44780_PrintStr ("G3 ROBOTICS");
+  HD44780_PrintStr ("G3");
+  HD44780_SetCursor (5, 0);
+  HD44780_PrintStr (tactic);
+  HD44780_SetCursor (0, 1);
+  HD44780_PrintStr ("POINTS:  ");
+  HD44780_SetCursor (9, 1);
+  HD44780_PrintStr (snum);
+}
+
+void
+write_to_display_time (uint8_t points, uint8_t time)
+{
+  itoa (points, snum, 10);
+  itoa (time, snum_time, 10);
+  HD44780_Init (2);
+  HD44780_Backlight ();
+  HD44780_Clear ();
+  HD44780_SetCursor (0, 0);
+  HD44780_PrintStr ("G3");
+  HD44780_SetCursor (10, 0);
+  HD44780_PrintStr (snum_time);
   HD44780_SetCursor (0, 1);
   HD44780_PrintStr ("POINTS:  ");
   HD44780_SetCursor (9, 1);

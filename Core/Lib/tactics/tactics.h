@@ -18,8 +18,6 @@
 bool
 yellow_matijaV2 ();
 bool
-yellow_matija ();
-bool
 yellow_NSD ();
 bool
 yellow_4 ();

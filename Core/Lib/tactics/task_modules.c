@@ -987,7 +987,7 @@ task_pot_reserved (uint8_t side)
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  set_translation_speed_limit (1.0);
-	  task_points = 2 * 5;
+	  task_points = 2 * 4;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;
@@ -1332,7 +1332,7 @@ task_push_pots (uint8_t side)
 	{
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (1.0);
-	  task_points = 2 * 5;
+	  task_points = 2 * 4;
 	  task_case = RETURN;
 	  task_status = TASK_SUCCESS;
 	  task_init = false;
