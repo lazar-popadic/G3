@@ -55,6 +55,16 @@ reset_movement ();
 void
 hold_position_with_reg ();
 
+float
+return_x_offset (float x, float y, int8_t translation_direction,
+		 float dist_offset);
+float
+return_y_offset (float x, float y, int8_t translation_direction,
+		 float dist_offset);
+float
+return_theta_offset (float x, float y, int8_t translation_direction,
+		     float dist_offset);
+
 void
 reset_x_coord_close ();
 void

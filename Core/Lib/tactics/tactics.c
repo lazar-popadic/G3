@@ -113,8 +113,13 @@ yellow_matijaV2 ()
 	  plants[1] = plant_yellow1;
 	  plants[2] = plant_yellow2;
 	  plants[3] = plant_central2;
-//	  plants[4] = plant_central2;
+	  plants[4] = plant_blue1;
 //	  plants[5] = plant_blue1;
+
+	  alt_plants[0] = plant_blue2;
+	  alt_plants[1] = plant_yellow2;
+	  alt_plants[2] = plant_blue1;
+	  alt_plants[3] = plant_yellow1;
 
 	  homes[0] = home_yellow2;
 	  homes[1] = home_yellow3_close;
@@ -132,18 +137,32 @@ yellow_matijaV2 ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
-	  tactic_state = 1;
+	  if (alt == 1)
+	    tactic_state = 10;
+	  else
+	    tactic_state = 1;
 
 	  set_translation_speed_limit (1.0);
 	  current_task_retries = 0;
 	}
       else if (current_task_status == TASK_FAILED_1)
 	{
-	  reset_movement ();
-	  current_task_retries++;
-
 	  reset_task ();
-
+	  if (alt == 0)
+	    swap_plant_alt (0);
+	  reset_movement ();
+	  alt = 1;
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  if (alt == 0)
+	    {
+	      swap_plant_alt (0);
+	      reset_task ();
+	    }
+	  reset_movement ();
+	  alt = 1;
 	}
       break;
 
@@ -151,6 +170,33 @@ yellow_matijaV2 ()
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (1.0);
       move_to_xy (home_yellow1.x, 2000 - 250, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = POT;
+	}
+      if (interrupted)
+	{
+	  current_task_retries++;
+	  reset_movement ();
+	}
+      break;
+
+    case 10:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (1.0);
+      turn_to_pos (2500, 1190, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = 11;
+	}
+      break;
+
+    case 11:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (1.0);
+      move_to_xy (2500, 1190, WALL);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  current_task_retries = 0;
@@ -204,7 +250,16 @@ yellow_matijaV2 ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
-
+	  if (!current_task_retries % 2)
+	    alt = 2;
+	  else
+	    alt = 1;
+	  swap_plants (1);
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -212,6 +267,7 @@ yellow_matijaV2 ()
       current_task_status = task_dropoff_x (YELLOW, CLOSE);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  points += 2 * 4;
 	  points += get_and_reset_task_points ();
 	  reset_task ();
 	  tactic_state = PLANT_3;
@@ -256,10 +312,46 @@ yellow_matijaV2 ()
 	}
       else if (current_task_status == TASK_FAILED_1)
 	{
-	  reset_movement ();
-	  current_task_retries++;
 	  reset_task ();
-	  // TODO: ovde stavi alt biljku
+	  if (alt != 2)
+	    {
+	      swap_plants (2);
+	      tactic_state = 12;
+	    }
+	  reset_movement ();
+	  alt = 2;
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
+      break;
+
+    case 12:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (1.0);
+      turn_to_pos (plants[1].x, plants[1].y, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = 13;
+	}
+      break;
+
+    case 13:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (1.0);
+      move_to_xy (plants[1].x, plants[1].y, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = PLANT_3;
+	}
+      if (interrupted)
+	{
+	  current_task_retries++;
+	  reset_movement ();
 	}
       break;
 
@@ -268,7 +360,6 @@ yellow_matijaV2 ()
 
       if (current_task_status == TASK_SUCCESS)
 	{
-	  points += get_and_reset_task_points ();
 	  current_task_retries = 0;
 	  reset_task ();
 	  tactic_state = PLANT_4;
@@ -354,7 +445,7 @@ yellow_matijaV2 ()
       break;
 
     case SOLAR_R:
-      current_task_status = task_solar (YELLOW, RESERVED, 0.5, WALL);
+      current_task_status = task_solar (YELLOW, RESERVED, 0.4, WALL);
       if (current_task_status == TASK_SUCCESS)
 	{
 	  reset_task ();
@@ -379,6 +470,8 @@ yellow_matijaV2 ()
       break;
 
     case PLANT_4:
+      if (plants[3].x == plant_yellow1.x)
+	swap_plants (3);
       current_task_status = task_pickup_plants (plants[3], 1);
 
       if (current_task_status == TASK_SUCCESS)
@@ -396,6 +489,11 @@ yellow_matijaV2 ()
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -443,7 +541,7 @@ yellow_NSD ()
 //	  plants[4] = plant_central2;
 //	  plants[5] = plant_blue1;
 
-//	  alt_plants[0] = plant_yellow2;
+	  alt_plants[0] = plant_blue2;
 	  alt_plants[1] = plant_yellow1;
 	  alt_plants[2] = plant_central1;
 	  alt_plants[3] = plant_blue1;
@@ -473,7 +571,11 @@ yellow_NSD ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
-
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -545,6 +647,11 @@ yellow_NSD ()
 	  reset_task ();
 
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case DROP_X_C:
@@ -603,6 +710,11 @@ yellow_NSD ()
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case PLANT_3:
@@ -622,6 +734,11 @@ yellow_NSD ()
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -792,6 +909,11 @@ yellow_4 ()
 	  swap_plant_alt (2);
 	  tactic_state = 1;
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case 1:
@@ -914,6 +1036,11 @@ yellow_4 ()
 	  reset_task ();
 	  swap_first2_plants ();
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case DROP_X_C:
@@ -972,6 +1099,11 @@ yellow_4 ()
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -1117,6 +1249,11 @@ yellow_4 ()
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case DROP_X_F:
@@ -1207,8 +1344,8 @@ yellow_risky ()
 
 	  alt_plants[0] = plant_blue1;
 	  alt_plants[0] = plant_blue1;
-	  alt_plants[0] = plant_blue1;
-	  alt_plants[0] = plant_blue1;
+	  alt_plants[3] = plant_central1;
+	  alt_plants[2] = plant_yellow2;
 
 	  homes[0] = home_yellow2;
 	  homes[1] = home_yellow1;
@@ -1239,6 +1376,11 @@ yellow_risky ()
 	  swap_plant_alt (0);
 //	   swap_plant_alt (2);
 //	  tactic_state = 1;
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -1294,7 +1436,41 @@ yellow_risky ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
+	  if (alt == 0)
+	    tactic_state = 10;
+	  alt = 1;
 //	 	  swap_first2_plants ();
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
+      break;
+
+    case 10:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (1.0);
+      turn_to_pos (700, 200, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = 11;
+	}
+      break;
+    case 11:
+      sensors_case_timer = SENSORS_HIGH;
+      set_translation_speed_limit (1.0);
+      move_to_xy (700, 200, WALL);
+      if (movement_finished () && timer_delay_nonblocking (20))
+	{
+	  current_task_retries = 0;
+	  tactic_state = PLANT_2;
+	}
+      if (interrupted)
+	{
+	  current_task_retries++;
+	  reset_movement ();
 	}
       break;
 
@@ -1365,6 +1541,11 @@ yellow_risky ()
 	  reset_task ();
 //	 	  swap_first2_plants ();
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
 //    case 1:
@@ -1423,7 +1604,14 @@ yellow_risky ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
+	  swap_plant_alt (2);
+	  swap_plant_alt (3);
 
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -1512,6 +1700,11 @@ yellow_risky ()
 	  current_task_retries++;
 	  reset_task ();
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case DROP_Y:
@@ -1563,15 +1756,15 @@ yellow_risky ()
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (0.5);
       set_rotation_speed_limit (0.5);
-      move_to_xy (3000 - 350, 350, MECHANISM);
+      move_to_xy (3000 - 340, 330, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  current_task_retries = 0;
 	  tactic_state = RETURN;
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
 	  mechanism_open ();
 	  mechanism_open ();
 	  mechanism_open ();
@@ -1645,6 +1838,11 @@ blue_4 ()
 	  swap_plant_alt (0);
 	  swap_plant_alt (2);
 	  tactic_state = 1;
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -1768,6 +1966,11 @@ blue_4 ()
 	  reset_task ();
 	  swap_first2_plants ();
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case DROP_X_C:
@@ -1826,6 +2029,11 @@ blue_4 ()
 	  current_task_retries++;
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
+	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
 	}
       break;
 
@@ -1972,6 +2180,11 @@ blue_4 ()
 	  reset_task ();
 	  // TODO: ovde stavi alt biljku
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  just_set_task_case (2);
+	  reset_movement ();
+	}
       break;
 
     case DROP_X_F:
@@ -2097,6 +2310,11 @@ homologation ()
 	  reset_movement ();
 	  reset_task ();
 	}
+      else if (current_task_status == TASK_FAILED_2)
+	{
+	  reset_movement ();
+	  just_set_task_case (2);
+	}
       break;
 
     case DROP_X_C:
@@ -2175,6 +2393,14 @@ swap_first2_plants ()
   target temp = plants[0];
   plants[0] = plants[1];
   plants[1] = temp;
+}
+
+void
+swap_plants (uint8_t number)
+{
+  target temp = plants[number];
+  plants[number] = plants[number + 1];
+  plants[number + 1] = temp;
 }
 
 void

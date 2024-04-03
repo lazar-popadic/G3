@@ -63,5 +63,9 @@ void
 reset_task ();
 void
 set_task_case (uint8_t number);
+void
+just_set_task_case (uint8_t number);
+void
+swap_plants (uint8_t number);
 
 #endif /* LIB_TACTICS_TASK_MODULES_H_ */

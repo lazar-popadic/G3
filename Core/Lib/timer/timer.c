@@ -22,8 +22,8 @@
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 #define HOME_TIME 95*2*1000
 
-#define W_LIMIT		0.0001*0.001
-#define V_LIMIT		0.00005*0.001
+#define W_LIMIT		0.5
+#define V_LIMIT		0.25
 
 static void
 tim10_init ();
@@ -140,6 +140,8 @@ timer_delay_nonblocking (uint32_t delay_ms)
   flag_delay = true;
   return true;
 }
+
+
 
 bool
 task_timeout (uint32_t delay_ms)

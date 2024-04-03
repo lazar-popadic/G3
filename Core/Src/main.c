@@ -180,59 +180,59 @@ main (void)
 	      positioning_done = true;
 	      tactic_chooser = switch_1 () + switch_2 ();
 
-	      	      if (blue_side_selected ())
-	       {
-	       switch (tactic_chooser)
-	       {
-	       case 0:
-	       break;
-	       case 1:
-	       break;
-	       case 2:
-	       break;
-	       case 3:	// blue_4
-	       set_starting_position (100 + 85, 32.5 + 170, 180);
-	       turn_to_pos (plant_central2.x, plant_central2.y,
-	       MECHANISM);
-	       selected_tactic = 7;
-	       strcpy (tactic_string, b_4);
-	       break;
-	       }
-	       }
-	       else
-	       {
-	       switch (tactic_chooser)
-	       {
-	       case 0:	// yellow_risky
-	       set_starting_position (100 + 85, 1225 - 40 - 170, 180);
-	       turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
-	       selected_tactic = 14;
-	       strcpy (tactic_string, y_risky);
-	       break;
-	       case 1:	// yellow_NSD
-	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
-	       turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-	       selected_tactic = 12;
-	       strcpy (tactic_string, y_NSD);
-	       break;
-	       case 2:	// yellow_matijaV2
-	       set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
-	       0);
-	       turn_to_pos (plant_central1.x, plant_central1.y,
-	       MECHANISM);
-	       selected_tactic = 10;
-	       strcpy (tactic_string, y_matijaV2);
-	       break;
-	       case 3:	// yellow_4
-	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
-	       turn_to_pos (plant_central2.x, plant_central2.y,
-	       MECHANISM);
-	       selected_tactic = 8;
-	       strcpy (tactic_string, y_4);
-	       break;
-	       }
-	       }
-	       /*	//homologacija
+	      if (blue_side_selected ())
+		{
+		  switch (tactic_chooser)
+		    {
+		    case 0:
+		      break;
+		    case 1:
+		      break;
+		    case 2:
+		      break;
+		    case 3:	// blue_4
+		      set_starting_position (100 + 85, 32.5 + 170, 180);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+		      MECHANISM);
+		      selected_tactic = 7;
+		      strcpy (tactic_string, b_4);
+		      break;
+		    }
+		}
+	      else
+		{
+		  switch (tactic_chooser)
+		    {
+		    case 0:	// yellow_risky
+		      set_starting_position (100 + 85, 1225 - 40 - 170, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+		      selected_tactic = 14;
+		      strcpy (tactic_string, y_risky);
+		      break;
+		    case 1:	// yellow_NSD
+		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
+		      selected_tactic = 12;
+		      strcpy (tactic_string, y_NSD);
+		      break;
+		    case 2:	// yellow_matijaV2
+		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
+					     0);
+		      turn_to_pos (plant_central1.x, plant_central1.y,
+		      MECHANISM);
+		      selected_tactic = 10;
+		      strcpy (tactic_string, y_matijaV2);
+		      break;
+		    case 3:	// yellow_4
+		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+		      MECHANISM);
+		      selected_tactic = 8;
+		      strcpy (tactic_string, y_4);
+		      break;
+		    }
+		}
+	      /*	//homologacija
 	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 	       turn_to_pos (3000 - 333, 215,
 	       MECHANISM);

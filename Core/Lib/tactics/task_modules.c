@@ -25,6 +25,9 @@ extern volatile target planter_yellow_x_close;
 extern volatile target planter_yellow_x_far;
 extern position robot_position;
 
+volatile target plant_target_2 =
+  { 0, 0 };
+
 int8_t
 task_go_home (target home, uint8_t direction)
 {
@@ -111,6 +114,9 @@ task_pickup_plants (target plant_target, float offset_perc)
 	  set_translation_speed_limit (1.0);
 	  transition_factor = 10.0;
 	}
+
+      mechanism_down ();
+      mechanism_open ();
       move_to_xy_offset (plant_target.x, plant_target.y, MECHANISM, -320);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -129,36 +135,51 @@ task_pickup_plants (target plant_target, float offset_perc)
 	  task_init = true;
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (0.24);
-	  transition_factor = 4.0;
-	  move_to_xy_offset (plant_target.x, plant_target.y, MECHANISM,
-			     125 * offset_perc);
+	  transition_factor = 100.0;
+	  plant_target_2.x = return_x_offset (plant_target.x, plant_target.y,
+	  MECHANISM,
+					      110 * offset_perc);
+	  plant_target_2.y = return_y_offset (plant_target.x, plant_target.y,
+	  MECHANISM,
+					      110 * offset_perc);
+
 	}
-      if (timer_delay_nonblocking (1750))
+      move_to_xy_offset (plant_target_2.x, plant_target_2.y, MECHANISM,
+			 110 * offset_perc);
+      task_status = TASK_IN_PROGRESS;
+      if (timer_delay_nonblocking (1432))
 	{
 	  task_case++;
 	  task_init = false;
 	}
       if (interrupted)
 	{
-	  task_status = TASK_FAILED_1;
-	  task_case = RETURN_CASE;
+	  task_status = TASK_FAILED_2;
 	}
       break;
     case 3:
       transition_factor = 1.0;
       mechanism_half_up ();
-      if (timer_delay_nonblocking (666))
+      if (timer_delay_nonblocking (640))
 	{
 	  task_case++;
 	  task_init = false;
 	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_2;
+	}
       break;
     case 4:
       mechanism_close ();
-      if (movement_finished () && timer_delay_nonblocking (20))
+      if (timer_delay_nonblocking (500))
 	{
 	  task_case++;
 	  task_init = false;
+	}
+      if (interrupted)
+	{
+	  task_status = TASK_FAILED_2;
 	}
       break;
     case 5:
@@ -787,7 +808,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	  set_translation_speed_limit (speed_limit);
 	}
       mechanism_up ();
-      turn_to_pos (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 215,
+      turn_to_pos (side * 3000 - (2 * side - 1) * (320 + solar * 1000), 218,
 		   first_side);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -796,7 +817,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	}
       break;
     case 1:
-      move_to_xy (side * 3000 - (2 * side - 1) * (333 + solar * 1000), 215,
+      move_to_xy (side * 3000 - (2 * side - 1) * (320 + solar * 1000), 218,
 		  first_side);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -847,8 +868,8 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
 	}
-      move_to_xy (side * 3000 - (2 * side - 1) * (333 + 450 + solar * 1000),
-		  220,
+      move_to_xy (side * 3000 - (2 * side - 1) * (775 + solar * 1000),
+		  223,
 		  MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -874,7 +895,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	{
 	  if (solar == CENTRAL)
 	    task_points = 2 * 5;
-	  else if (solar == RESERVED)
+	  else
 	    task_points = 3 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
@@ -947,7 +968,7 @@ task_pot_reserved (uint8_t side)
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (0.5);
 	  set_translation_speed_limit (0.5);
-	  move_on_direction_2 (325, MECHANISM);
+	  move_on_direction_2 (328, MECHANISM);
 	}
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -969,7 +990,7 @@ task_pot_reserved (uint8_t side)
 	}
       break;
     case 5:
-      mechanism_open ();
+      mechanism_half_open ();
       task_case++;
       break;
     case 6:
@@ -1067,7 +1088,7 @@ task_pot_solar (uint8_t side)
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (0.5);
 	  set_translation_speed_limit (0.5);
-	  move_on_direction_2 (325 - 200, MECHANISM);
+	  move_on_direction_2 (328 - 200, MECHANISM);
 	}
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -1089,7 +1110,7 @@ task_pot_solar (uint8_t side)
 	}
       break;
     case 5:
-      mechanism_open ();
+      mechanism_half_open ();
       task_case++;
       break;
     case 6:
@@ -1101,6 +1122,7 @@ task_pot_solar (uint8_t side)
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (0.25);
 	}
+      mechanism_up ();
       if (side == BLUE)
 	move_to_xy (robot_position.x_mm, 500,
 	WALL);
@@ -1185,7 +1207,7 @@ task_pot_far (uint8_t side)
 	  task_status = TASK_IN_PROGRESS;
 	  set_rotation_speed_limit (0.5);
 	  set_translation_speed_limit (0.5);
-	  move_on_direction_2 (325, MECHANISM);
+	  move_on_direction_2 (328, MECHANISM);
 	}
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -1207,7 +1229,7 @@ task_pot_far (uint8_t side)
 	}
       break;
     case 5:
-      mechanism_open ();
+      mechanism_half_open ();
       task_case++;
       break;
     case 6:
@@ -1219,6 +1241,7 @@ task_pot_far (uint8_t side)
 	  set_rotation_speed_limit (1.0);
 	  set_translation_speed_limit (0.25);
 	}
+      mechanism_up ();
       if (side == BLUE)
 	move_to_xy (planter_blue_x_far.x - 500, robot_position.y_mm,
 	WALL);
@@ -1456,6 +1479,12 @@ void
 set_task_case (uint8_t number)
 {
   task_init = false;
+  task_case = number;
+}
+
+void
+just_set_task_case (uint8_t number)
+{
   task_case = number;
 }
 
