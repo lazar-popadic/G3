@@ -44,5 +44,7 @@ uint8_t
 get_points ();
 void
 add_points (uint8_t number);
+uint8_t
+uint8_t_min (uint8_t a, uint8_t b);
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

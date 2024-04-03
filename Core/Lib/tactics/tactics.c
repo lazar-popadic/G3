@@ -24,11 +24,14 @@
 #define DROP_Y		134		// ostavi u planter kod sime
 #define POT		140		// samo ostavi u saksije kod rezervisanog polja
 #define POT_2		141		// ostavi u saksije kod rezervisanog polja i gurni ih u polje
-#define POT_3     142 // saksije kod najudaljenijeg polja
-#define POT_4     143  // gurni saksije kod najudaljenijeg polja
-#define POT_5     144  // saksije izmedju retyerbisanih i sredisnjih solara
+#define POT_3     	142 		// saksije kod najudaljenijeg polja
+#define POT_4     	143  		// gurni saksije kod najudaljenijeg polja
+#define POT_5     	144  		// saksije izmedju retyerbisanih i sredisnjih solara
+
+#define SOLAR_C_MAX_TIME_S	5
 
 volatile uint8_t points = 0;
+volatile uint8_t solar_c_start_time = 255;
 
 extern position robot_position;
 extern volatile bool interrupted;
@@ -380,8 +383,10 @@ blue_matijaV2 ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (BLUE, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -806,8 +811,10 @@ yellow_matijaV2 ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (YELLOW, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -1169,8 +1176,10 @@ yellow_NSD ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (YELLOW, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -1585,8 +1594,10 @@ yellow_4 ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (YELLOW, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -1926,8 +1937,10 @@ yellow_risky ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (YELLOW, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -2379,8 +2392,10 @@ blue_risky ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (BLUE, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -2968,8 +2983,10 @@ blue_4 ()
       break;
 
     case SOLAR_C:
+      solar_c_start_time = uint8_t_min (solar_c_start_time, sys_time_s);
       current_task_status = task_solar (BLUE, CENTRAL, 1, WALL);
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS
+	  || (sys_time_s - solar_c_start_time) > SOLAR_C_MAX_TIME_S)
 	{
 	  points += get_and_reset_task_points ();
 	  reset_task ();
@@ -3300,4 +3317,13 @@ void
 add_points (uint8_t number)
 {
   points += number;
+}
+
+uint8_t
+uint8_t_min (uint8_t a, uint8_t b)
+{
+  if (a > b)
+    return b;
+  else
+    return a;
 }
