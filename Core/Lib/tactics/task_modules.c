@@ -848,7 +848,7 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	  task_status = TASK_IN_PROGRESS;
 	}
       move_to_xy (side * 3000 - (2 * side - 1) * (333 + 450 + solar * 1000),
-		  215,
+		  220,
 		  MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
@@ -872,7 +872,10 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
 	solar_in_r ();
       if (timer_delay_nonblocking (1000))
 	{
-	  task_points = 3 * 5;
+	  if (solar == CENTRAL)
+	    task_points = 2 * 5;
+	  else if (solar == RESERVED)
+	    task_points = 3 * 5;
 	  task_status = TASK_SUCCESS;
 	  task_case = RETURN_CASE;
 	  task_init = false;

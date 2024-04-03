@@ -72,14 +72,14 @@ extern volatile uint8_t sensors_case_timer;
 extern volatile bool interrupted;
 
 char tactic_string[10];
-char y_risky[10] = "Y:Risk";
-char y_matijaV2[10] = "Y:MV2";
-char y_4[10] = "Y:4";
-char y_NSD[10] = "Y:NSD";
-char b_risky[10] = "B:Risk";
-char b_matijaV2[10] = "B:MV2";
-char b_4[10] = "B:4";
-char b_NSD[10] = "B:NSD";
+char y_risky[10] = "Y: Risk";
+char y_matijaV2[10] = "Y: MV2";
+char y_4[10] = "Y: 4";
+char y_NSD[10] = "Y: NSD";
+char b_risky[10] = "B: Risk";
+char b_matijaV2[10] = "B: MV2";
+char b_4[10] = "B: 4";
+char b_NSD[10] = "B: NSD";
 
 /* USER CODE END PV */
 
@@ -180,58 +180,64 @@ main (void)
 	      positioning_done = true;
 	      tactic_chooser = switch_1 () + switch_2 ();
 
-	      if (blue_side_selected ())
-		{
-		  switch (tactic_chooser)
-		    {
-		    case 0:
-		      break;
-		    case 1:
-		      break;
-		    case 2:
-		      break;
-		    case 3:	// blue_4
-		      set_starting_position (100 + 85, 32.5 + 170, 180);
-		      turn_to_pos (plant_central2.x, plant_central2.y,
-		      MECHANISM);
-		      selected_tactic = 7;
-		      strcpy (tactic_string, b_4);
-		      break;
-		    }
-		}
-	      else
-		{
-		  switch (tactic_chooser)
-		    {
-		    case 0:	// yellow_risky
-		      set_starting_position (100 + 85, 1225 - 40 - 170, 180);
-		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
-		      selected_tactic = 14;
-		      strcpy (tactic_string, y_risky);
-		      break;
-		    case 1:	// yellow_NSD
-		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
-		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-		      selected_tactic = 12;
-		      strcpy (tactic_string, y_NSD);
-		      break;
-		    case 2:	// yellow_matijaV2
-		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
-					     0);
-		      turn_to_pos (plant_central1.x, plant_central1.y,
-		      MECHANISM);
-		      selected_tactic = 10;
-		      strcpy (tactic_string, y_matijaV2);
-		      break;
-		    case 3:	// yellow_4
-		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
-		      turn_to_pos (plant_central2.x, plant_central2.y,
-		      MECHANISM);
-		      selected_tactic = 8;
-		      strcpy (tactic_string, y_4);
-		      break;
-		    }
-		}
+	      	      if (blue_side_selected ())
+	       {
+	       switch (tactic_chooser)
+	       {
+	       case 0:
+	       break;
+	       case 1:
+	       break;
+	       case 2:
+	       break;
+	       case 3:	// blue_4
+	       set_starting_position (100 + 85, 32.5 + 170, 180);
+	       turn_to_pos (plant_central2.x, plant_central2.y,
+	       MECHANISM);
+	       selected_tactic = 7;
+	       strcpy (tactic_string, b_4);
+	       break;
+	       }
+	       }
+	       else
+	       {
+	       switch (tactic_chooser)
+	       {
+	       case 0:	// yellow_risky
+	       set_starting_position (100 + 85, 1225 - 40 - 170, 180);
+	       turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+	       selected_tactic = 14;
+	       strcpy (tactic_string, y_risky);
+	       break;
+	       case 1:	// yellow_NSD
+	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+	       turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
+	       selected_tactic = 12;
+	       strcpy (tactic_string, y_NSD);
+	       break;
+	       case 2:	// yellow_matijaV2
+	       set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
+	       0);
+	       turn_to_pos (plant_central1.x, plant_central1.y,
+	       MECHANISM);
+	       selected_tactic = 10;
+	       strcpy (tactic_string, y_matijaV2);
+	       break;
+	       case 3:	// yellow_4
+	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+	       turn_to_pos (plant_central2.x, plant_central2.y,
+	       MECHANISM);
+	       selected_tactic = 8;
+	       strcpy (tactic_string, y_4);
+	       break;
+	       }
+	       }
+	       /*	//homologacija
+	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+	       turn_to_pos (3000 - 333, 215,
+	       MECHANISM);
+	       selected_tactic = 20;
+	       */
 	    }
 	  mechanism_open ();
 	  solar_in_l ();
@@ -291,6 +297,11 @@ main (void)
 	    state_main = END;
 	  break;
 
+	case 20:
+	  if (homologation ())
+	    state_main = END;
+	  break;
+
 //	case 10:
 //	  move_on_direction_2 (200,MECHANISM);
 ////	  if (interrupted)
@@ -300,7 +311,6 @@ main (void)
 //	  break;
 //
 	case END:
-	  write_to_display_time(get_points (), sys_time_s);
 //	  write_to_display (get_points (), tactic_string);
 	  timer_stop_sys_time ();
 	  stop_right_wheel ();
@@ -308,6 +318,7 @@ main (void)
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	  regulation_on = false;
+	  write_to_display_time (get_points (), sys_time_s);
 	  break;
 	}
     } // while
@@ -430,11 +441,11 @@ write_to_display (uint8_t points, char tactic[10])
   HD44780_Clear ();
   HD44780_SetCursor (0, 0);
   HD44780_PrintStr ("G3");
-  HD44780_SetCursor (5, 0);
+  HD44780_SetCursor (8, 0);
   HD44780_PrintStr (tactic);
   HD44780_SetCursor (0, 1);
-  HD44780_PrintStr ("POINTS:  ");
-  HD44780_SetCursor (9, 1);
+  HD44780_PrintStr ("POINTS:");
+  HD44780_SetCursor (13, 1);
   HD44780_PrintStr (snum);
 }
 
@@ -447,12 +458,12 @@ write_to_display_time (uint8_t points, uint8_t time)
   HD44780_Backlight ();
   HD44780_Clear ();
   HD44780_SetCursor (0, 0);
-  HD44780_PrintStr ("G3");
-  HD44780_SetCursor (10, 0);
+  HD44780_PrintStr ("G3    TIME:");
+  HD44780_SetCursor (13, 0);
   HD44780_PrintStr (snum_time);
   HD44780_SetCursor (0, 1);
-  HD44780_PrintStr ("POINTS:  ");
-  HD44780_SetCursor (9, 1);
+  HD44780_PrintStr ("POINTS:");
+  HD44780_SetCursor (13, 1);
   HD44780_PrintStr (snum);
 }
 /* USER CODE END 4 */

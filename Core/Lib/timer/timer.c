@@ -22,8 +22,8 @@
 #define END_TIME 100*2*1000	// 100 * 2 * 0.5 * 1 000ms = 100s
 #define HOME_TIME 95*2*1000
 
-#define W_LIMIT		0.0001*0.0001
-#define V_LIMIT		0.00005*0.0001
+#define W_LIMIT		0.0001*0.001
+#define V_LIMIT		0.00005*0.001
 
 static void
 tim10_init ();

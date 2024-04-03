@@ -25,6 +25,9 @@ bool
 yellow_risky();
 bool
 blue_4();
+
+bool
+homologation ();
 void
 pop_plant ();
 void
