@@ -185,20 +185,20 @@ main (void)
 		  switch (tactic_chooser)
 		    {
 		    case 0:	// risky 13
-		      set_starting_position (3000 - 100 - 85, 1225 - 40 - 170, 180);
+		      set_starting_position (3000 - 100 - 85, 1225 - 40 - 170, 0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
 		      selected_tactic = 13;
 		      strcpy (tactic_string, b_risky);
 		      break;
 		    case 1:	// nsd 11
-		      set_starting_position (100 + 85, 32.5 + 170, 0);
+		      set_starting_position (100 + 85, 32.5 + 170, 180);
 		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
 		      selected_tactic = 11;
 		      strcpy (tactic_string, b_NSD);
 		      break;
 		    case 2:	// mv2	7
 		      set_starting_position (100 + 85, 2000 - 32.5 - 170,
-					     0);
+					     180);
 		      turn_to_pos (plant_central1.x, plant_central1.y,
 		      MECHANISM);
 		      selected_tactic = 7;
