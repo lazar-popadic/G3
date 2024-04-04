@@ -28,7 +28,7 @@
 #define POT_4     	143  		// gurni saksije kod najudaljenijeg polja
 #define POT_5     	144  		// saksije izmedju retyerbisanih i sredisnjih solara
 
-#define SOLAR_C_MAX_TIME_S	5
+#define SOLAR_C_MAX_TIME_S	10
 
 volatile uint8_t points = 0;
 volatile uint8_t solar_c_start_time = 255;
@@ -2650,7 +2650,7 @@ blue_risky ()
       sensors_case_timer = SENSORS_HIGH;
       set_translation_speed_limit (0.5);
       set_rotation_speed_limit (0.5);
-      move_to_xy (3000 - 340, 330, MECHANISM);
+      move_to_xy (340, 330, MECHANISM);
       if (movement_finished () && timer_delay_nonblocking (20))
 	{
 	  current_task_retries = 0;
