@@ -297,7 +297,7 @@ main (void)
 	  break;
 
 	case 11:
-//	  if (blue_NSD ())
+	  if (blue_NSD ())
 	    state_main = END;
 	  break;
 
