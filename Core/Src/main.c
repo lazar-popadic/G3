@@ -80,6 +80,7 @@ char b_risky[10] = "B: Risk";
 char b_matijaV2[10] = "B: MV2";
 char b_4[10] = "B: 4";
 char b_NSD[10] = "B: NSD";
+char b_NEO[10] = "B: NEO";
 
 /* USER CODE END PV */
 
@@ -201,8 +202,8 @@ main (void)
 					     180);
 		      turn_to_pos (plant_central1.x, plant_central1.y,
 		      MECHANISM);
-		      selected_tactic = 7;
-		      strcpy (tactic_string, b_matijaV2);
+		      selected_tactic = 117;
+		      strcpy (tactic_string, b_NEO);
 		      break;
 		    case 3:	// blue_4 	9
 		      set_starting_position (100 + 85, 32.5 + 170, 180);
@@ -298,6 +299,11 @@ main (void)
 
 	case 11:
 	  if (blue_NSD ())
+	    state_main = END;
+	  break;
+
+	case 117:
+	  if (blue_neo ())
 	    state_main = END;
 	  break;
 

@@ -95,13 +95,19 @@ mechanism_down_pot ()
 void
 mechanism_down ()
 {
-  ax_move (7, 512, 250);
+  ax_move (7, 512, 100);
 }
 
 void
 mechanism_open ()
 {
   ax_move (4, 485, 500);
+}
+
+void
+mechanism_open_almost ()
+{
+  ax_move (4, 550, 500);
 }
 
 void
@@ -119,6 +125,6 @@ mechanism_half_open ()
 void
 mechanism_close ()
 {
-  ax_move (4, 950, 400);
+  ax_move (4, 900, 400);
 }
 

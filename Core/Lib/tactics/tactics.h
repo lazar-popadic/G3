@@ -31,6 +31,8 @@ bool
 blue_risky ();
 bool
 blue_NSD ();
+bool
+blue_neo ();
 
 bool
 homologation ();
