@@ -515,10 +515,15 @@ blue_matijaV2 ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  move_to_angle(-135);
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
 	  tactic_state = RETURN;
 	  current_task_retries = 0;
 	}
@@ -950,11 +955,16 @@ yellow_matijaV2 ()
       current_task_status = task_go_home (homes[home_counter], WALL);
       if (current_task_status == TASK_SUCCESS)
 	{
+	  move_to_angle(-45);
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  mechanism_half_down();
+	  mechanism_half_down();
+	  mechanism_half_down();
+	  mechanism_half_down();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
 	  tactic_state = RETURN;
 	  current_task_retries = 0;
 	}
@@ -1368,10 +1378,15 @@ yellow_NSD ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  move_to_angle(45);
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
 	  tactic_state = RETURN;
 	  current_task_retries = 0;
 	}
@@ -1396,7 +1411,6 @@ yellow_NSD ()
     }
   return tactic_finished;
 }
-
 
 bool
 blue_NSD ()
@@ -1792,10 +1806,15 @@ blue_NSD ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  move_to_angle(135);
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
+	  mechanism_open();
 	  tactic_state = RETURN;
 	  current_task_retries = 0;
 	}
@@ -2006,7 +2025,7 @@ yellow_4 ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
-	  swap_first2_plants ();
+	  swap_plants (1);
 	}
       else if (current_task_status == TASK_FAILED_2)
 	{
@@ -2279,10 +2298,14 @@ yellow_4 ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
 	  tactic_state = RETURN;
 	  current_task_retries = 0;
 	}
@@ -3419,7 +3442,7 @@ blue_4 ()
 	  reset_movement ();
 	  current_task_retries++;
 	  reset_task ();
-	  swap_first2_plants ();
+	  swap_plants (1);
 	}
       else if (current_task_status == TASK_FAILED_2)
 	{
@@ -3578,7 +3601,7 @@ blue_4 ()
       break;
 
     case DROP_Y:
-      current_task_status = task_dropoff_y_2 (YELLOW, MECHANISM);
+      current_task_status = task_dropoff_y_2 (BLUE, MECHANISM);
 
       if (current_task_status == TASK_SUCCESS)
 	{
@@ -3693,10 +3716,14 @@ blue_4 ()
       if (current_task_status == TASK_SUCCESS)
 	{
 	  points += get_and_reset_task_points ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
-	  mechanism_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_half_down ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
+	  mechanism_open ();
 	  tactic_state = RETURN;
 	  current_task_retries = 0;
 	}

@@ -470,7 +470,7 @@ task_dropoff_x (uint8_t side, uint8_t planter)
 	  sensors_case_timer = SENSORS_HIGH;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
-	  set_translation_speed_limit (0.6);
+	  set_translation_speed_limit (0.5);
 	  set_rotation_speed_limit (0.5);
 	}
       if (planter == CLOSE)
@@ -858,13 +858,13 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
       break;
     case 4:
       task_status = TASK_IN_PROGRESS;
-      set_translation_speed_limit (0.24);
+      set_translation_speed_limit (0.3);
       task_case++;
       break;
     case 5:
       if (!task_init)
 	{
-	  set_translation_speed_limit (0.24);
+	  set_translation_speed_limit (0.3);
 	  sensors_case_timer = SENSORS_MECHANISM;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
