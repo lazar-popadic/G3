@@ -29,9 +29,11 @@
 #define POT_5     	144  		// saksije izmedju retyerbisanih i sredisnjih solara
 
 #define SOLAR_C_MAX_TIME_S	10
+#define PLANT_TIMEOUT		10
 
 volatile uint8_t points = 0;
 volatile uint8_t solar_c_start_time = 255;
+volatile uint8_t plant_start_time = 255;
 
 extern position robot_position;
 extern volatile bool interrupted;
@@ -115,9 +117,9 @@ blue_matijaV2 ()
 	  plants[0] = plant_central1;
 	  plants[1] = plant_blue1;
 	  plants[2] = plant_blue2;
-	  plants[3] = plant_central2;
+	  plants[3] = plant_yellow2;
 	  plants[4] = plant_yellow1;
-//	  plants[5] = plant_yellow1;
+//	  plants[5] = plant_yellow2;
 
 	  alt_plants[0] = plant_yellow2;
 	  alt_plants[1] = plant_blue2;
@@ -483,11 +485,13 @@ blue_matijaV2 ()
       break;
 
     case PLANT_4:
+      plant_start_time = uint8_t_min (plant_start_time, sys_time_s);
+
       if (plants[3].x == plant_blue1.x)
 	swap_plants (3);
       current_task_status = task_pickup_plants (plants[3], 1);
 
-      if (current_task_status == TASK_SUCCESS)
+      if (current_task_status == TASK_SUCCESS || (sys_time_s - plant_start_time) > PLANT_TIMEOUT)
 	{
 	  reset_task ();
 	  tactic_state = SOLAR_C;
@@ -556,7 +560,7 @@ yellow_matijaV2 ()
 	  plants[0] = plant_central1;
 	  plants[1] = plant_yellow1;
 	  plants[2] = plant_yellow2;
-	  plants[3] = plant_central2;
+	  plants[3] = plant_blue2;
 	  plants[4] = plant_blue1;
 //	  plants[5] = plant_blue1;
 

@@ -858,13 +858,13 @@ task_solar (uint8_t side, uint8_t solar, float speed_limit, uint8_t first_side)
       break;
     case 4:
       task_status = TASK_IN_PROGRESS;
-      set_translation_speed_limit (0.3);
+      set_translation_speed_limit (0.24);
       task_case++;
       break;
     case 5:
       if (!task_init)
 	{
-	  set_translation_speed_limit (0.3);
+	  set_translation_speed_limit (0.24);
 	  sensors_case_timer = SENSORS_MECHANISM;
 	  task_init = true;
 	  task_status = TASK_IN_PROGRESS;
