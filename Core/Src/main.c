@@ -13,6 +13,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,6 +44,7 @@ uint16_t duty_cycle_test = 100;
 bool positioning_done = false;
 uint8_t selected_tactic = 0;
 
+extern volatile uint16_t sys_time_s;
 extern volatile target plant_blue1;
 extern volatile target plant_blue2;
 extern volatile target plant_central1;
@@ -60,33 +62,49 @@ extern volatile bool regulation_on;
 int16_t calib1 = 512;
 int16_t calib2 = 512;
 
-unsigned char brojac = 0;
 bool s1 = false;
 bool s2 = false;
 bool s3 = false;
 
+uint8_t tactic_chooser = 0;
+
 extern volatile uint8_t sensors_case_timer;
 extern volatile bool interrupted;
+
+char tactic_string[10];
+char y_risky[10] = "Y: Risk";
+char y_matijaV2[10] = "Y: MV2";
+char y_4[10] = "Y: 4";
+char y_NSD[10] = "Y: NSD";
+char b_risky[10] = "B: Risk";
+char b_matijaV2[10] = "B: MV2";
+char b_4[10] = "B: 4";
+char b_NSD[10] = "B: NSD";
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
+void
+SystemClock_Config (void);
+static void
+MX_GPIO_Init (void);
+static void
+MX_I2C1_Init (void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 char snum[5];
+char snum_time[5];
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
+ * @brief  The application entry point.
+ * @retval int
+ */
+int
+main (void)
 {
 
   /* USER CODE BEGIN 1 */
@@ -98,19 +116,18 @@ int main(void)
 
   HAL_Init ();
 
-
   /* USER CODE BEGIN Init */
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  SystemClock_Config ();
 
   /* USER CODE BEGIN SysInit */
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_I2C1_Init();
+  MX_GPIO_Init ();
+  MX_I2C1_Init ();
   /* USER CODE BEGIN 2 */
   io_init ();
   timer_init ();
@@ -125,11 +142,12 @@ int main(void)
   __enable_irq ();
 
   regulation_on = false;
-  HD44780_Init(2);
-  HD44780_NoBacklight();
- HD44780_Clear();
- HD44780_SetCursor(0, 0);
- HD44780_PrintStr("G3 Robotics");
+  HD44780_Init (2);
+  HD44780_NoBacklight ();
+  HD44780_Clear ();
+  HD44780_SetCursor (0, 0);
+  HD44780_PrintStr ("G3");
+  HD44780_Backlight ();
 
 //  timer_start_sys_time ();
   /* USER CODE END 2 */
@@ -139,9 +157,7 @@ int main(void)
   while (1)
     {
 
-    /* USER CODE END WHILE */
-
-      ispis_displej(brojac);
+      /* USER CODE END WHILE */
 
       /* USER CODE BEGIN 3 */
       switch (state_main)
@@ -162,39 +178,80 @@ int main(void)
 	      pwm_start ();
 	      regulation_on = true;
 	      positioning_done = true;
+	      tactic_chooser = switch_1 () + switch_2 ();
+
 	      if (blue_side_selected ())
 		{
-		  if (tactic_1_selected ())		// plava sigurna
+		  switch (tactic_chooser)
 		    {
-		      set_starting_position (100 + 85, 2000 - 35 - 170, 180);
-		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
-		      selected_tactic = 1;
-		    }
-		  else				// plava rizicna
-		    {
-		      set_starting_position (3000 - 50 - 85, 1000 - 225 + 50,
-					     0);
+		    case 0:	// risky 13
+		      set_starting_position (3000 - 100 - 85, 1225 - 40 - 170, 0);
 		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-		      selected_tactic = 2;
+		      selected_tactic = 13;
+		      strcpy (tactic_string, b_risky);
+		      break;
+		    case 1:	// nsd 11
+		      set_starting_position (100 + 85, 32.5 + 170, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+		      selected_tactic = 11;
+		      strcpy (tactic_string, b_NSD);
+		      break;
+		    case 2:	// mv2	7
+		      set_starting_position (100 + 85, 2000 - 32.5 - 170,
+					     180);
+		      turn_to_pos (plant_central1.x, plant_central1.y,
+		      MECHANISM);
+		      selected_tactic = 7;
+		      strcpy (tactic_string, b_matijaV2);
+		      break;
+		    case 3:	// blue_4 	9
+		      set_starting_position (100 + 85, 32.5 + 170, 180);
+		      turn_to_pos (plant_central2.x, plant_central2.y,
+		      MECHANISM);
+		      selected_tactic = 9;
+		      strcpy (tactic_string, b_4);
+		      break;
 		    }
 		}
 	      else
 		{
-		  if (tactic_1_selected ())		// zuta sigurna
+		  switch (tactic_chooser)
 		    {
+		    case 0:	// yellow_risky
+		      set_starting_position (100 + 85, 1225 - 40 - 170, 180);
+		      turn_to_pos (plant_blue2.x, plant_blue2.y, MECHANISM);
+		      selected_tactic = 14;
+		      strcpy (tactic_string, y_risky);
+		      break;
+		    case 1:	// yellow_NSD
+		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
+		      selected_tactic = 12;
+		      strcpy (tactic_string, y_NSD);
+		      break;
+		    case 2:	// yellow_matijaV2
 		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
 					     0);
-		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-		      selected_tactic = 3;
-		    }
-		  else				// zuta rizicna
-		    {
+		      turn_to_pos (plant_central1.x, plant_central1.y,
+		      MECHANISM);
+		      selected_tactic = 10;
+		      strcpy (tactic_string, y_matijaV2);
+		      break;
+		    case 3:	// yellow_4
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
 		      selected_tactic = 8;
+		      strcpy (tactic_string, y_4);
+		      break;
 		    }
 		}
+	      /*	//homologacija
+	       set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
+	       turn_to_pos (3000 - 333, 215,
+	       MECHANISM);
+	       selected_tactic = 20;
+	       */
 	    }
 	  mechanism_open ();
 	  solar_in_l ();
@@ -208,6 +265,7 @@ int main(void)
 	  set_rotation_speed_limit (1.0);
 	  reset_and_stop_timer ();
 	  regulation_on = false;
+	  write_to_display (0, tactic_string);
 	  state_main = START;
 	  break;
 
@@ -220,31 +278,56 @@ int main(void)
 	      Vd_inc = 0;
 	      Vl_inc = 0;
 	      state_main = selected_tactic;
-	      pwm_start ();
-	      regulation_on = true;
 	      set_rotation_speed_limit (1.0);
 	      set_translation_speed_limit (1.0);
+	      pwm_start ();
+	      regulation_on = true;
 	      transition_factor = 1.0;
 	    }
 	  break;
 
-//	case 1:
-//	  if (safe_blue ())
-//	    state_main = END;
-//	  break;
-//
-//	case 2:
-//	  if (risky_blue ())
-//	    state_main = END;
-//	  break;
+	case 7:
+	  if (blue_matijaV2 ())
+	    state_main = END;
+	  break;
 
-	case 3:
-//	  if (safe_yellow ())
+	case 9:
+	  if (blue_4 ())
+	    state_main = END;
+	  break;
+
+	case 11:
+	  if (blue_NSD ())
+	    state_main = END;
+	  break;
+
+	case 13:
+	  if (blue_risky ())
 	    state_main = END;
 	  break;
 
 	case 8:
 	  if (yellow_4 ())
+	    state_main = END;
+	  break;
+
+	case 10:
+	  if (yellow_matijaV2 ())
+	    state_main = END;
+	  break;
+
+	case 12:
+	  if (yellow_NSD ())
+	    state_main = END;
+	  break;
+
+	case 14:
+	  if (yellow_risky ())
+	    state_main = END;
+	  break;
+
+	case 20:
+	  if (homologation ())
 	    state_main = END;
 	  break;
 
@@ -257,12 +340,14 @@ int main(void)
 //	  break;
 //
 	case END:
+//	  write_to_display (get_points (), tactic_string);
 	  timer_stop_sys_time ();
 	  stop_right_wheel ();
 	  stop_left_wheel ();
 	  pwm_duty_cycle_left (0);
 	  pwm_duty_cycle_right (0);
 	  regulation_on = false;
+	  write_to_display_time (get_points (), sys_time_s);
 	  break;
 	}
     } // while
@@ -270,22 +355,25 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void
+SystemClock_Config (void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_OscInitTypeDef RCC_OscInitStruct =
+    { 0 };
+  RCC_ClkInitTypeDef RCC_ClkInitStruct =
+    { 0 };
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
+   * in the RCC_OscInitTypeDef structure.
+   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -295,32 +383,33 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLN = 84;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  if (HAL_RCC_OscConfig (&RCC_OscInitStruct) != HAL_OK)
+    {
+      Error_Handler ();
+    }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+      | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  if (HAL_RCC_ClockConfig (&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+    {
+      Error_Handler ();
+    }
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2C1_Init(void)
+ * @brief I2C1 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void
+MX_I2C1_Init (void)
 {
 
   /* USER CODE BEGIN I2C1_Init 0 */
@@ -339,10 +428,10 @@ static void MX_I2C1_Init(void)
   hi2c1.Init.OwnAddress2 = 0;
   hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
   hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  if (HAL_I2C_Init (&hi2c1) != HAL_OK)
+    {
+      Error_Handler ();
+    }
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
@@ -350,45 +439,70 @@ static void MX_I2C1_Init(void)
 }
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
+ * @brief GPIO Initialization Function
+ * @param None
+ * @retval None
+ */
+static void
+MX_GPIO_Init (void)
 {
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
-void ispis_displej(uint8_t brojac) {
-	uint8_t a;
-	a = brojac;
+void
+write_to_display (uint8_t points, char tactic[10])
+{
+//  uint8_t a;
+//  a = number;
+//  itoa (a, snum, 10);
 
-	itoa(a, snum, 10);
-	HD44780_Init(2);
-	HD44780_Backlight();
-	HD44780_Clear();
-	HD44780_SetCursor(0, 0);
-	HD44780_PrintStr("G3 ROBOTICS");
-	HD44780_SetCursor(0, 1);
-	HD44780_PrintStr("POINTS:  ");
-	HD44780_SetCursor(9, 1);
-	HD44780_PrintStr(snum);
+  itoa (points, snum, 10);
+  HD44780_Init (2);
+  HD44780_Backlight ();
+  HD44780_Clear ();
+  HD44780_SetCursor (0, 0);
+  HD44780_PrintStr ("G3");
+  HD44780_SetCursor (8, 0);
+  HD44780_PrintStr (tactic);
+  HD44780_SetCursor (0, 1);
+  HD44780_PrintStr ("POINTS:");
+  HD44780_SetCursor (13, 1);
+  HD44780_PrintStr (snum);
+}
+
+void
+write_to_display_time (uint8_t points, uint8_t time)
+{
+  itoa (points, snum, 10);
+  itoa (time, snum_time, 10);
+  HD44780_Init (2);
+  HD44780_Backlight ();
+  HD44780_Clear ();
+  HD44780_SetCursor (0, 0);
+  HD44780_PrintStr ("G3    TIME:");
+  HD44780_SetCursor (13, 0);
+  HD44780_PrintStr (snum_time);
+  HD44780_SetCursor (0, 1);
+  HD44780_PrintStr ("POINTS:");
+  HD44780_SetCursor (13, 1);
+  HD44780_PrintStr (snum);
 }
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void
+Error_Handler (void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */

@@ -16,14 +16,35 @@
 #define RESET_BEFORE_START 254
 
 bool
-yellow_matija ();
+yellow_matijaV2 ();
+bool
+yellow_NSD ();
 bool
 yellow_4 ();
+bool
+yellow_risky();
+bool
+blue_matijaV2 ();
+bool
+blue_4();
+bool
+blue_risky ();
+bool
+blue_NSD ();
+
+bool
+homologation ();
 void
 pop_plant ();
 void
 swap_first2_plants ();
 void
 swap_plant_alt (uint8_t i);
+uint8_t
+get_points ();
+void
+add_points (uint8_t number);
+uint8_t
+uint8_t_min (uint8_t a, uint8_t b);
 
 #endif /* LIB_MODULES_TACTICS_TACTICS_H_ */

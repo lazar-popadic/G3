@@ -22,7 +22,7 @@
 static const float KP_ROT = 60.0;
 static const float KI_ROT = 20.0;
 
-static const float KP_TRAN = 0.036;
+static const float KP_TRAN = 0.032;
 static const float KI_TRAN = 0.64;
 
 extern volatile float theta_to_pos;

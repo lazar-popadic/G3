@@ -85,9 +85,8 @@ no_movement ()
 bool
 movement_finished ()
 {
-  if (fabs (distance) < EPSILON_DISTANCE * transition_factor
-      && fabs (theta_to_angle) < EPSILON_THETA_SMALL * transition_factor
-      && !robot_moving)
+  if (fabs (distance) < EPSILON_DISTANCE
+      && fabs (theta_to_angle) < EPSILON_THETA_SMALL && !robot_moving)
     {
       regulation_rotation_finished ();
       regulation_translation_finished ();
@@ -154,6 +153,34 @@ move_to_xy_offset (float x, float y, int8_t translation_direction,
     }
   move_full (x - offset.x, y - offset.y,
 	     robot_position.theta_rad * 180.0 / M_PI, translation_direction);
+}
+
+float
+return_x_offset (float x, float y, int8_t translation_direction,
+		 float dist_offset)
+{
+  float theta_target_rad = atan2 (
+      y - robot_position.y_mm,
+      x - robot_position.x_mm) + translation_direction * M_PI;
+  return x - dist_offset * cos (theta_target_rad);
+}
+
+float
+return_y_offset (float x, float y, int8_t translation_direction,
+		 float dist_offset)
+{
+  float theta_target_rad = atan2 (
+      y - robot_position.y_mm,
+      x - robot_position.x_mm) + translation_direction * M_PI;
+  return y - dist_offset * sin (theta_target_rad);
+}
+
+float
+return_theta_offset (float x, float y, int8_t translation_direction,
+		     float dist_offset)
+{
+  return atan2 (y - robot_position.y_mm, x - robot_position.x_mm)
+      + translation_direction * M_PI;
 }
 
 void

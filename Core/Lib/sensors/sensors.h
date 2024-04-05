@@ -9,13 +9,14 @@
 #define LIB_SENSORS_SENSORS_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
-bool
-position_switch_on ();
+uint8_t
+switch_2 ();
 bool
 blue_side_selected ();
-bool
-tactic_1_selected ();
+uint8_t
+switch_1 ();
 void
 sensors_init ();
 bool
