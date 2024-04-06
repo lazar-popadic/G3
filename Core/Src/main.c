@@ -76,11 +76,16 @@ char y_risky[10] = "Y: Risk";
 char y_matijaV2[10] = "Y: MV2";
 char y_4[10] = "Y: 4";
 char y_NSD[10] = "Y: NSD";
+char y_NTS[10] = "Y: NTS";
+char y_381[10] = "Y: +381";
+char b_381[10] = "B: +381";
 char b_risky[10] = "B: Risk";
 char b_matijaV2[10] = "B: MV2";
 char b_4[10] = "B: 4";
 char b_NSD[10] = "B: NSD";
 char b_NEO[10] = "B: NEO";
+char y_NEO[10] = "Y: NEO";
+char b_memra[10] = "B: memra";
 
 /* USER CODE END PV */
 
@@ -114,6 +119,7 @@ main (void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+
 
   HAL_Init ();
 
@@ -186,10 +192,11 @@ main (void)
 		  switch (tactic_chooser)
 		    {
 		    case 0:	// risky 13
-		      set_starting_position (3000 - 100 - 85, 1225 - 40 - 170, 0);
-		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-		      selected_tactic = 13;
-		      strcpy (tactic_string, b_risky);
+		      set_starting_position (3000 - 100 - 85, 1225 - 30 - 170,
+					     0);
+		      turn_to_pos (plant_yellow1.x + 360, plant_yellow1.y, MECHANISM);
+		      selected_tactic = 113;
+		      strcpy (tactic_string, b_memra);
 		      break;
 		    case 1:	// nsd 11
 		      set_starting_position (100 + 85, 32.5 + 170, 180);
@@ -197,9 +204,8 @@ main (void)
 		      selected_tactic = 11;
 		      strcpy (tactic_string, b_NSD);
 		      break;
-		    case 2:	// mv2	7
-		      set_starting_position (100 + 85, 2000 - 32.5 - 170,
-					     180);
+		    case 2:	// neo
+		      set_starting_position (100 + 85, 2000 - 32.5 - 170, 180);
 		      turn_to_pos (plant_central1.x, plant_central1.y,
 		      MECHANISM);
 		      selected_tactic = 117;
@@ -209,8 +215,8 @@ main (void)
 		      set_starting_position (100 + 85, 32.5 + 170, 180);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
-		      selected_tactic = 9;
-		      strcpy (tactic_string, b_4);
+		      selected_tactic = 119;
+		      strcpy (tactic_string, b_381);
 		      break;
 		    }
 		}
@@ -224,26 +230,25 @@ main (void)
 		      selected_tactic = 14;
 		      strcpy (tactic_string, y_risky);
 		      break;
-		    case 1:	// yellow_NSD
-		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
-		      turn_to_pos (plant_yellow2.x, plant_yellow2.y, MECHANISM);
-		      selected_tactic = 12;
-		      strcpy (tactic_string, y_NSD);
+		    case 1:	// yellow_NTS
+		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170, 0);
+		      turn_to_pos (plant_central1.x, plant_central1.y, MECHANISM);
+		      selected_tactic = 112;
+		      strcpy (tactic_string, y_NTS);
 		      break;
-		    case 2:	// yellow_matijaV2
-		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170,
-					     0);
+		    case 2:	// neo
+		      set_starting_position (3000 - 100 - 85, 2000 - 32.5 - 170, 0);
 		      turn_to_pos (plant_central1.x, plant_central1.y,
 		      MECHANISM);
-		      selected_tactic = 10;
-		      strcpy (tactic_string, y_matijaV2);
+		      selected_tactic = 110;
+		      strcpy (tactic_string, y_NEO);
 		      break;
-		    case 3:	// yellow_4
+		    case 3:	// y_381
 		      set_starting_position (3000 - 100 - 85, 32.5 + 170, 0);
 		      turn_to_pos (plant_central2.x, plant_central2.y,
 		      MECHANISM);
-		      selected_tactic = 8;
-		      strcpy (tactic_string, y_4);
+		      selected_tactic = 118;
+		      strcpy (tactic_string, y_381);
 		      break;
 		    }
 		}
@@ -312,8 +317,18 @@ main (void)
 	    state_main = END;
 	  break;
 
+	case 113:
+	  if (blue_memra ())
+	    state_main = END;
+	  break;
+
 	case 8:
 	  if (yellow_4 ())
+	    state_main = END;
+	  break;
+
+	case 118:
+	  if (yellow_381 ())
 	    state_main = END;
 	  break;
 
@@ -327,8 +342,23 @@ main (void)
 	    state_main = END;
 	  break;
 
+	case 112:
+	  if (yellow_nts ())
+	    state_main = END;
+	  break;
+
 	case 14:
 	  if (yellow_risky ())
+	    state_main = END;
+	  break;
+
+	case 110:
+	  if (yellow_neo())
+	    state_main = END;
+	  break;
+
+	case 119:
+	  if (blue_381())
 	    state_main = END;
 	  break;
 

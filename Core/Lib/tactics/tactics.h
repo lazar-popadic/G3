@@ -16,6 +16,12 @@
 #define RESET_BEFORE_START 254
 
 bool
+blue_381 ();
+bool
+yellow_nts ();
+bool
+yellow_381 ();
+bool
 yellow_matijaV2 ();
 bool
 yellow_NSD ();
@@ -23,6 +29,8 @@ bool
 yellow_4 ();
 bool
 yellow_risky();
+bool
+yellow_neo ();
 bool
 blue_matijaV2 ();
 bool
@@ -33,6 +41,8 @@ bool
 blue_NSD ();
 bool
 blue_neo ();
+bool
+blue_memra ();
 
 bool
 homologation ();
